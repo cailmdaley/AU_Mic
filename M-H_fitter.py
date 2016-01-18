@@ -6,12 +6,12 @@ plt.close()
 
 #Create randomly sampled parabola
 x = 10 * rand.random((100,)) - 5
-gaussian = 8*rand.normal(0, .2, 100)
+gaussian = rand.normal(0, 1.6, 100)
 data = 3*x**2 + gaussian + 1
 
 def chi(a,b):
     model = a*x**2 + b
-    chi = np.sum(((data-model)**2)/model)
+    chi = np.sum(((data-model)**2)/1.6**2)
     return chi
 
 #M-H Algorithim
@@ -20,35 +20,35 @@ b= [6.]
 steps=1000
 accept= []
 chisquared = []
+sigma_a = 1
+sigma_b = 1
 for i in range(steps):
     if rand.random(1) < 0.5:
-        a.append(rand.normal(a[-1], 1))
-        deltachi = chi(a[-2], b[-1]) - chi(a[-1], b[-1])
+        a.append(rand.normal(a[-1], sigma_a))
+        b.append(b[-1])
+        deltachi = chi(a[-2], b[-2]) - chi(a[-1], b[-1])
         if deltachi < 0:
-            if rand.random(1) <  np.exp(-deltachi**2/2):
+            if rand.random(1) <  np.exp(-deltachi/2):
                 a[-1] = a[-1]
-                if i<30:
-                    accept.append(1)
+                accept.append(1)
             else: a[-1] = a[-2]
         else:
             a[-1] = a[-1]
-            if i<30:
-                accept.append(1)
+            accept.append(1)
     else:
-        b.append(rand.normal(b[-1], 1))
-        deltachi = chi(a[-1], b[-2]) - chi(a[-1], b[-1])
+        b.append(rand.normal(b[-1], sigma_b))
+        a.append(a[-1])
+        deltachi = chi(a[-2], b[-2]) - chi(a[-1], b[-1])
         if deltachi < 0:
-            if rand.random(1) <  np.exp(-deltachi**2/2):
+            if rand.random(1) <  np.exp(-deltachi/2):
                 b[-1] = b[-1]
-                if i<30:
-                    accept.append(1)
+                accept.append(1)
             else: b[-1] = b[-2]
         else:
             b[-1] = b[-1]
-            if i<30:
-                accept.append(1)
+            accept.append(1)
     chisquared.append(chi(a[-1], b[-1]))
-acceptance = len(accept)/30.
+acceptance = len(accept)/np.float(steps)
 print acceptance
 
 #Model & Data Plotting
