@@ -57,7 +57,7 @@ for i in range(len(model)):
     os.system('invert vis='+modelname+''+str(i)+'.vis map='+modelname+''+str(i)+'.mp beam='+modelname+''+str(i)+'.bm cell='+pixsize+' imsize=512 options=systemp,mfs robust=2')
     os.system('clean map='+modelname+''+str(i)+'.mp beam='+modelname+''+str(i)+'.bm out='+modelname+''+str(i)+'.cl  niters=10000') #cutoff=6.290E-05
     os.system('restor map='+modelname+''+str(i)+'.mp beam='+modelname+''+str(i)+'.bm model='+modelname+''+str(i)+'.cl out='+modelname+''+str(i)+'.cm')
-    # os.system('cgdisp in='+modelname+''+str(i)+'.cm device=/xs labtyp=arcsec beamtyp=b,l,3')
+    os.system('cgdisp in='+modelname+''+str(i)+'.cm device=/xs labtyp=arcsec beamtyp=b,l,3')
 
 #Read in visibilities, convert data from polarized to Stokes I
 for i in range(len(model)):
