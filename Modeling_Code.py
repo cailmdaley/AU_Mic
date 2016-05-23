@@ -15,7 +15,7 @@ par.printPar()
 
 #Create Model
 os.system('radmc3d mctherm')
-image.makeImage(npix=300., wav=1351.0, incl=89.5, posang=128.41+90, sizeau=150.)
+image.makeImage(npix=300., wav=1351.0, incl=89.5, posang=218.41, sizeau=150.)
 im = image.readImage()
 
 #Variables
