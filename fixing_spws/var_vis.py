@@ -65,28 +65,22 @@ def var_vis(filename):
     plt.ylabel("Imaginary Weight")
     plt.savefig("{}_weight_scatter.png".format(filename))
 
-    return real_weight, imag_weight
-
-
-    # diff = real_weight-imag_weight
-    # plt.hist(diff, 20)
-    # plt.xlabel("Real - Imaginary")
-    # plt.ylabel("Number of Visibilities")
-    # plt.savefig("{}_weight_difference_hist.png".format(filename))
-    #
-    #
     #Calculating total weight from imaginary and real components
     total_weight = np.sqrt(real_weight*imag_weight)
 
     #Reshape weights to fit in weights column of uv fits file; place the weights into both xx and yy polarization columns.
-    total_weight = np.reshape(total_weight, len(im[0].data['data'][:,0,0,0,0,0,2]))
-    im[0].data['data'][:,0,0,0,0,0,2], im[0].data['data'][:,0,0,0,0,1,2] = total_weight, total_weight
+    if len(im[0].data['data'].shape) == 7:
+        total_weight = np.reshape(total_weight, len(im[0].data['data'][:,0,0,0,0,0,2]))
+        im[0].data['data'][:,0,0,0,0,0,2], im[0].data['data'][:,0,0,0,0,1,2] = total_weight, total_weight
+    else:
+        total_weight = np.reshape(total_weight, len(im[0].data['data'][:,0,0,0,0,2]))
+        im[0].data['data'][:,0,0,0,0,2], im[0].data['data'][:,0,0,0,1,2] = total_weight, total_weight
 
 
-    subprocess.call('rm {}.corrected_weights.uvf'.format(filename))
+    subprocess.call('rm {}.corrected_weights.uvf'.format(filename), shell=True)
     im.writeto('{}.corrected_weights.uvf'.format(filename), clobber=True)
     im.close()
-    return
+    return real_weight, imag_weight
 
 
 
