@@ -187,12 +187,13 @@ def image_vis(vis, pixsize, show=True):
             vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
 
-visibilities = [24jun2015_aumic1_spw0.vis, 24jun2015_aumic1_spw1.vis, 24jun2015_aumic1_spw2.vis, 24jun2015_aumic1_spw3.vis]
+visibilities = ['24jun2015_aumic1_spw0', '24jun2015_aumic1_spw1', '24jun2015_aumic1_spw2', '24jun2015_aumic1_spw3']
 newfiles = []
 for vis in visibilities:
+<<<<<<< HEAD
     vis_cut(vis, "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'",
             ".timesplit", newfiles)
-    create_uvf(vis)
+    create_uvf(vis+'.timesplit')
 
 im = create_model()
 
