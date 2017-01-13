@@ -118,12 +118,12 @@ def image_vis(vis, pixsize, show=True):
     if show==True:
         subprocess.call(['cgdisp', 'in={}.cm'.format(vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
-# newfiles = []
-# for i in [4,5,6,7]:
-#     vis_cut(filenames[i], "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'", ".timesplit", newfiles)
-#
 
-#         create_uvf(filename)
+visibilities = [24jun2015_aumic1_spw0.vis, 24jun2015_aumic1_spw1.vis, 24jun2015_aumic1_spw2.vis, 24jun2015_aumic1_spw3.vis]
+newfiles = []
+for vis in visibilities:
+    vis_cut(vis, "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'", ".timesplit", newfiles)
+    create_uvf(vis)
 
 im = create_model()
 
