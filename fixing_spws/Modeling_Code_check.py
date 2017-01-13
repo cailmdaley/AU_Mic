@@ -122,7 +122,7 @@ def image_vis(vis, pixsize, show=True):
 # for i in [4,5,6,7]:
 #     vis_cut(filenames[i], "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'", ".timesplit", newfiles)
 #
-#     for filename in newfiles:
+
 #         create_uvf(filename)
 
 im = create_model()
