@@ -95,9 +95,13 @@ def var_vis(filename):
 
 uvf = ['18aug2015_aumic_spw0','18aug2015_aumic_spw1','18aug2015_aumic_spw2','18aug2015_aumic_spw3','24jun2015_aumic1_spw0','24jun2015_aumic1_spw1','24jun2015_aumic1_spw2','24jun2015_aumic1_spw3','26mar2014_aumic_spw0','26mar2014_aumic_spw1','26mar2014_aumic_spw2','26mar2014_aumic_spw3']
 
-real_weight, imag_weight = var_vis(uvf[0])
-real_weight0, imag_weight0 = var_vis(uvf[4])
-real_weight1, imag_weight1 = var_vis(uvf[5])
-real_weight2, imag_weight2 = var_vis(uvf[6])
-real_weight3, imag_weight3 = var_vis(uvf[7])
-real_weight4, imag_weight4 = var_vis(uvf[10])
+uvfs = ['24jun2015_aumic1_spw0.timesplit', '24jun2015_aumic1_spw1.timesplit', '24jun2015_aumic1_spw2.timesplit', '24jun2015_aumic1_spw3.timesplit']
+for uvf in uvfs:
+    var_vis(uvf)
+
+# real_weight, imag_weight = var_vis(uvf[0])
+# real_weight0, imag_weight0 = var_vis(uvf[4])
+# real_weight1, imag_weight1 = var_vis(uvf[5])
+# real_weight2, imag_weight2 = var_vis(uvf[6])
+# real_weight3, imag_weight3 = var_vis(uvf[7])
+# real_weight4, imag_weight4 = var_vis(uvf[10])
