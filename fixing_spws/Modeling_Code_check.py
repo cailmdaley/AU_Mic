@@ -60,12 +60,10 @@ dec = [-31. - 20. / 60. - 32.52034 / 3600.,
 starflux = 9.417385e-05
 pixsize = '0.03arcsec'
 
-# Create Model
-
 
 def create_model():
     """
-    Returns a model image of the disk
+    Returns a model image of a circumstellar disk.
     """
 
     analyze.writeDefaultParfile('ppdisk')
@@ -81,8 +79,6 @@ def create_model():
     im = image.readImage()
 
     return im
-
-# Add star position & subtract star flux, create convolved model visibilities
 
 
 def model_convolve(im, modelname, filename, coord, ra, dec):
@@ -114,7 +110,7 @@ def model_convolve(im, modelname, filename, coord, ra, dec):
 
 def get_chi(filename, modelname):
     """
-    Return chi^2 of model using seperate weightfile.
+    Return chi^2 of model.
     """
 
     data = fits.open('{}.uvf'.format(filename))
@@ -153,12 +149,12 @@ def get_chi(filename, modelname):
 
     return chi, redchi
 
-# Make this part do the file splitting
-#subprocess.call("uvlist vis=24jun2015_aumic1_spw3.vis options=baseline")
-#os.system("prthd in=24jun2015_aumic1_spw3.vis")
-
 
 def vis_cut(vis, cut, suff, filenames):
+    """
+    Flag/remove part a subset of the data in a miriad.vis file.
+    """
+
     subprocess.call('rm -r {}.vis'.format(vis + suff), shell=True)
     subprocess.call(['uvaver vis={}.vis select={} out={}.vis'.format(
         vis, cut, vis + suff)], shell=True)
@@ -166,12 +162,20 @@ def vis_cut(vis, cut, suff, filenames):
 
 
 def create_uvf(filename):
+    """
+    Create a .uvf file from a .vis file of the same name.
+    """
+
     subprocess.call('rm -r {}.uvf'.format(filename), shell=True)
     subprocess.call('fits in={}.vis op=uvout out={}.uvf'.format(
         filename, filename), shell=True)
 
 
 def image_vis(vis, pixsize, show=True):
+    """
+    Clean and image a miriad visibility file; uses imstat to print rms, and then asks the user to input a clean cutoff level.
+    """
+
     subprocess.call(['rm -r ' + vis + '.{mp,bm,cl,cm}'], shell=True)
     subprocess.call('invert vis={}.vis map={}.mp beam={}.bm cell={} imsize=512 options=systemp,mfs robust=2'.format(
         vis, vis, vis, pixsize), shell=True)
