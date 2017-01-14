@@ -83,9 +83,11 @@ def var_vis(filename):
     return real_weight, imag_weight
 
 
+def create_vis(filename):
+    subprocess.call('rm -r {}.vis'.format(filename), shell=True)
+    subprocess.call('fits in={}.uvf op=uvin out={}.vis'.format(
+        filename, filename), shell=True)
 
-#hdu=fits.PrimaryHDU(weight)
-#hdu.writeto('HIP73145_weights2.fits')
 
 uvf = ['18aug2015_aumic_spw0','18aug2015_aumic_spw1','18aug2015_aumic_spw2','18aug2015_aumic_spw3','24jun2015_aumic1_spw0','24jun2015_aumic1_spw1','24jun2015_aumic1_spw2','24jun2015_aumic1_spw3','26mar2014_aumic_spw0','26mar2014_aumic_spw1','26mar2014_aumic_spw2','26mar2014_aumic_spw3']
 # real_weight, imag_weight = var_vis(uvf[0])

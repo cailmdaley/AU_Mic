@@ -13,10 +13,10 @@ filenames = ['18aug2015_aumic_spw0.corrected_weights',
              '18aug2015_aumic_spw1.corrected_weights',
              '18aug2015_aumic_spw2.corrected_weights',
              '18aug2015_aumic_spw3.corrected_weights',
-             '24jun2015_aumic1_spw0.corrected_weights.timesplit',
-             '24jun2015_aumic1_spw1.corrected_weights.timesplit',
-             '24jun2015_aumic1_spw2.corrected_weights.timesplit',
-             '24jun2015_aumic1_spw3.corrected_weights.timesplit',
+             '24jun2015_aumic1_spw0.timesplit.corrected_weights',
+             '24jun2015_aumic1_spw1.timesplit.corrected_weights',
+             '24jun2015_aumic1_spw2.timesplit.corrected_weights',
+             '24jun2015_aumic1_spw3.timesplit.corrected_weights',
              '26mar2014_aumic_spw0.corrected_weights',
              '26mar2014_aumic_spw1.corrected_weights',
              '26mar2014_aumic_spw2.corrected_weights',
@@ -187,12 +187,12 @@ def image_vis(vis, pixsize, show=True):
             vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
 
-visibilities = ['24jun2015_aumic1_spw0', '24jun2015_aumic1_spw1', '24jun2015_aumic1_spw2', '24jun2015_aumic1_spw3']
-newfiles = []
-for vis in visibilities:
-    vis_cut(vis, "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'",
-            ".timesplit", newfiles)
-    create_uvf(vis+'.timesplit')
+# visibilities = ['24jun2015_aumic1_spw0', '24jun2015_aumic1_spw1', '24jun2015_aumic1_spw2', '24jun2015_aumic1_spw3']
+# newfiles = []
+# for vis in visibilities:
+#     vis_cut(vis, "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'",
+#             ".timesplit", newfiles)
+#     create_uvf(vis+'.timesplit')
 
 im = create_model()
 
