@@ -97,7 +97,7 @@ uvf = ['18aug2015_aumic_spw0','18aug2015_aumic_spw1','18aug2015_aumic_spw2','18a
 # real_weight3, imag_weight3 = var_vis(uvf[7])
 # real_weight4, imag_weight4 = var_vis(uvf[10])
 
-uvfs = ['24jun2015_aumic1_spw0.timesplit', '24jun2015_aumic1_spw1.timesplit', '24jun2015_aumic1_spw2.timesplit', '24jun2015_aumic1_spw3.timesplit']
+uvfs = ['24jun2015_aumic1_spw0.timeflag', '24jun2015_aumic1_spw1.timeflag', '24jun2015_aumic1_spw2.timeflag', '24jun2015_aumic1_spw3.timeflag']
 real_weight0, imag_weight0 = var_vis(uvfs[0])
 real_weight1, imag_weight1 = var_vis(uvfs[1])
 real_weight2, imag_weight2 = var_vis(uvfs[2])

@@ -85,27 +85,26 @@ def model_convolve(im, modelname, filename, coord, ra, dec):
     """
     Create model fits file with correct header information, remove stellar emission, convolve with ALMA visiblities to create model .vis and .uvf files.
     """
-    print(modelname)
 
-    subprocess.call(['rm -rf {}*'.format(modelname)], shell=True)
 
-    im.writeFits('{}.fits'.format(modelname),
+    subprocess.call('rm -r model_files', shell=True)
+    subprocess.call('mkdir model_files', shell=True)
+
+    im.writeFits('model_files/{}.fits'.format(modelname),
                  dpc=8.9, coord='{}'.format(coord))
-    model = fits.open('{}.fits'.format(modelname))
+    model = fits.open('model_files/{}.fits'.format(modelname))
     model[0].data[0, 150, 150] -= starflux
     model[0].header['CRVAL1'] = ra
     model[0].header['CRVAL2'] = dec
 
-    # Clear pre-existing models before writing
-    subprocess.call(['rm -rf {}.fits'.format(modelname)], shell=True)
-    model.writeto('{}.fits'.format(modelname))
+    model.writeto('model_files/{}.fits'.format(modelname), overwrite=True)
     model.close
-    subprocess.call(['fits', 'in={}.fits'.format(modelname),
-                     'op=xyin', 'out={}.im'.format(modelname)])
-    subprocess.call(['uvmodel', 'model={}.im'.format(modelname), 'vis={}.vis'.format(
-        filename), 'options=replace', 'out={}.vis'.format(modelname)])
-    subprocess.call(['fits', 'in={}.vis'.format(modelname),
-                     'op=uvout', 'out={}.uvf'.format(modelname)])
+    subprocess.call(['fits', 'in=model_files/{}.fits'.format(modelname),
+                     'op=xyin', 'out=model_files/{}.im'.format(modelname)])
+    subprocess.call(['uvmodel', 'model=model_files/{}.im'.format(modelname), 'vis=data_files/{}.vis'.format(
+        filename), 'options=replace', 'out=model_files/{}.vis'.format(modelname)])
+    subprocess.call(['fits', 'in=model_files/{}.vis'.format(modelname),
+                     'op=uvout', 'out=model_files/{}.uvf'.format(modelname)])
 
 
 def get_chi(filename, modelname):
@@ -113,7 +112,7 @@ def get_chi(filename, modelname):
     Return chi^2 of model.
     """
 
-    data = fits.open('{}.uvf'.format(filename))
+    data = fits.open('data_files/{}.uvf'.format(filename))
     datrlimwt = data[0].data['data']
 
     # splitting visibilities by time removes one index from datrlimwt array:
@@ -133,7 +132,7 @@ def get_chi(filename, modelname):
     datrlI = np.array((datrlxx + datrlyy) / 2.)
     datimI = np.array((datimxx + datimyy) / 2.)
 
-    model = fits.open('{}.uvf'.format(modelname))
+    model = fits.open('model_files/{}.uvf'.format(modelname))
     modrlimwt = model[0].data['data']
     modrlI = modrlimwt[::2, 0, 0, 0, 0, 0]
     modimI = modrlimwt[::2, 0, 0, 0, 0, 1]
@@ -148,28 +147,6 @@ def get_chi(filename, modelname):
     redchi = chi / len(datrlI)
 
     return chi, redchi
-
-
-def vis_cut(vis, cut, suff, filenames):
-    """
-    Flag/remove part a subset of the data in a miriad.vis file.
-    """
-
-    subprocess.call('rm -r {}.vis'.format(vis + suff), shell=True)
-    subprocess.call(['uvaver vis={}.vis select={} out={}.vis'.format(
-        vis, cut, vis + suff)], shell=True)
-    filenames.append(vis + suff)
-
-
-def create_uvf(filename):
-    """
-    Create a .uvf file from a .vis file of the same name.
-    """
-
-    subprocess.call('rm -r {}.uvf'.format(filename), shell=True)
-    subprocess.call('fits in={}.vis op=uvout out={}.uvf'.format(
-        filename, filename), shell=True)
-
 
 def image_vis(vis, pixsize, show=True):
     """
@@ -190,13 +167,6 @@ def image_vis(vis, pixsize, show=True):
         subprocess.call(['cgdisp', 'in={}.cm'.format(
             vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
-
-# visibilities = ['24jun2015_aumic1_spw0', '24jun2015_aumic1_spw1', '24jun2015_aumic1_spw2', '24jun2015_aumic1_spw3']
-# newfiles = []
-# for vis in visibilities:
-#     vis_cut(vis, "'time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)'",
-#             ".timeflag", newfiles)
-#     create_uvf(vis+'.timeflag')
 
 im = create_model()
 
