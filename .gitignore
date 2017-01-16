@@ -1,0 +1,17 @@
+SED_plotter.py
+radmc3dPy-0.28.1
+.DS_Store
+*.pyc
+*.gz
+*.aux
+*.fdb_latexmk
+*.fls
+*.latex
+
+
+
+radmc3dPy
+Imaging/*
+!Imaging/aumic_composite_cleans
+
+!aumic_model_image*
