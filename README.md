@@ -9,7 +9,7 @@ This repository contains my work on AU_Microscopii, including data analysis, mod
 
 
 Directories in AU Mic folder:
-    Visibilities
+    Imaging
     Modeling
 
 
