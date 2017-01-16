@@ -1,10 +1,17 @@
-# Modeling Code
+#-------------------------------------------------------------------
+# Modeling_Code.py : Modeling Code for ALMA Observations of AU_Mic |
+# AUTHOR           : Cail Daley                                    |
+# PI               : A. M. Hughes                                  |
+# INSTITUTION      : Department of Astronomy,                      |
+#                  : Wesleyan University                           |
+# DESCRIPTION      : The purpose of this code is...ToDo            |
+#===================================================================
 from radmc3dPy import *
 from astropy.io import fits
 import subprocess
 import numpy as np
 import matplotlib.pylab as plb
-#==============================================================================#
+#===================================================================#
 
 
 # Variables and input files:
@@ -168,8 +175,12 @@ def image_vis(vis, pixsize, show=True):
             vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
 
+
+
+
 im = create_model()
 
+#Calculate chi^2 of each model
 chis = []
 redchis = []
 for i in range(len(filenames)):
