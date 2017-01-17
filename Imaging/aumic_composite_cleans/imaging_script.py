@@ -14,31 +14,298 @@ files = glob("../data_files/*.ms")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Auto-thresh clean
-image = "aumic_auto-thresh_niter10000"
-subprocess.call("rm -rf {}*".format(image), shell=True)
-tclean(vis=files,
-       imagename=image,
-       imsize=512,
-       cell='0.03arcsec',
-       weighting='briggs',
-       robust=2,
-       niter=10000,
-       usemask='auto-thresh',
-       pbmask=0.5)
+# image = "aumic_auto-thresh_briggs2_niter10000"
+# subprocess.call("rm -rf {}*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=2,
+#        niter=10000,
+#        usemask='auto-thresh',
+#        pbmask=0.5)
+#
+# viewer(infile=image + '.image')
 
-viewer(infile=image + '.image')
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Natural no taper: residual is the dirty image
+# image = "aumic_dirty_natural"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
 
-# Create dirty map with uniform weighting to get noise
-image = "aumic_dirty"
+
+# Natural 300klambda taper: residual is the dirty image
+image = "aumic_dirty_natural_100klam"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=files,
        imagename=image,
        imsize=512,
        cell='0.03arcsec',
-       weighting='uniform',
-       niter=1,
-       usemask='pb',
-       pbmask=0.5)
-
+       weighting='natural',
+       uvtaper=['100klambda'],
+       niter=0)
+rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# User mask:
+image = "aumic_usermask_natural_100klam"
+subprocess.call("rm -rf {}.*".format(image), shell=True)
+tclean(vis=files,
+       imagename=image,
+       imsize=512,
+       cell='0.03arcsec',
+       weighting='natural',
+       uvtaper=['100klambda'],
+       niter=100000,
+       threshold=rms/2.,
+       usemask='user',
+       mask = '../aumic.mask',
+       pbmask=None)
 viewer(infile=image + '.image')
+
+# # Natural 300klambda taper: residual is the dirty image
+# image = "aumic_dirty_natural_300klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['300klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_300klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['300klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+
+# # Natural 400klambda taper: residual is the dirty image
+# image = "aumic_dirty_natural_400klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['400klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_400klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['400klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+
+# # Natural 500klambda taper: residual is the dirty image
+# image = "aumic_dirty_natural_500klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['500klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_500klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['500klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# # Briggs Robust = 2: residual is the dirty image
+# image = "aumic_dirty_briggs2"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=2,
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_briggs2"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=2,
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Briggs Robust = 1: residual is the dirty image
+# image = "aumic_dirty_briggs1"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=1,
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+
+# User mask:
+# image = "aumic_usermask_briggs1"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=1,
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# # Briggs Robust = 0.5: residual is the dirty image
+# image = "aumic_dirty_briggs0.5"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=0.5,
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+#
+# # User mask:
+# image = "aumic_usermask_briggs0.5"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=0.5,
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Briggs Robust = 0: residual is the dirty image
+# image = "aumic_dirty_briggs0"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=0,
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+
+# User mask:
+# image = "aumic_usermask_briggs0"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=0,
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# #Briggs Robust = -2: residual is the dirty image
+# image = "aumic_dirty_briggs-2"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=-2,
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+#
+# # User mask:
+# image = "aumic_usermask_briggs-2"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='briggs',
+#        robust=-2,
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
