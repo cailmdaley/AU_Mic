@@ -54,7 +54,8 @@ files = glob("../data_files/*.ms")
 #        mask = '../aumic.mask',
 #        pbmask=None)
 # viewer(infile=image + '.image')
-
+# rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0] # rms=1.4753316463611554e-05
+#
 
 # # Natural 100klambda taper: residual is the dirty image
 # image = "aumic_dirty_natural_100klam"
@@ -110,7 +111,7 @@ files = glob("../data_files/*.ms")
 #        mask = '../aumic.mask',
 #        pbmask=None)
 # viewer(infile=image + '.image')
-
+# rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0] #rms=1.9399181837798096e-05
 
 # # Natural 300klambda taper: residual is the dirty image
 # image = "aumic_dirty_natural_300klam"
