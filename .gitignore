@@ -12,8 +12,9 @@ radmc3dPy-0.28.1
 
 radmc3dPy
 Imaging/*
+Modeling/model_files
 !Imaging/aumic_composite_cleans/imaging_script.py
-!Imaging/Plots/*
+!Imaging/Plots
 
 !aumic_model_image*
 !Notes/logo.png
