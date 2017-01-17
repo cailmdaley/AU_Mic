@@ -55,32 +55,61 @@ files = glob("../data_files/*.ms")
 # viewer(infile=image + '.image')
 
 
-# Natural 300klambda taper: residual is the dirty image
-image = "aumic_dirty_natural_100klam"
+# # Natural 100klambda taper: residual is the dirty image
+# image = "aumic_dirty_natural_100klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['100klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_100klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['100klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
+
+
+# Natural 200klambda taper: residual is the dirty image
+image = "aumic_dirty_natural_200klam"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=files,
        imagename=image,
        imsize=512,
        cell='0.03arcsec',
        weighting='natural',
-       uvtaper=['100klambda'],
+       uvtaper=['200klambda'],
        niter=0)
 rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
 # User mask:
-image = "aumic_usermask_natural_100klam"
+image = "aumic_usermask_natural_200klam"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=files,
        imagename=image,
        imsize=512,
        cell='0.03arcsec',
        weighting='natural',
-       uvtaper=['100klambda'],
+       uvtaper=['200klambda'],
        niter=100000,
        threshold=rms/2.,
        usemask='user',
        mask = '../aumic.mask',
        pbmask=None)
 viewer(infile=image + '.image')
+
 
 # # Natural 300klambda taper: residual is the dirty image
 # image = "aumic_dirty_natural_300klam"
