@@ -11,6 +11,7 @@ files = glob("../data_files/*.ms")
 # ALMA Atenna diameter = 12 m
 # Primary beam = lambda/D --> ~23"
 # AU Mic ~ 8" across-- going with mask 1/2 of pb
+# exportfits(imagename=image+'.image', fitsimage=image + '.fits')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Auto-thresh clean
@@ -83,32 +84,32 @@ files = glob("../data_files/*.ms")
 # viewer(infile=image + '.image')
 
 
-# Natural 200klambda taper: residual is the dirty image
-image = "aumic_dirty_natural_200klam"
-subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=files,
-       imagename=image,
-       imsize=512,
-       cell='0.03arcsec',
-       weighting='natural',
-       uvtaper=['200klambda'],
-       niter=0)
-rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
-# User mask:
-image = "aumic_usermask_natural_200klam"
-subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=files,
-       imagename=image,
-       imsize=512,
-       cell='0.03arcsec',
-       weighting='natural',
-       uvtaper=['200klambda'],
-       niter=100000,
-       threshold=rms/2.,
-       usemask='user',
-       mask = '../aumic.mask',
-       pbmask=None)
-viewer(infile=image + '.image')
+# # Natural 200klambda taper: residual is the dirty image
+# image = "aumic_dirty_natural_200klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['200klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_200klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['200klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = '../aumic.mask',
+#        pbmask=None)
+# viewer(infile=image + '.image')
 
 
 # # Natural 300klambda taper: residual is the dirty image
