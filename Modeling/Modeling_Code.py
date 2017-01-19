@@ -93,7 +93,6 @@ def model_convolve(im, modelname, filename, coord, ra, dec):
     Create model fits file with correct header information, remove stellar emission, convolve with ALMA visiblities to create model .vis and .uvf files.
     """
 
-
     subprocess.call('rm -r model_files', shell=True)
     subprocess.call('mkdir model_files', shell=True)
 
@@ -155,6 +154,7 @@ def get_chi(filename, modelname):
 
     return chi, redchi
 
+
 def image_vis(vis, pixsize, show=True):
     """
     Clean and image a miriad visibility file; uses imstat to print rms, and then asks the user to input a clean cutoff level.
@@ -175,12 +175,9 @@ def image_vis(vis, pixsize, show=True):
             vis), 'device=/xs', 'labtyp=arcsec', 'beamtyp=b,l,3'])
 
 
-
-
-
 im = create_model()
 
-#Calculate chi^2 of each model
+# Calculate chi^2 of each model
 chis = []
 redchis = []
 for i in range(len(filenames)):
