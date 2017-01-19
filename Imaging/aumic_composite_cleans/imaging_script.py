@@ -111,7 +111,8 @@ files = glob("../data_files/*.ms")
 #        mask = '../aumic.mask',
 #        pbmask=None)
 # viewer(infile=image + '.image')
-# rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0] #rms=1.9399181837798096e-05
+# rms = imstat(imagename='{}.image'.format(image), region='rms.region',
+# listit=False)['rms'][0] #rms=1.9399181837798096e-05
 
 # # Natural 300klambda taper: residual is the dirty image
 # image = "aumic_dirty_natural_300klam"
@@ -225,7 +226,7 @@ files = glob("../data_files/*.ms")
 # viewer(infile=image + '.image')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Briggs Robust = 1: residual is the dirty image
+# Briggs Robust = 1: residual is the dirty image
 # image = "aumic_dirty_briggs1"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
 # tclean(vis=files,
@@ -284,7 +285,7 @@ files = glob("../data_files/*.ms")
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#Briggs Robust = 0: residual is the dirty image
+# Briggs Robust = 0: residual is the dirty image
 # image = "aumic_dirty_briggs0"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
 # tclean(vis=files,
