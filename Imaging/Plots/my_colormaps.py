@@ -48,8 +48,8 @@ cubehelix_2 = sns.cubehelix_palette(start=0,
                                     as_cmap=True)
 
 cubehelix_3 = sns.cubehelix_palette(start=0,
-                                    rot=1.5,
-                                    gamma=.4,
+                                    rot=1,
+                                    gamma=.8,
                                     hue=2,
                                     light=1,
                                     dark=0,

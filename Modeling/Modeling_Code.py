@@ -155,7 +155,7 @@ def get_chi(filename, modelname):
     return chi, redchi
 
 
-def image_vis(vis, pixsize, show=True):
+def image_vis(vis, show=True):
     """
     Clean and image a miriad visibility file; uses imstat to print rms, and then asks the user to input a clean cutoff level.
     """
