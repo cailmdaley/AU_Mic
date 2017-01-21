@@ -8,13 +8,7 @@ import seaborn as sns
 import numpy as np
 
 
-def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None, save=None, show=False):
-
-    # Set seaborn plot styles
-    sns.set_style("ticks",
-                  {"xtick.direction": "in",
-                   "ytick.direction": "in"})
-    sns.set_context("talk")
+def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None):
 
     # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
@@ -35,23 +29,14 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
     ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
     dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
 
-    # Create figure
-    fig, ax = plt.subplots(figsize=(6, 6))
-
     # Set axes limits
-    xmin = -4.0
-    xmax = 4.0
-    ymin = -4.0
-    ymax = 4.0
+    xmin = -5.0
+    xmax = 5.0
+    ymin = -5.0
+    ymax = 5.0
     ax.set_xlim(xmax, xmin)
     ax.set_ylim(ymin, ymax)
     ax.grid(False)
-
-    # Set x and y labels
-    ax.set_xlabel(r'$\Delta \alpha$ (")')
-    #   labelpad=15, fontsize=18)
-    ax.set_ylabel(r'$\Delta \delta$ (")')
-    #   labelpad=15, fontsize=18)
 
     # Set x and y major and minor tics
     majorLocator = MultipleLocator(1)
@@ -61,6 +46,17 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
     minorLocator = MultipleLocator(0.2)
     ax.xaxis.set_minor_locator(minorLocator)
     ax.yaxis.set_minor_locator(minorLocator)
+
+    # Set x and y labels
+    if image=='aumic_usermask_natural':
+        ax.set_xlabel(r'$\Delta \alpha$ (")')
+        ax.set_ylabel(r'$\Delta \delta$ (")')
+        ax.xaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''])
+        ax.yaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''])
+    else:
+        ax.xaxis.set_ticklabels([])
+        ax.yaxis.set_ticklabels([])
+
 
     # Set physical range of colour map
     cxmin = ra[0]
@@ -74,7 +70,7 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
 
     # Plot image as a colour map in units of micro Jy
     im = im * 1e6
-    cmap = plt.imshow(im,
+    cmap = ax.imshow(im,
                       extent=[cxmin, cxmax, cymin, cymax],
                       vmin=cbmin,
                       vmax=np.max(im),
@@ -109,7 +105,7 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
     # Create the colorbar
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("top", size="8%", pad=0.0)
-    cbar = fig.colorbar(cmap, cax=cax, orientation='horizontal')
+    cbar = fig.colorbar(cmap, ax=ax, cax=cax, orientation='horizontal')
     cbar.ax.xaxis.set_tick_params(direction='out',
                                   length=3,
                                   which='major',
@@ -129,7 +125,7 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
     cbar.set_ticks(np.arange(cbmin, cbmax, cbtmj))
 
     # Colorbar label
-    fig.text(0.477, 0.862, r'$\mu Jy / bm$', fontsize=10,
+    ax.text(0.477, 0.862, r'$\mu Jy / bm$', fontsize=10,
              path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Overplot the beam ellipse
@@ -163,42 +159,51 @@ def plotcmd(image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, 
             ax.text(*t, fontsize=11,
                     path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
-    # Save and show figure
-    if save:
-        fig.savefig(save)
-    if show:
-        plt.show()
+
+# Set seaborn plot styles
+sns.set_style("ticks",
+              {"xtick.direction": "in",
+               "ytick.direction": "in"})
+sns.set_context("talk")
+
 
 # Set colorpalette
 from my_colormaps import *
 cpals = [cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
 colorsaves = ['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
+which_cpal = 3
 
-i = 3
-plotcmd('aumic_usermask_natural',
-        cpal=cpals[i],
-        cbmin=-50,
-        cbmax=301,
-        cbtmj=50,
-        cbtmn=25,
-        rms=1.4753316463611554e-05,
-        cont_levs=np.arange(2, 40, 2),
-        text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
-              (1.04, -3.7, 'natural weighting')],
-        save='aumic_usermask_natural' + '_countour_image_' +
-        colorsaves[i] + '.png',
-        show=True)
+# Create figure
+fig, (natural_ax, taper_ax) = plt.subplots(
+    1, 2, sharex=False, sharey=False, figsize=(11.6, 6.2))
 
-plotcmd('aumic_usermask_natural_200klam',
-        cpal=cpals[i],
-        cbmin=-50,
-        cbmax=551,
-        cbtmj=100,
-        cbtmn=50,
-        rms=1.9399181837798096e-05,
-        cont_levs=np.arange(2, 40, 2),
-        text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
-              (0.72, -3.7, r'200k$\lambda$ taper')],
-        save='aumic_usermask_natural_200klam' +
-        '_countour_image_' + colorsaves[i] + '.png',
-        show=False)
+# Plot subplots on seperate axes
+return_axis(ax=natural_ax,
+            image='aumic_usermask_natural',
+            cpal=cpals[which_cpal],
+            cbmin=-50,
+            cbmax=301,
+            cbtmj=50,
+            cbtmn=25,
+            rms=1.4753316463611554e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
+                  (1.04, -3.7, 'natural weighting')])
+
+return_axis(ax=taper_ax,
+            image='aumic_usermask_natural_200klam',
+            cpal=cpals[which_cpal],
+            cbmin=-50,
+            cbmax=551,
+            cbtmj=100,
+            cbtmn=50,
+            rms=1.9399181837798096e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
+                  (0.72, -3.7, r'200k$\lambda$ taper')])
+
+plt.subplots_adjust(wspace=-.072)
+
+# Save and show figure
+plt.savefig('AU_mic_naturaltaper.png')
+# plt.show()
