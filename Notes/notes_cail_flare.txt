@@ -1,0 +1,60 @@
+Long-baseline data imfit
+
+Fixvis phase center:
+J2000 20h45m09.8677s -031d20m32.89s
+
+Here is the whole procedure:
+
+initweights
+	vis = 'uid___A002_Xa42f75_X319.ms.split.cal'
+
+split
+	vis = 'uid___A002_Xa42f75_X319.ms.split.cal' 
+	outputvis='aumic1_spw1_3'
+	spw='1'
+	datacolumn='all'
+	field='AU_Mic'
+	width=128
+	timerange='04:23:0~04:24:0'
+
+fixvis
+	vis='aumic1_spw1_3'
+	outputvis='aumic1_spw1_3.fixvis'
+	phasecenter='J2000 20h45m09.8677s -031d20m32.89s'
+
+Point source fluxes:
+23-24: 0.00091
+24-25: 0.0115
+25-26: 0.0036
+26-27: 0.00158
+
+rm -rf point_fit.cl
+cl.addcomponent(flux=0.00153, fluxunit='Jy', shape='point', dir='J2000 20h45m09.8677s -031d20m32.89s')
+cl.rename('point_fit.cl')
+cl.close()
+
+ft(vis='aumic1_spw1_3.fixvis',complist='point_fit.cl')
+
+uvsub
+	vis='aumic1_spw1_3.fixvis'
+
+split
+	vis='aumic1_spw1_3.fixvis'
+	outputvis='aumic_spw1_3.fixvis.uvsub'
+	datacolumn='corrected'
+
+tclean 
+	vis=['aumic1_spw0_3.fixvis.uvsub','aumic1_spw1_3.fixvis.uvsub', 'aumic1_spw2_3.fixvis.uvsub', 'aumic1_spw3_3.fixvis.uvsub']
+	imagename='aumic1_3.fixvis.uvsub'
+	imsize=[512,512]
+	cell=['0.03arcsec','0.03arcsec']
+	niter=500
+
+
+
+
+
+
+
+
+Magic commands: clearcal(vis='') and delmod(vis='')
