@@ -1,0 +1,117 @@
+Long-baseline data imfit
+
+timer1
+
+--- ra:    20:45:09.87147 +/- 0.00030 s (0.00383 arcsec along great circle)
+--- dec: -031.20.32.85121 +/- 0.00228 arcsec
+--- ra:  255.230 +/- 0.128 pixels
+--- dec: 255.071 +/- 0.076 pixels
+--- Peak:         425.5 +/- 5.8 uJy/beam
+
+timer5c
+
+--- ra:    20:45:09.86568 +/- 0.00021 s (0.00265 arcsec along great circle)
+--- dec: -031.20.32.91581 +/- 0.00147 arcsec
+--- ra:  257.704 +/- 0.088 pixels
+--- dec: 252.918 +/- 0.049 pixels
+--- Peak:         7.820 +/- 0.096 mJy/beam
+
+All times
+
+--- ra:    20:45:09.86765 +/- 0.00016 s (0.00203 arcsec along great circle)
+--- dec: -031.20.32.88803 +/- 0.00128 arcsec
+--- ra:  256.859 +/- 0.068 pixels
+--- dec: 253.844 +/- 0.043 pixels
+--- Peak:         862.3 +/- 7.7 uJy/beam
+
+Fixvis phase center:
+J2000 20h45m09.8677s -031d20m32.89s
+
+Proper motion check:
+	Difference between short-baseline data set and this data set
+	Delta RA = 0.35 +/- 0.03 arcsec
+	Delta dec = -0.53 +/- 0.03 arcsec
+	Date difference: 26Mar2014 - 24jun2015 = 1.25 years (approx)
+	Prediction from SIMBAD ppm: 
+		Delta RA = 0.34995 arcsec, Delta dec = -0.45076 arcsec
+
+Subtracting point source from data:
+cl.addcomponent(flux=0.0007554, fluxunit='Jy', shape='point', dir='J2000 20h45m09.8443s -031d20m32.36s')
+cl.rename('point_fit.cl')
+cl.close()
+ft(vis='aumic_spw1',complist='point_fit.cl')
+go uvsub
+
+tclean NOT CLEAN!!!
+
+Here is the whole procedure:
+
+initweights
+	vis = 'uid___A002_X7d80c7_X15c6.ms.split.cal'
+
+split
+	vis = 'uid___A002_X7d80c7_X15c6.ms.split.cal' 
+	outputvis='aumic_spw1_noflare'
+	spw='1'
+	datacolumn='all'
+	field='AU_Mic'
+	width=128
+	timebin='1min'
+	timerange='03:45:0~04:20:0'
+
+fixvis
+	vis='aumic_spw1_noflare'
+	outputvis='aumic_spw1_noflare.fixvis'
+	phasecenter='J2000 20h45m09.8677s -031d20m32.89s'
+
+*** at this point, fit point source to long baselines only ***
+uvmodelfit
+	vis='aumic_spw1.fixvis'
+
+	with uvrange='100~1400'
+	spw1: I = 0.000452438 +/- 3.39915e-05
+	spw2: I = 0.000342006 +/- 3.47319e-05
+	spw3: I = 0.000431545 +/- 3.70009e-05
+	Mean: 0.000408663
+
+	These are old... (from before I split out the no-flare part)
+	with uvrange='200~1400'
+	spw1: I = 0.000833226 +/- 3.43693e-05
+	spw2: I = 0.000730598 +/- 3.50697e-05
+	spw3: I = 0.000807629 +/- 3.74201e-05
+	Mean: 0.000790484
+
+	with uvrange='50~1400'
+	spw1: I = 0.000896905 +/- 2.96017e-05
+	spw2: I = 0.000827688 +/- 3.02792e-05
+	spw3: I = 0.000930092 +/- 3.22404e-05
+	Mean: 0.000884895
+
+cl.addcomponent(flux=0.000408663, fluxunit='Jy', shape='point', dir='J2000 20h45m09.8677s -031d20m32.89s')
+cl.rename('point_fit.cl')
+cl.close()
+
+ft(vis='aumic_spw1_noflare.fixvis',complist='point_fit.cl')
+
+uvsub
+	vis='aumic_spw1_noflare.fixvis'
+
+split
+	vis='aumic_spw1_noflare.fixvis'
+	outputvis='aumic_spw1_noflare.fixvis.uvsub'
+	datacolumn='corrected'
+
+tclean 
+	vis=['aumic_spw0_noflare.fixvis.uvsub','aumic_spw1_noflare.fixvis.uvsub', 'aumic_spw2_noflare.fixvis.uvsub', 'aumic_spw3_noflare.fixvis.uvsub']
+	imagename='aumic.fixvis.uvsub'
+	imsize=[512,512]
+	cell=['0.03arcsec','0.03arcsec']
+
+
+
+
+
+
+
+
+Magic commands: clearcal(vis='') and delmod(vis='')
