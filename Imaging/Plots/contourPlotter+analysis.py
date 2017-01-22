@@ -1,6 +1,7 @@
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import MultipleLocator, LinearLocator, AutoMinorLocator
+from scipy.ndimage.interpolation import rotate
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
 from astropy.io import fits
@@ -10,9 +11,11 @@ import numpy as np
 
 def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None):
 
-    # Read in FITS image and header:
+    angle=129.5
+    # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
-    im = fits.getdata(image + ".fits").squeeze()
+    #Read in images and rotate so that disk is horizontal
+    im = rotate(fits.getdata(image + ".fits").squeeze(), angle-90)
     if residuals:
         resid = fits.getdata(residuals + ".fits").squeeze()
 
@@ -28,6 +31,9 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Convert from degrees to arcsecs
     ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
     dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
+    
+    x = ((np.arange(im.shape[0]) - xpix + 1) * xdelt) * 3600
+    y = ((np.arange(im.shape[0]) - ypix + 1) * ydelt) * 3600
 
     # Set axes limits
     xmin = -5.0
@@ -59,10 +65,10 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
 
 
     # Set physical range of colour map
-    cxmin = ra[0]
-    cxmax = ra[-1]
-    cymin = dec[-1]
-    cymax = dec[0]
+    cxmin = x[0]
+    cxmax = x[-1]
+    cymin = y[-1]
+    cymax = y[0]
 
     # Set limits and tics of colorbar - velocity scale
     print(np.min(im))
@@ -80,7 +86,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     cont_levs = cont_levs * rms * 1e6
 
     if residuals:
-        ax.contour(resid,
+        ax.contour(x, y, resid,
                    levels=cont_levs,
                    colors='k',
                    linewidths=0.75,
@@ -91,12 +97,12 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                    linewidths=0.75,
                    linestyles='dashed')
     else:
-        ax.contour(ra, dec, im,
+        ax.contour(x, y, im,
                    colors='k',
                    levels=cont_levs,
                    linewidths=0.75,
                    linestyles='solid')
-        ax.contour(ra, dec, im,
+        ax.contour(x, y, im,
                    levels=-1 * np.flip(cont_levs, axis=0),
                    colors='k',
                    linewidths=0.75,
@@ -206,5 +212,5 @@ return_axis(ax=taper_ax,
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AU_mic_naturaltaper.png')
+# plt.savefig('AU_mic_naturaltaper.png')
 plt.show()
