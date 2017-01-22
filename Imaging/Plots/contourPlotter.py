@@ -49,10 +49,10 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
 
     # Set x and y labels
     if image=='aumic_usermask_natural':
-        ax.set_xlabel(r'$\Delta \alpha$ (")')
-        ax.set_ylabel(r'$\Delta \delta$ (")')
-        ax.xaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''])
-        ax.yaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''])
+        ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=15)
+        ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=15)
+        ax.xaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
+        ax.yaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
     else:
         ax.xaxis.set_ticklabels([])
         ax.yaxis.set_ticklabels([])
@@ -72,7 +72,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     im = im * 1e6
     cmap = ax.imshow(im,
                       extent=[cxmin, cxmax, cymin, cymax],
-                      vmin=cbmin,
+                      vmin=np.min(im),
                       vmax=np.max(im),
                       cmap=cpal)
 
@@ -122,10 +122,11 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                                   top='on')
     minorLocator = AutoMinorLocator(cbtmj / cbtmn)
     cbar.ax.xaxis.set_minor_locator(minorLocator)
+    cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(), rotation=45, fontsize=11)
     cbar.set_ticks(np.arange(cbmin, cbmax, cbtmj))
 
     # Colorbar label
-    ax.text(0.477, 0.862, r'$\mu Jy / bm$', fontsize=10,
+    cbar.ax.text(0.432, 0.365, r'$\mu Jy / bm$', fontsize=13,
              path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Overplot the beam ellipse
@@ -133,7 +134,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     bmin = head['bmin'] * 3600.
     bmaj = head['bmaj'] * 3600.
     bpa = head['bpa']
-    el = Ellipse(xy=[-3.5, -3.5],
+    el = Ellipse(xy=[-4.3, -4.3],
                  width=bmin,
                  height=bmaj,
                  angle=-bpa,
@@ -144,10 +145,10 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     ax.add_artist(el)
 
     # Plot the scale bar
-    x = 3
-    y = -3.7
+    x = 3.97
+    y = -4.7
     ax.plot([x, x - 1], [y, y], '-', linewidth=1, color='k')
-    ax.text(x - 0.14, y + 0.06, "10 au", fontsize=11,
+    ax.text(x, y + 0.1, "10 au", fontsize=13,
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
@@ -156,7 +157,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Add figure text
     if text:
         for t in text:
-            ax.text(*t, fontsize=11,
+            ax.text(*t, fontsize=13,
                     path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
 
@@ -184,11 +185,11 @@ return_axis(ax=natural_ax,
             cbmin=-50,
             cbmax=301,
             cbtmj=50,
-            cbtmn=25,
+            cbtmn=10,
             rms=1.4753316463611554e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
-                  (1.04, -3.7, 'natural weighting')])
+            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+                  (4.43, 3.95, 'natural weighting')])
 
 return_axis(ax=taper_ax,
             image='aumic_usermask_natural_200klam',
@@ -196,14 +197,14 @@ return_axis(ax=taper_ax,
             cbmin=-50,
             cbmax=551,
             cbtmj=100,
-            cbtmn=50,
+            cbtmn=20,
             rms=1.9399181837798096e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(1.3, -3.4, 'AU Mic ALMA 1.4mm'),
-                  (0.72, -3.7, r'200k$\lambda$ taper')])
+            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+                  (4, 3.95, r'200k$\lambda$ taper')])
 
-plt.subplots_adjust(wspace=-.072)
+plt.subplots_adjust(wspace=0)
 
 # Save and show figure
 plt.savefig('AU_mic_naturaltaper.png')
-# plt.show()
+plt.show()
