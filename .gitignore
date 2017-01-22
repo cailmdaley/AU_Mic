@@ -1,6 +1,7 @@
 SED_plotter.py
 radmc3dPy-0.28.1
-.DS_Store
+.DS*
+__*
 *.pyc
 *.gz
 *.aux
