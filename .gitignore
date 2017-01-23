@@ -8,14 +8,16 @@ __*
 *.fdb_latexmk
 *.fls
 *.latex
+*.nfs
 
 
 
 radmc3dPy
-Imaging/*
 Modeling/model_files
-!Imaging/aumic_composite_cleans/imaging_script.py
-!Imaging/Plots
+Modeling/data_files
+Imaging/uncorrected_data_files
+Imaging/Visibility_processing
+Imaging/aumic_ALL
 
 !aumic_model_image*
 !Notes/logo.png
