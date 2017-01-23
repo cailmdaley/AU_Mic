@@ -65,9 +65,35 @@ The 26 March data were obtained with 32 antennas and baselines ranging between  
 
 The 18 August utilized 35 antennas in a more extended antenna configuration (baselines between 20 and 1268 m) to probe the small scale structure of the disk. Weather conditions were poorer, with $\sim$1.6 mm of precipitable water vapor. The quasars J2056-4714 and J2056-472 were used as bandpass and absolute flux calibrators respectively, and were observed at the beginning of the observation window. For the remainder of the time block, antennas cycled between seven-minute observations of AU Mic and brief observations of the quasars J2101-2933 (phase calibration) and J2057-3734 (delay calibration). AU Mic was observed for 35 minutes altogether.
 
-The 24 June observation was taken to supplement the 18 August's, which was of poor quality due to ? (I don't remember why...). 37 antennas covered baselines from 30 to 1431 m and weather condition were good-- 0.7 mm of precipitable water vapor. Bandpass and absolute flux calibrations, using J1924-2914 and Titan respectively, were conducted at the beginning of the scheduled time block. Short observations of the phase calibrator J2056-3208 and the delay calibrator J2101-2933 were interspersed among seven-minute observations of the source, which was observed for 33 minutes.
+The 24 June observation was taken to supplement the 18 August's, which was of poor quality due to ? (I don't remember why...). 37 antennas covered baselines from 30 to 1431 m and weather condition were good-- 0.7 mm of precipitable water vapor. Bandpass and absolute flux calibrations, using J1924-2914 and Titan respectively, were conducted at the beginning of the scheduled time block. Short observations of the phase calibrator J2056-3208 and the delay calibrator J2101-2933 were interspersed among seven-minute observations of the source, which was observed for 33 minutes. A flare occurred during the last observation of AU Mic, from 04:23:38-04:29:58.
 
 Calibration, reduction, and imaging were carried out using the CASA and MIRIAD software packages.
+
+
+
+; subtracted point-source fluxes for the star are recorded in Table 2.
+
+Flare time--4:23:38-4:29:58
+
+\begin{table}
+	\label{tab:flare fluxes}
+	\caption{Subtracted point-source fluxes}
+	\begin{tabu} to \textwidth {X[l]X[r]}
+		\toprule
+		Time (UTC) & Subtracted point-source flux ($\mu$Jy) \\
+		\midrule
+    03:45:0~04:20:0 (no flare) & 408.663 $\pm$ Weighted SEM? \\
+		4:23:38-4:24:00 & 924.124 $\pm$ no error \\
+		4:24:00-4:25:00 & 11464   $\pm$ 102.408 \\
+		4:25:00-4:26:00 & 3593.76 $\pm$ 103.683 \\
+		4:26:00-4:27:00 & 1581.96 $\pm$ 97.1994 \\
+		4:27:00-4:28:00 & 450.769 $\pm$ 104.444 \\
+		4:28:00-4:29:00 & 460.622 $\pm$ 99.9457 \\
+		4:29:00-4:29:58 & 522.681 $\pm$ 103.164 \\
+		\bottomrule
+	\end{tabu}
+\end{table}
+
 
 \begin{itemize}
 	\item 18 aug
@@ -138,17 +164,7 @@ Calibration, reduction, and imaging were carried out using the CASA and MIRIAD s
 	      	\item 3:46:05 to 4:19:18 1993 second  s
 	      	\item ctrfreq = 230557.7065 Mhz
 	      	\item totBW=1875000 kHz
-          \item Flare:
-            \begin{itemize}
-              \item time--4:23:38-4:29:58
-              \item 3- 0.0009241243333333333
-              \item 4:00- 0.011464 +/- 0.000102408
-              \item 5:00- 0.00359376 +/- 0.000103683
-              \item 6:00- 0.00158196 +/- 9.71994e-05
-              \item 7:00- 0.000450769 +/- 0.000104444
-              \item 8:00- 0.000460622 +/- 9.99457e-05
-              \item 9:00- 0.000522681 +/- 0.000103164
-            \end{itemize}
+	      	\item Flare:
 	      \end{itemize}
 
 	\item all band 7
