@@ -48,15 +48,16 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     ax.yaxis.set_minor_locator(minorLocator)
 
     # Set x and y labels
-    if image=='aumic_usermask_natural':
+    if image == 'aumic_usermask_natural':
         ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=15)
         ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=15)
-        ax.xaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
-        ax.yaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
+        ax.xaxis.set_ticklabels(
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
+        ax.yaxis.set_ticklabels(
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
     else:
         ax.xaxis.set_ticklabels([])
         ax.yaxis.set_ticklabels([])
-
 
     # Set physical range of colour map
     cxmin = ra[0]
@@ -71,10 +72,10 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Plot image as a colour map in units of micro Jy
     im = im * 1e6
     cmap = ax.imshow(im,
-                      extent=[cxmin, cxmax, cymin, cymax],
-                      vmin=np.min(im),
-                      vmax=np.max(im),
-                      cmap=cpal)
+                     extent=[cxmin, cxmax, cymin, cymax],
+                     vmin=np.min(im),
+                     vmax=np.max(im),
+                     cmap=cpal)
 
     # Scale countour levels to micro Jy and plot contours
     cont_levs = cont_levs * rms * 1e6
@@ -122,12 +123,13 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                                   top='on')
     minorLocator = AutoMinorLocator(cbtmj / cbtmn)
     cbar.ax.xaxis.set_minor_locator(minorLocator)
-    cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(), rotation=45, fontsize=11)
+    cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(),
+                            rotation=45, fontsize=11)
     cbar.set_ticks(np.arange(cbmin, cbmax, cbtmj))
 
     # Colorbar label
     cbar.ax.text(0.432, 0.365, r'$\mu Jy / bm$', fontsize=13,
-             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+                 path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Overplot the beam ellipse
     beam_ellipse_color = 'k'
@@ -147,8 +149,8 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Plot the scale bar
     x = 3.97
     y = -4.7
-    ax.plot([x, x - 1], [y, y], '-', linewidth=1, color='k')
-    ax.text(x, y + 0.1, "10 au", fontsize=13,
+    ax.plot([x, x - 1], [y, y], '-', linewidth=2, color='k')
+    ax.text(x + 0.2, y + 0.15, "10 au", fontsize=17,
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
@@ -157,8 +159,8 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Add figure text
     if text:
         for t in text:
-            ax.text(*t, fontsize=13,
-                    path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+            ax.text(*t, fontsize=18,
+                    path_effects=[PathEffects.withStroke(linewidth=3, foreground="w")])
 
 
 # Set seaborn plot styles
@@ -186,10 +188,10 @@ return_axis(ax=natural_ax,
             cbmax=301,
             cbtmj=50,
             cbtmn=10,
-            rms=1.4753316463611554e-05,
+            rms=1.592382e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4.43, 3.95, 'natural weighting')])
+            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
+                  (4.15, 3.7, 'natural weighting')])
 
 return_axis(ax=taper_ax,
             image='aumic_usermask_natural_200klam',
@@ -198,10 +200,10 @@ return_axis(ax=taper_ax,
             cbmax=551,
             cbtmj=100,
             cbtmn=20,
-            rms=1.9399181837798096e-05,
+            rms=2.094688e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4, 3.95, r'200k$\lambda$ taper')])
+            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
+                  (3.65, 3.7, r'200k$\lambda$ taper')])
 
 plt.subplots_adjust(wspace=0)
 

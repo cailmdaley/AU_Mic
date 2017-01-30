@@ -2,22 +2,28 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import MultipleLocator, LinearLocator, AutoMinorLocator
 from scipy.ndimage.interpolation import rotate
+from scipy.ndimage import zoom
+from astropy.io import fits
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
-from astropy.io import fits
+import matplotlib as mpl
 import seaborn as sns
 import numpy as np
 
 
 def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None):
 
-    angle=129.5
+    angleSE = 129.5 - 90
+    angleNW = 311.2 - 90
     # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
-    #Read in images and rotate so that disk is horizontal
-    im = rotate(fits.getdata(image + ".fits").squeeze(), angle-90)
+    # Read in images and rotate so that disk is horizontal
+    im = rotate(fits.getdata(image + ".fits").squeeze(),
+                angleSE, reshape=False)
+
     if residuals:
         resid = fits.getdata(residuals + ".fits").squeeze()
+    np.shape(im)
 
     # Generate x and y axes: offset position in arcsec
     nx = head['NAXIS1']
@@ -31,15 +37,12 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Convert from degrees to arcsecs
     ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
     dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
-    
-    x = ((np.arange(im.shape[0]) - xpix + 1) * xdelt) * 3600
-    y = ((np.arange(im.shape[0]) - ypix + 1) * ydelt) * 3600
 
     # Set axes limits
-    xmin = -5.0
-    xmax = 5.0
-    ymin = -5.0
-    ymax = 5.0
+    xmin = -5.5
+    xmax = 5.5
+    ymin = -5.5
+    ymax = 5.5
     ax.set_xlim(xmax, xmin)
     ax.set_ylim(ymin, ymax)
     ax.grid(False)
@@ -54,21 +57,22 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     ax.yaxis.set_minor_locator(minorLocator)
 
     # Set x and y labels
-    if image=='aumic_usermask_natural':
+    if image == 'aumic_usermask_natural':
         ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=15)
         ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=15)
-        ax.xaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
-        ax.yaxis.set_ticklabels(['', '','-4','','-2','','0','','2','','4',''], fontsize=13)
+        ax.xaxis.set_ticklabels(
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
+        ax.yaxis.set_ticklabels(
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
     else:
         ax.xaxis.set_ticklabels([])
         ax.yaxis.set_ticklabels([])
 
-
     # Set physical range of colour map
-    cxmin = x[0]
-    cxmax = x[-1]
-    cymin = y[-1]
-    cymax = y[0]
+    cxmin = ra[0]
+    cxmax = ra[-1]
+    cymin = dec[0]
+    cymax = dec[-1]
 
     # Set limits and tics of colorbar - velocity scale
     print(np.min(im))
@@ -80,13 +84,14 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                       extent=[cxmin, cxmax, cymin, cymax],
                       vmin=np.min(im),
                       vmax=np.max(im),
+                      origin='lower',
                       cmap=cpal)
 
     # Scale countour levels to micro Jy and plot contours
     cont_levs = cont_levs * rms * 1e6
 
     if residuals:
-        ax.contour(x, y, resid,
+        ax.contour(resid,
                    levels=cont_levs,
                    colors='k',
                    linewidths=0.75,
@@ -97,12 +102,12 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                    linewidths=0.75,
                    linestyles='dashed')
     else:
-        ax.contour(x, y, im,
+        ax.contour(ra, dec, im,
                    colors='k',
                    levels=cont_levs,
                    linewidths=0.75,
                    linestyles='solid')
-        ax.contour(x, y, im,
+        ax.contour(ra, dec, im,
                    levels=-1 * np.flip(cont_levs, axis=0),
                    colors='k',
                    linewidths=0.75,
@@ -128,7 +133,8 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                                   top='on')
     minorLocator = AutoMinorLocator(cbtmj / cbtmn)
     cbar.ax.xaxis.set_minor_locator(minorLocator)
-    cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(), rotation=45, fontsize=11)
+    cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(),
+                            rotation=45, fontsize=11)
     cbar.set_ticks(np.arange(cbmin, cbmax, cbtmj))
 
     # Colorbar label
@@ -143,7 +149,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     el = Ellipse(xy=[-4.3, -4.3],
                  width=bmin,
                  height=bmaj,
-                 angle=-bpa,
+                 angle=-bpa + angleSE,
                  edgecolor='k',
                  hatch='/////',
                  facecolor='none',
@@ -152,19 +158,33 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
 
     # Plot the scale bar
     x = 3.97
-    y = -4.7
-    ax.plot([x, x - 1], [y, y], '-', linewidth=1, color='k')
-    ax.text(x, y + 0.1, "10 au", fontsize=13,
+    y = -5
+    ax.plot([x, x - 1], [y, y], '-', linewidth=2, color='k')
+    ax.text(x + 0.2, y + 0.15, "10 au", fontsize=17,
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
     ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
 
+    # Add PA lines and legend
+    ax.plot([5, -5], [0, 0], '-', linewidth=1,
+            color='k', label='Boccaletti SE PA')
+    h = 5 * np.sin(np.radians(angleNW - angleSE))
+    ax.plot([5, -5], [-h, h], '--', linewidth=1,
+            color='blue', label='Boccaletti NW PA')
+    legend = ax.legend()
+
+    # Add cardinal directions:
+    ax.arrow(0, -4, np.cos(np.radians(90+45 + angleSE)), np.sin(np.radians(90+45 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(0+np.cos(np.radians(90+45 + angleSE)), -4+np.sin(np.radians(90+45 + angleSE))+0.15, 'NW', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+    ax.arrow(0, -4, np.cos(np.radians(-90+45 + angleSE)), np.sin(np.radians(-90+45 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(0+np.cos(np.radians(-90+45 + angleSE))+0.4, -4+np.sin(np.radians(-90+45 + angleSE))+0.2, 'SE', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+
     # Add figure text
-    if text:
-        for t in text:
-            ax.text(*t, fontsize=13,
-                    path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+    # if text:
+    #     for t in text:
+    #         ax.text(*t, fontsize=18,
+    # path_effects=[PathEffects.withStroke(linewidth=3, foreground="w")])
 
 
 # Set seaborn plot styles
@@ -176,41 +196,41 @@ sns.set_context("talk")
 
 # Set colorpalette
 from my_colormaps import *
-cpals = [cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
-colorsaves = ['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
-which_cpal = 3
+cpals=[cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
+colorsaves=['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
+which_cpal=3
 
 # Create figure
-fig, (natural_ax, taper_ax) = plt.subplots(
-    1, 2, sharex=False, sharey=False, figsize=(11.6, 6.2))
+fig, (natural_ax, taper_ax)=plt.subplots(
+    1, 2, sharex = False, sharey = False, figsize = (11.6, 6.2))
 
 # Plot subplots on seperate axes
-return_axis(ax=natural_ax,
-            image='aumic_usermask_natural',
-            cpal=cpals[which_cpal],
-            cbmin=-50,
-            cbmax=301,
-            cbtmj=50,
-            cbtmn=10,
-            rms=1.4753316463611554e-05,
-            cont_levs=np.arange(2, 40, 2),
-            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+return_axis(ax = natural_ax,
+            image = 'aumic_usermask_natural',
+            cpal = cpals[which_cpal],
+            cbmin = -50,
+            cbmax = 301,
+            cbtmj = 50,
+            cbtmn = 10,
+            rms =  1.592382e-05,
+            cont_levs = np.arange(2, 40, 2),
+            text = [(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4.43, 3.95, 'natural weighting')])
 
-return_axis(ax=taper_ax,
-            image='aumic_usermask_natural_200klam',
-            cpal=cpals[which_cpal],
-            cbmin=-50,
-            cbmax=551,
-            cbtmj=100,
-            cbtmn=20,
-            rms=1.9399181837798096e-05,
-            cont_levs=np.arange(2, 40, 2),
-            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+return_axis(ax = taper_ax,
+            image = 'aumic_usermask_natural_200klam',
+            cpal = cpals[which_cpal],
+            cbmin = -50,
+            cbmax = 551,
+            cbtmj = 100,
+            cbtmn = 20,
+            rms = 2.094688e-05,
+            cont_levs = np.arange(2, 40, 2),
+            text = [(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4, 3.95, r'200k$\lambda$ taper')])
 
-plt.subplots_adjust(wspace=0)
+plt.subplots_adjust(wspace = 0)
 
 # Save and show figure
-# plt.savefig('AU_mic_naturaltaper.png')
+plt.savefig('AU_mic_naturaltaper_PA_lines.png')
 plt.show()
