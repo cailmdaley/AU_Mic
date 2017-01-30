@@ -6,7 +6,7 @@ import subprocess
 # Create list of measurement sets to use in clean:
 from glob import glob
 files = glob("../data_files/*.ms")
-mask='../aumic.mask'
+mask='../aumic_larger.mask'
 
 # Rest wavelength = 1351 microns
 # ALMA Atenna diameter = 12 m
@@ -31,31 +31,33 @@ mask='../aumic.mask'
 # viewer(infile=image + '.image')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Natural no taper: residual is the dirty image
-image = "aumic_dirty_natural"
-subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=files,
-       imagename=image,
-       imsize=512,
-       cell='0.03arcsec',
-       weighting='natural',
-       niter=0)
-rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
-# User mask:
-image = "aumic_usermask_natural"
-subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=files,
-       imagename=image,
-       imsize=512,
-       cell='0.03arcsec',
-       weighting='natural',
-       niter=100000,
-       threshold=rms/2.,
-       usemask='user',
-       mask = mask,
-       pbmask=None)
-viewer(infile=image+'.image')
-rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0] # rms=1.4716037185280584e-05
+# # Natural no taper: residual is the dirty image
+# image = "aumic_dirty_natural"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_largermask"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=100000,
+#        threshold=rms,
+#        usemask='user',
+#        mask = mask,
+#        pbmask=None)
+# viewer(infile=image+'.image')
+# rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0]
+# small mask rms=1.4757766621187329e-05
+# large mask rms=1.4716037185280584e-05
 
 
 # # Natural 100klambda taper: residual is the dirty image
@@ -342,3 +344,36 @@ rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=Fal
 #        mask = mask,
 #        pbmask=None)
 # viewer(infile=image + '.image')
+
+
+
+print(files)
+files = files[:4]
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# # Natural no taper: residual is the dirty image
+# image = "aumic_dirty_natural"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_usermask_natural_largermask"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        niter=100000,
+#        threshold=rms,
+#        usemask='user',
+#        mask = mask,
+#        pbmask=None)
+# viewer(infile=image+'.image')
+# rms = imstat(imagename='{}.image'.format(image), region='rms.region', listit=False)['rms'][0]
+# small mask rms=1.4757766621187329e-05
+# large mask rms=1.4716037185280584e-05
