@@ -81,11 +81,11 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Plot image as a colour map in units of micro Jy
     im = im * 1e6
     cmap = ax.imshow(im,
-                      extent=[cxmin, cxmax, cymin, cymax],
-                      vmin=np.min(im),
-                      vmax=np.max(im),
-                      origin='lower',
-                      cmap=cpal)
+                     extent=[cxmin, cxmax, cymin, cymax],
+                     vmin=np.min(im),
+                     vmax=np.max(im),
+                     origin='lower',
+                     cmap=cpal)
 
     # Scale countour levels to micro Jy and plot contours
     cont_levs = cont_levs * rms * 1e6
@@ -139,14 +139,14 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
 
     # Colorbar label
     cbar.ax.text(0.432, 0.365, r'$\mu Jy / bm$', fontsize=13,
-             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+                 path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Overplot the beam ellipse
     beam_ellipse_color = 'k'
     bmin = head['bmin'] * 3600.
     bmaj = head['bmaj'] * 3600.
     bpa = head['bpa']
-    el = Ellipse(xy=[-4.3, -4.3],
+    el = Ellipse(xy=[-4.6, -4.6],
                  width=bmin,
                  height=bmaj,
                  angle=-bpa + angleSE,
@@ -160,7 +160,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     x = 3.97
     y = -5
     ax.plot([x, x - 1], [y, y], '-', linewidth=2, color='k')
-    ax.text(x + 0.2, y + 0.15, "10 au", fontsize=17,
+    ax.text(x + 0.25, y + 0.15, "10 au", fontsize=17,
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
@@ -175,10 +175,14 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     legend = ax.legend()
 
     # Add cardinal directions:
-    ax.arrow(0, -4, np.cos(np.radians(90+45 + angleSE)), np.sin(np.radians(90+45 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
-    ax.text(0+np.cos(np.radians(90+45 + angleSE)), -4+np.sin(np.radians(90+45 + angleSE))+0.15, 'NW', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
-    ax.arrow(0, -4, np.cos(np.radians(-90+45 + angleSE)), np.sin(np.radians(-90+45 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
-    ax.text(0+np.cos(np.radians(-90+45 + angleSE))+0.4, -4+np.sin(np.radians(-90+45 + angleSE))+0.2, 'SE', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+    y = -5
+    ax.arrow(0, y, np.cos(np.radians(angleSE)), np.sin(np.radians(angleSE)),
+             width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(0 + np.cos(np.radians(angleSE)), y + np.sin(np.radians(angleSE)) + 0.15,
+            'E', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+    ax.arrow(0, y, np.cos(np.radians(90 + angleSE)), np.sin(np.radians(90 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(0 + np.cos(np.radians(90 + angleSE)) + 0.4, y + np.sin(np.radians(90 + angleSE)
+                                                                    ) + 0.2, 'N', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Add figure text
     # if text:
@@ -196,40 +200,40 @@ sns.set_context("talk")
 
 # Set colorpalette
 from my_colormaps import *
-cpals=[cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
-colorsaves=['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
-which_cpal=3
+cpals = [cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
+colorsaves = ['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
+which_cpal = 3
 
 # Create figure
-fig, (natural_ax, taper_ax)=plt.subplots(
-    1, 2, sharex = False, sharey = False, figsize = (11.6, 6.2))
+fig, (natural_ax, taper_ax) = plt.subplots(
+    1, 2, sharex=False, sharey=False, figsize=(11.6, 6.2))
 
 # Plot subplots on seperate axes
-return_axis(ax = natural_ax,
-            image = 'aumic_usermask_natural',
-            cpal = cpals[which_cpal],
-            cbmin = -50,
-            cbmax = 301,
-            cbtmj = 50,
-            cbtmn = 10,
-            rms =  1.592382e-05,
-            cont_levs = np.arange(2, 40, 2),
-            text = [(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+return_axis(ax=natural_ax,
+            image='aumic_usermask_natural',
+            cpal=cpals[which_cpal],
+            cbmin=-50,
+            cbmax=301,
+            cbtmj=50,
+            cbtmn=10,
+            rms=1.592382e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4.43, 3.95, 'natural weighting')])
 
-return_axis(ax = taper_ax,
-            image = 'aumic_usermask_natural_200klam',
-            cpal = cpals[which_cpal],
-            cbmin = -50,
-            cbmax = 551,
-            cbtmj = 100,
-            cbtmn = 20,
-            rms = 2.094688e-05,
-            cont_levs = np.arange(2, 40, 2),
-            text = [(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+return_axis(ax=taper_ax,
+            image='aumic_usermask_natural_200klam',
+            cpal=cpals[which_cpal],
+            cbmin=-50,
+            cbmax=551,
+            cbtmj=100,
+            cbtmn=20,
+            rms=2.094688e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4, 3.95, r'200k$\lambda$ taper')])
 
-plt.subplots_adjust(wspace = 0)
+plt.subplots_adjust(wspace=0)
 
 # Save and show figure
 plt.savefig('AU_mic_naturaltaper_PA_lines.png')
