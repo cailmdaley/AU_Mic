@@ -11,7 +11,7 @@ import seaborn as sns
 import numpy as np
 
 
-def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None):
+def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None, axislabels=True):
 
     angleSE = 129.5 - 90
     angleNW = 311.2 - 90
@@ -57,7 +57,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     ax.yaxis.set_minor_locator(minorLocator)
 
     # Set x and y labels
-    if image == 'aumic_usermask_natural':
+    if axislabels == True:
         ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=15)
         ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=15)
         ax.xaxis.set_ticklabels(
@@ -180,9 +180,10 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
              width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
     ax.text(0 + np.cos(np.radians(angleSE)), y + np.sin(np.radians(angleSE)) + 0.15,
             'E', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
-    ax.arrow(0, y, np.cos(np.radians(90 + angleSE)), np.sin(np.radians(90 + angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.arrow(0, y, np.cos(np.radians(90 + angleSE)), np.sin(np.radians(90 +
+                                                                       angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
     ax.text(0 + np.cos(np.radians(90 + angleSE)) + 0.4, y + np.sin(np.radians(90 + angleSE)
-                                                                    ) + 0.2, 'N', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+                                                                   ) + 0.2, 'N', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Add figure text
     # if text:
@@ -210,10 +211,11 @@ fig, (natural_ax, taper_ax) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=natural_ax,
-            image='aumic_usermask_natural',
+            image='aumic_marjune_usermask_natural',
+            axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
-            cbmax=301,
+            cbmax=401,
             cbtmj=50,
             cbtmn=10,
             rms=1.592382e-05,
@@ -221,11 +223,13 @@ return_axis(ax=natural_ax,
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4.43, 3.95, 'natural weighting')])
 
+
 return_axis(ax=taper_ax,
-            image='aumic_usermask_natural_200klam',
+            image='aumic_marjune_usermask_200klam',
+            axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-50,
-            cbmax=551,
+            cbmax=601,
             cbtmj=100,
             cbtmn=20,
             rms=2.094688e-05,
@@ -236,5 +240,5 @@ return_axis(ax=taper_ax,
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AU_mic_naturaltaper_PA_lines.png')
+plt.savefig('AU_mic_marjune_PA_lines.png')
 plt.show()
