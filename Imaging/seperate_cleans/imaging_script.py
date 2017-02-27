@@ -6,7 +6,7 @@ import subprocess
 # Create list of measurement sets to use in clean:
 from glob import glob
 files = glob("../data_files/*.ms")
-files = files[4:]
+files = files[4:][::-1]
 print(files)
 mask='../aumic_larger.mask'
 
@@ -80,60 +80,61 @@ mask='../aumic_larger.mask'
 # #rms = 2.60297147179e-05
 
 
-# # Natural no taper: residual is the dirty image
-# image = "aumic_marjune_dirty_natural"
-# subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=files,
-#        imagename=image,
-#        imsize=512,
-#        cell='0.03arcsec',
-#        weighting='natural',
-#        niter=0)
-# rms = imstat(imagename='{}.residual'.format(image), region='../rms.region', listit=False)['rms'][0]
-# print(rms)
-# # User mask:
-# image = "aumic_marjune_usermask_natural"
-# subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=files,
-#        imagename=image,
-#        imsize=512,
-#        cell='0.03arcsec',
-#        weighting='natural',
-#        niter=100000,
-#        threshold=rms/2.,
-#        usemask='user',
-#        mask = mask,
-#        pbmask=None)
-# viewer(infile=image+'.image')
-# rms = imstat(imagename='{}.image'.format(image), region='../rms.region', listit=False)['rms'][0]
-# print(rms)
-# #rms = 1.7922860934049822e-05
-
-# Natural 200klambda taper: residual is the dirty image
-image = "aumic_marjune_dirty_200klam"
+# Natural no taper: residual is the dirty image
+image = "aumic_marjune_dirty_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=files,
        imagename=image,
        imsize=512,
        cell='0.03arcsec',
        weighting='natural',
-       uvtaper=['200klambda'],
        niter=0)
 rms = imstat(imagename='{}.residual'.format(image), region='../rms.region', listit=False)['rms'][0]
+print(rms)
 # User mask:
-image = "aumic_marjune_usermask_200klam"
+image = "aumic_marjune_usermask_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=files,
        imagename=image,
        imsize=512,
        cell='0.03arcsec',
        weighting='natural',
-       uvtaper=['200klambda'],
        niter=100000,
        threshold=rms/2.,
        usemask='user',
        mask = mask,
        pbmask=None)
-viewer(infile=image + '.image')
-rms = imstat(imagename='{}.image'.format(image), region='../rms.region',
-listit=False)['rms'][0] #rms=2.2735775928595103e-05
+viewer(infile=image+'.image')
+rms = imstat(imagename='{}.image'.format(image), region='../rms.region', listit=False)['rms'][0]
+print(rms) #rms = 1.79587623279e-05
+exportfits(imagename='{}.image'.format(image), fitsimage='{}.fits'.format(image))
+
+# # Natural 200klambda taper: residual is the dirty image
+# image = "aumic_marjune_dirty_200klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['200klambda'],
+#        niter=0)
+# rms = imstat(imagename='{}.residual'.format(image), region='../rms.region', listit=False)['rms'][0]
+# # User mask:
+# image = "aumic_marjune_usermask_200klam"
+# subprocess.call("rm -rf {}.*".format(image), shell=True)
+# tclean(vis=files,
+#        imagename=image,
+#        imsize=512,
+#        cell='0.03arcsec',
+#        weighting='natural',
+#        uvtaper=['200klambda'],
+#        niter=100000,
+#        threshold=rms/2.,
+#        usemask='user',
+#        mask = mask,
+#        pbmask=None)
+# viewer(infile=image + '.image')
+# rms = imstat(imagename='{}.image'.format(image), region='../rms.region',
+# listit=False)['rms'][0] #rms= 2.2775318939238787e-05
+# exportfits(imagename='{}.image'.format(image), fitsimage='{}.fits'.format(image))
