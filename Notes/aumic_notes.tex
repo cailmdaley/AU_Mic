@@ -52,7 +52,8 @@
 
 \begin{mer}
 	\begin{itemize}
-		\item
+		\item I think I like flare table better not in scientific notation
+    \item 18aug notes extra point-source subtraction?
 	\end{itemize}
 
 \end{mer}
@@ -77,19 +78,39 @@ Checking noise statistics for natural clean:\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newday{13 January 2017}
-AU Mic was observed on three dates with ALMA: 26 March 2014, 18 August 2014, and 24 June 2015. All observations were configured with four spectral windows, and used 12 m antennas with ALMA's Band 7 receivers. One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 Ghz, while the other three were configured to detect continuum with maximum bandwidth of 2 Ghz and channel spacing of 15.6 Mhz. Central frequencies for spectral windows 1-3 can be found in Table 1.
+AU Mic was observed on three dates with ALMA: 26 March 2014, 18 August 2014, and 24 June 2015. All observations were configured with four spectral windows, and employed ALMA's 12 m antennas and Band 7 receivers. One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 Ghz, while the remainging three were configured to detect continuum emission with maximum bandwidths of 2 Ghz and channel spacing of 15.6 Mhz. Central frequencies for the continuum bands are 228.5, 213.5, and 216.0 Ghz.
 
 The 26 March data were obtained with 32 antennas and baselines ranging between  14 and 437 m; weather conditions were excellent ($\sim$0.6 mm of precipitable water vapor). The quasar J1924-2914 was used as a bandpass calibrator, and Titan was used to calibrate absolute flux. After these initial calibrations, observations cycled every seven minutes between AU Mic and the quasar J2101-2933, which was used for phase calibration. In total, 35 minutes were spent on source.
 
-The 18 August utilized 35 antennas in a more extended antenna configuration (baselines between 20 and 1268 m) to probe the small scale structure of the disk. Weather conditions were poorer, with $\sim$1.6 mm of precipitable water vapor. The quasars J2056-4714 and J2056-472 were used as bandpass and absolute flux calibrators respectively, and were observed at the beginning of the observation window. For the remainder of the time block, antennas cycled between seven-minute observations of AU Mic and brief observations of the quasars J2101-2933 (phase calibration) and J2057-3734 (delay calibration). AU Mic was observed for 35 minutes altogether.
+The 18 August utilized 35 antennas in a more extended antenna configuration (baselines between 20 and 1268 m) to probe the small scale structure of the disk. Weather conditions were poor, with $\sim$1.6 mm of precipitable water vapor. The quasars J2056-4714 (bandpass calibration) and J2056-472 (absolute flux calibration) were observed at the beginning of the observation window. For the remainder of the time block antennas cycled between seven-minute observations of AU Mic and brief observations of the quasars J2101-2933, for phase calibration, and J2057-3734, to test the quality of the gain transfer. AU Mic was observed for 35 minutes altogether.
 
-The 24 June observation was taken to supplement the 18 August's, which was of poor quality due to ? (I don't remember why...). 37 antennas covered baselines from 30 to 1431 m and weather condition were good-- 0.7 mm of precipitable water vapor. Bandpass and absolute flux calibrations, using J1924-2914 and Titan respectively, were conducted at the beginning of the scheduled time block. Short observations of the phase calibrator J2056-3208 and the delay calibrator J2101-2933 were interspersed among seven-minute observations of the source, which was observed for 33 minutes. A flare occurred during the last observation of AU Mic, from 04:23:38-04:29:58.
+The 24 June observation was taken to supplement the 18 August's, which was of poor quality due to weather conditions? 37 antennas covered baselines from 30 to 1431 m and weather conditions were good-- 0.7 mm of precipitable water vapor. Bandpass and absolute flux calibrations, making use of J1924-2914 and Titan respectively, were conducted at the beginning of the scheduled time block. Short observations of the quasars J2056-3208 for phase calibration and J2101-2933 to assess the quality of the gain transfer were interspersed among seven-minute observations of the source, which was observed for 33 minutes. The central star flared during the last observation of AU Mic, from 04:23:38-04:29:58.
 
-Calibration, reduction, and imaging were carried out using the CASA and MIRIAD software packages.
+Calibration, reduction, and imaging were carried out using the CASA and MIRIAD software packages. Standard ALMA reduction scripts were applied to the datasets: phase calibration was accomplished via water vapor radiometry tables, and system temperature calibrations were performed to account for variations in instrument and weather conditions. Flux and bandpass calibrations were subsequently applied.
+
+The authors travelled to the NRAO facility in Charlottesville, VA in October 2015 to further process the data; in particular the trip was intended to allow on-site correction of the 24 June flare. Tasks used to reduce the data at the NRAO facility were are part of the CASA package. First, weights were assigned to all datasets using the task \textit{initweights}. An elliptical gaussian was then fit to the disk and star in the image plane of each dataset using the task \textit{imfit}; the equatorial coordinates of the the best fit gaussian peak were then used to phase shift the dataset via the task \textit{fixvis} to account for AU Mic's proper motion. \footnote{Should I put the derived phase centers in a table?}
+
+Task order?
+\begin{itemize}
+  \item initweights
+  \item imfit (small box in center)
+  \item split to human-comprehensible name
+  \item fixvis
+  \item for non-flare dates:
+  \begin{itemize}
+    \item cl, ft with imfit peak OR
+    \item cl, ft with uvmodelfit spw mean (We DID use this)
+  \end{itemize}
+  \item for flare/June dates:
+  \begin{itemize}
+    \item cl, ft with uvmodelfit spw mean
+  \end{itemize}
+  \item split to add .uvsub--seems like it should be the same file?
+\end{itemize}
 
 
 
-; subtracted point-source fluxes for the star are recorded in Table 2.
+
 
 Flare time--4:23:38-4:29:58
 
@@ -100,10 +121,10 @@ Flare time--4:23:38-4:29:58
 		\toprule
 		Time (UTC) & Point-source Flux ($\mu$Jy) \\
 		\midrule
-    03:45:0~04:20:0 (no flare) & ($4.1 \pm 0.2)  \times 10^2$\\
+    03:45:0-04:20:0 (no flare) & ($4.1 \pm 0.2)  \times 10^2$\\
 		4:23:38-4:24:00 & $(9.2 \pm 1.7) \times 10^2$ \\
 		4:23:38-4:24:00 & $(1.146 \pm 0.010) \times 10^4$ \\
-		4:25:00-4:26:00 & $(3.59i \pm 0.10) \times 10^3$ \\
+		4:25:00-4:26:00 & $(3.59 \pm 0.10) \times 10^3$ \\
 		4:26:00-4:27:00 & $(1.58 \pm 0.10) \times 10^3$ \\
 		4:27:00-4:28:00 & $(4.50 \pm 1.0) \times 10^2$ \\
 		4:28:00-4:29:00 & $(4.60 \pm 1.0 \times 10^2$ \\
@@ -128,10 +149,10 @@ Flare time--4:23:38-4:29:58
 	      	      \end{itemize}
 	      	\item spws:
 	      	      \begin{itemize}
-	      	      	\item 0: ctr=230538 Mhz, totBW=1875000 khz, chanwid=488 kHz
-	      	      	\item 1: ctr=228492 Mhz, totBW=2e6 khz, chanwid=15625 khz
-	      	      	\item 1: ctr=213492 Mhz, totBW=2e6 khz, chanwid=-15625 khz
-	      	      	\item 1: ctr=215992 Mhz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 0: ctr=230.538 Ghz, totBW=1875000 khz, chanwid=488 kHz
+	      	      	\item 1: ctr=228.492 Ghz, totBW=2e6 khz, chanwid=15625 khz
+	      	      	\item 1: ctr=213.492 Ghz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 1: ctr=215.992 Ghz, totBW=2e6 khz, chanwid=-15625 khz
 	      	      \end{itemize}
 	      	\item 35 antennas-- 12 m diameter
 	      	\item baselines between 20 and 1268
@@ -155,10 +176,10 @@ Flare time--4:23:38-4:29:58
 	      	      \end{itemize}
 	      	\item spws:
 	      	      \begin{itemize}
-	      	      	\item 0: ctr=230564 Mhz, totBW=1875000 khz, chanwid=488 kHz
-	      	      	\item 1: ctr=228519 Mhz, totBW=2e6 khz, chanwid=15625 khz
-	      	      	\item 1: ctr=213518 Mhz, totBW=2e6 khz, chanwid=-15625 khz
-	      	      	\item 1: ctr=216018 Mhz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 0: ctr=230.564 Ghz, totBW=1875000 khz, chanwid=488 kHz
+	      	      	\item 1: ctr=228.519 Ghz, totBW=2e6 khz, chanwid=15625 khz
+	      	      	\item 1: ctr=213.518 Ghz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 1: ctr=216.018 Ghz, totBW=2e6 khz, chanwid=-15625 khz
 	      	      \end{itemize}
 	      	\item 32 antennas-- 12 m diameter
 	      	\item baselines between 15 and 437
@@ -178,10 +199,10 @@ Flare time--4:23:38-4:29:58
 	      	      \end{itemize}
 	      	\item spws:
 	      	      \begin{itemize}
-	      	      	\item 0: ctr=230557 Mhz, totBW=1875000 khz, chanwid=488 kHz
-	      	      	\item 1: ctr=228512 Mhz, totBW=2e6 khz, chanwid=15625 khz
-	      	      	\item 1: ctr=213511 Mhz, totBW=2e6 khz, chanwid=-15625 khz
-	      	      	\item 1: ctr=216011 Mhz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 0: ctr=230.557 Ghz, totBW=1875000 khz, chanwid=488 kHz
+	      	      	\item 1: ctr=228.512 Ghz, totBW=2e6 khz, chanwid=15625 khz
+	      	      	\item 1: ctr=213.511 Ghz, totBW=2e6 khz, chanwid=-15625 khz
+	      	      	\item 1: ctr=216.011 Ghz, totBW=2e6 khz, chanwid=-15625 khz
 	      	      \end{itemize}
 	      	\item 37 antennas-- 12 diameter??
 	      	\item baselines between 30 and 1431

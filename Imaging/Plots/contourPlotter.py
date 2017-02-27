@@ -19,15 +19,18 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     # Generate x and y axes: offset position in arcsec
     nx = head['NAXIS1']
     xpix = head['CRPIX1']
+    xval = head['CRVAL1']
     xdelt = head['CDELT1']
 
     ny = head['NAXIS2']
     ypix = head['CRPIX2']
+    yval = head['CRVAL2']
     ydelt = head['CDELT2']
 
     # Convert from degrees to arcsecs
     ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
     dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
+    ras = np.arange(xval - xpix*xdelt, xval + (nx-xpix)*xdelt, nx)
 
     # Set axes limits
     xmin = -5.0
@@ -71,6 +74,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
 
     # Plot image as a colour map in units of micro Jy
     im = im * 1e6
+    im[257, 254]
     cmap = ax.imshow(im,
                      extent=[cxmin, cxmax, cymin, cymax],
                      vmin=np.min(im),
@@ -182,30 +186,31 @@ fig, (ax1, ax2) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=ax1,
-            image='aumic_marjune_usermask_natural',
+            image='aumic_24jun_usermask_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
-            cbmax=351,
-            cbtmj=50,
-            cbtmn=10,
-            rms=1.592382e-05,
-            cont_levs=np.arange(2, 40, 2),
-            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
-                  (4.15, 3.7, 'natural weighting')])
-
-return_axis(ax=ax2,
-            image='aumic_marjune_usermask_200klam',
-            axislabels=False,
-            cpal=cpals[which_cpal],
-            cbmin=-50,
-            cbmax=551,
+            cbmax=301,
             cbtmj=100,
             cbtmn=20,
             rms=2.094688e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
-                  (3.65, 3.7, r'200k$\lambda$ taper')])
+                  (3.65, 3.7, r'June 24 natural')])
+
+return_axis(ax=ax2,
+            image='aumic_26mar_usermask_natural',
+            axislabels=False,
+            cpal=cpals[which_cpal],
+            cbmin=-50,
+            cbmax=601,
+            cbtmj=50,
+            cbtmn=10,
+            rms=1.592382e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
+                  (4.15, 3.7, 'March 26 natural')])
+
 
 plt.subplots_adjust(wspace=0)
 
