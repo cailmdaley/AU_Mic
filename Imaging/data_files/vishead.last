@@ -1,8 +1,8 @@
 taskname           = "vishead"
-vis                =  "26mar2014_aumic_spw0.corrected_weights.ms/"
+vis                =  "24jun2015_aumic1_spw0.timeflag.corrected_weights.ms/"
 mode               =  "summary"
 listitems          =  ['telescope', 'observer', 'project', 'field', 'freq_group_name', 'spw_name', 'schedule', 'schedule_type', 'release_date']
 hdkey              =  ""
 hdindex            =  ""
 hdvalue            =  ""
-#vishead(vis="26mar2014_aumic_spw0.corrected_weights.ms/",mode="summary",listitems=['telescope', 'observer', 'project', 'field', 'freq_group_name', 'spw_name', 'schedule', 'schedule_type', 'release_date'],hdkey="",hdindex="",hdvalue="")
+#vishead(vis="24jun2015_aumic1_spw0.timeflag.corrected_weights.ms/",mode="summary",listitems=['telescope', 'observer', 'project', 'field', 'freq_group_name', 'spw_name', 'schedule', 'schedule_type', 'release_date'],hdkey="",hdindex="",hdvalue="")
