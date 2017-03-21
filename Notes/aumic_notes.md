@@ -14,16 +14,16 @@
 
 <br>
 
-## Image Centering: 2/26/17
+## Image Centering: 2/26/17-3/20/17
 
 While comparing images made with different date combinations (i.e. removing August date because of poor quality), I noticed that the disk was offset from the image center for certain combinations. We have decided that this is caused by the non-homogeneous pointing centers (due to proper motion) of the three datasets. When `tclean` is called on a collection of datasets with different pointing centers, the pointing center of the first of the datasets is chosen as the origin of the image, and all datasets are combined in the *uv*-domain, with their phase offsets preserved. The resulting sky-domain image is both offset from the image center and a false representation of the disk.
 
 To fix this issue, I tried using `contcat` with its *dirtol* parameter set to a high value (2"). As long as the pointing/phase centers of the datasets do not differ from each other by more than *dirtol*, the datasets are combined as if they all share the pointing center of the first dataset and all is well. A quick test indicates that this method is succesful.
 
-However, I ran into another problem while attempting the `concat` method. The `26mar2014_aumic_spw0.corrected_weights.ms` dataset is missing `table.f8_TSM1` (all other datasets have this table), and because of this `concat` fails when applied to this dataset. 
+However, I ran into another problem while attempting the `concat` method. The `26mar2014_aumic_spw0.corrected_weights.ms` dataset is missing `table.f8_TSM1` (all other datasets have this table), and because of this `concat` fails when applied to this dataset. However, recreating the `.ms` file from the corresponding `.uvf` file seems to have fixed this problem. I'm starting over with the `seperate_cleans` and `composite_cleans` directories, and added `_old` to the originals.
 
-
-
+---
+***My troubleshooting notes:***
 
 **Fixvis:** `If the phase center is changed, the corresponding modifications are applied to the visibility columns given by the parameter "datacolumn" which is by default set to "all" (DATA, CORRECTED, and MODEL).`
 
