@@ -1,5 +1,5 @@
-SED_plotter.py
 radmc3dPy-0.28.1
+radmc3dPy
 .DS*
 __*
 *.pyc
@@ -12,14 +12,12 @@ __*
 
 
 
-radmc3dPy*
 Modeling/model_files
 Modeling/data_files
 Imaging/uncorrected_data_files
 
 Imaging/seperate_cleans_old
 Imaging/composite_cleans_old
-
 Imaging/Visibility_processing
 Imaging/aumic_ALL
 
