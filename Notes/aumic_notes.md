@@ -20,7 +20,7 @@ While comparing images made with different date combinations (i.e. removing Augu
 
 To fix this issue, I tried using `contcat` with its *dirtol* parameter set to a high value (2"). As long as the pointing/phase centers of the datasets do not differ from each other by more than *dirtol*, the datasets are combined as if they all share the pointing center of the first dataset and all is well. A quick test indicates that this method is succesful.
 
-However, I ran into another problem while attempting the `concat` method. The `26mar2014_aumic_spw0.corrected_weights.ms` dataset is missing `table.f8_TSM1` (all other datasets have this table), and because of this `concat` fails when applied to this dataset. However, recreating the `.ms` file from the corresponding `.uvf` file seems to have fixed this problem. I'm starting over with the `seperate_cleans` and `composite_cleans` directories, and added `_old` to the originals.
+However, I ran into another problem while attempting the `concat` method. The `26mar2014_aumic_spw0.corrected_weights.ms` dataset is missing `table.f8_TSM1` (all other datasets have this table), and because of this `concat` fails when applied to this dataset. However, recreating the `.ms` file from the corresponding `.uvf` file seems to have fixed this problem. I'm starting over with a `cleans` directory, and have added the suffix `_old` to the originals.
 
 
 ---
