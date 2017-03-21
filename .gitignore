@@ -9,6 +9,8 @@ __*
 *.fls
 *.latex
 *.nfs
+*.mask
+*.region
 
 
 
