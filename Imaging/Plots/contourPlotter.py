@@ -186,34 +186,34 @@ fig, (ax1, ax2) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=ax1,
-            image='aumic_24jun_usermask_natural',
+            image='aumic_marjune_concat_usermask_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=301,
             cbtmj=100,
             cbtmn=20,
-            rms=2.094688e-05,
+            rms=1.77061756403e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
-                  (3.65, 3.7, r'June 24 natural')])
+                  (3.65, 3.7, r'natural weighting')])
 
 return_axis(ax=ax2,
-            image='aumic_26mar_usermask_natural',
+            image='aumic_marjune_concat_usermask_200klam',
             axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=601,
             cbtmj=50,
             cbtmn=10,
-            rms=1.592382e-05,
+            rms=2.19239682338e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
-                  (4.15, 3.7, 'March 26 natural')])
+            text=[(4.7, 4.3, 'AU Mi c ALMA 1.4mm'),
+                  (4.15, 3.7, r'200 k$\lambda$ taper')])
 
 
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AUmic_mar_and_june_natural.png')
+plt.savefig('AUmic_marjune_concat_naturaltaper.png')
 plt.show()
