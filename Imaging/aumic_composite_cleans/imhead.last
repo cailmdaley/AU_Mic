@@ -1,7 +1,0 @@
-taskname           = "imhead"
-imagename          =  "aumic_usermask_natural_200klam.image"
-mode               =  "summary"
-hdkey              =  ""
-hdvalue            =  ""
-verbose            =  False
-#imhead(imagename="aumic_usermask_natural_200klam.image",mode="summary",hdkey="",hdvalue="",verbose=False)
