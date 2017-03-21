@@ -33,7 +33,7 @@ tclean(vis=concat + "_concat.ms",
 rms = imstat(imagename='{}.residual'.format(image),
              region='../rms.region', listit=False)['rms'][0]
 
-# User mask:
+# User maskÓ:
 image = concat + "_usermask_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=concat + "_concat.ms",
