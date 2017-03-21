@@ -12,7 +12,7 @@ __*
 
 
 
-radmc3dPy
+radmc3dPy*
 Modeling/model_files
 Modeling/data_files
 Imaging/uncorrected_data_files
@@ -23,5 +23,4 @@ Imaging/composite_cleans_old
 Imaging/Visibility_processing
 Imaging/aumic_ALL
 
-!aumic_model_image*
 !Notes/Figures/*
