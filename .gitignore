@@ -11,6 +11,7 @@ __*
 *.nfs
 *.mask
 *.region
+*.mask
 *.image
 *.residual
 
