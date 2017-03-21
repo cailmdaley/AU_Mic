@@ -9,8 +9,9 @@ files = glob("../data_files/*.ms")
 mask = '../aumic_larger.mask'
 
 # Concat before clean to fix proper motion offset
-files = files
-concat_name = "aumic_composite"
+files = files[4:12]
+print(files)
+concat_name = "aumic_junmar"
 subprocess.call("rm -rf {}".format(concat_name + "_concat.ms"), shell=True)
 concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
 
@@ -18,6 +19,11 @@ concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
 #rms values for various cleans
 composite_natural_rms = 1.47999598994e-05
 composite_200klam_rms = 1.94809763343e-05
+junmar_natural_rms = 1.77794445335e-05
+junmar_200klam_rms = 2.23016886594e-05
+aug_natural_rms = 2.50784905802e-05
+june_natural_rms = 2.02323226404e-05
+mar_200klam_rms = 2.84779671347e-05
 #==========================================================
 
 # Natural no taper: residual is the dirty image
