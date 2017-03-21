@@ -16,8 +16,6 @@ radmc3dPy
 Modeling/model_files
 Modeling/data_files
 Imaging/uncorrected_data_files
-Imaging/composite_cleans_old
-Imaging/seperate_cleans_old
 Imaging/Visibility_processing
 Imaging/aumic_ALL
 
