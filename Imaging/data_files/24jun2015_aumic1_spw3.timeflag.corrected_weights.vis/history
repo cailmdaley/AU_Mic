@@ -1,0 +1,29 @@
+SORTORD = 'TB      '
+SPECSYS = 'TOPOCENT'
+AIPS WTSCAL = 1.0
+FITS: Miriad fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
+FITS: Executed on: 2015-11-26T15:03:02.0
+FITS: Command line inputs follow:
+FITS:   in=24jun2015_aumic1_spw3.uvf
+FITS:   op=uvin
+FITS:   out=24jun2015_aumic1_spw3.vis
+UVAVER: Miriad UvAver: version 1.0 17-Nov-08
+UVAVER: Executed on: 2017-01-14T14:17:36.0
+UVAVER: Command line inputs follow:
+UVAVER:   vis=24jun2015_aumic1_spw3.vis
+UVAVER:   select=time(15JUN24:03:45:36.0,15JUN24:04:20:00.0)
+UVAVER:   out=24jun2015_aumic1_spw3.timeflag.vis
+FITS: Miriad fits: fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
+FITS: Executed on: 17JAN14:14:17:36.0
+FITS: Command line inputs follow:
+FITS:    in=24jun2015_aumic1_spw3.timeflag.vis
+FITS:    op=uvout
+FITS:    out=24jun2015_aumic1_spw3.timeflag.uvf
+FITS: NOTE: Use options=varwt if loading into Miriad
+AIPS WTSCAL =  1.00000000000E+00
+FITS: Miriad fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
+FITS: Executed on: 2017-01-14T15:08:08.0
+FITS: Command line inputs follow:
+FITS:   in=24jun2015_aumic1_spw3.timeflag.corrected_weights.uvf
+FITS:   op=uvin
+FITS:   out=24jun2015_aumic1_spw3.timeflag.corrected_weights.vis
