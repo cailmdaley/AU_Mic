@@ -16,8 +16,8 @@ concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
 
 #==========================================================
 #rms values for various cleans
-composite_natural_rms = 0
-composite_200klam_rms = 0
+composite_natural_rms = 1.47999598994e-05
+composite_200klam_rms = 1.94809763343e-05
 #==========================================================
 
 # Natural no taper: residual is the dirty image
