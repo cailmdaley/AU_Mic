@@ -1,0 +1,9 @@
+SORTORD = 'TB      '
+SPECSYS = 'TOPOCENT'
+AIPS WTSCAL = 1.0
+FITS: Miriad fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
+FITS: Executed on: 2017-03-30T18:57:26.0
+FITS: Command line inputs follow:
+FITS:   in=24jun2015_aumic1_spw0.corrected_weights.uvf
+FITS:   op=uvin
+FITS:   out=24jun2015_aumic1_spw0.corrected_weights.vis
