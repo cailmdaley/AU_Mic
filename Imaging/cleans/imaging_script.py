@@ -1,4 +1,4 @@
-"""
+pixsize"""
 Contains various cleaning methods for AU Mic--to be run in seperate_cleans directory.
 """
 import subprocess
@@ -7,14 +7,19 @@ import subprocess
 from glob import glob
 files = glob("../data_files/*.ms")
 mask = '../aumic_larger.mask'
+imsize = 512
+pixsize ='0.03arcsec',
 
 # Concat before clean to fix proper motion offset
 files = files[4:12]
 print(files)
-concat_name = "aumic_ctrpix_test"
-vis_name = 'aumic_composite'
+#concat_name = ...
 # subprocess.call("rm -rf {}".format(concat_name + "_concat.ms"), shell=True)
 # concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
+
+#Clean variables to be changed
+clean_name = "aumic_ctrpix_test"
+vis_name = 'aumic_composite_concat'
 
 #==========================================================
 #rms values for various cleans
@@ -28,24 +33,24 @@ mar_200klam_rms = 2.84779671347e-05
 #==========================================================
 
 # Natural no taper: residual is the dirty image
-image = concat_name+"_dirty_natural"
+image = clean_name+"_dirty_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis= vis_name + "_concat.ms",
+tclean(vis= vis_name + ".ms",
        imagename=image,
-       imsize=513,
-       cell='0.03arcsec',
+       imsize=imsize,
+       cell=pixsize,
        weighting='natural',
        niter=0)
 rms = imstat(imagename='{}.residual'.format(image),
              region='../rms.region', listit=False)['rms'][0]
 
 # User mask:
-image = concat_name + "_usermask_natural"
+image = clean_name + "_usermask_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
 tclean(vis=vis_name + "_concat.ms",
        imagename=image,
-       imsize=513,
-       cell='0.03arcsec',
+       imsize=imsize,
+       cell=pixsize,
        weighting='natural',
        niter=100000,
        threshold=rms / 2.,
@@ -67,8 +72,8 @@ exportfits(imagename='{}.image'.format(image),
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
 # tclean(vis=concat_name + "_concat.ms",
 #        imagename=image,
-#        imsize=512,
-#        cell='0.03arcsec',
+#        imsize=imsize,
+#        cell=pixsize,
 #        weighting='natural',
 #        uvtaper=['200klambda'],
 #        niter=0)
@@ -80,8 +85,8 @@ exportfits(imagename='{}.image'.format(image),
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
 # tclean(vis=concat_name + "_concat.ms",
 #        imagename=image,
-#        imsize=512,
-#        cell='0.03arcsec',
+#        imsize=imsize,
+#        cell=pixsize,
 #        weighting='natural',
 #        uvtaper=['200klambda'],
 #        niter=100000,
