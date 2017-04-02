@@ -1,18 +1,14 @@
-pixsize"""
+"""
 Contains various cleaning methods for AU Mic--to be run in seperate_cleans directory.
 """
 import subprocess
+from glob import glob
 
 # Create list of measurement sets to use in clean:
-from glob import glob
-files = glob("../data_files/*.ms")
-mask = '../aumic_larger.mask'
-imsize = 512
-pixsize ='0.03arcsec',
+files = glob("../data_files/*.ms")[4:12]
+print(files)
 
 # Concat before clean to fix proper motion offset
-files = files[4:12]
-print(files)
 #concat_name = ...
 # subprocess.call("rm -rf {}".format(concat_name + "_concat.ms"), shell=True)
 # concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
@@ -20,6 +16,9 @@ print(files)
 #Clean variables to be changed
 clean_name = "aumic_ctrpix_test"
 vis_name = 'aumic_composite_concat'
+mask = '../aumic_larger.mask'
+imsize = 4096
+pixsize ='0.00375arcsec',
 
 #==========================================================
 #rms values for various cleans

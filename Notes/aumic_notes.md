@@ -17,7 +17,7 @@
     - 2.8817286537130427,
     - 2.0514430147058822,
     is this a problem?
-- OK if imsize*cell != image size in arcsec?
+- OK if imsize*cell != size in arcsec? 
 
 <br>
 
@@ -28,7 +28,9 @@
 
 ## 3/21/17: Pixel location:
 
+
 - ctrpix remains the same if I make image 257 pixels
+- `interpolate.rotate` works on arrays, and does not mention a rotation centroid--I assume it must choose the float center point of the array
 
 CRPIXn from FITS standard:
 >The value field shall contain a floating point number, identifying the location of a reference point along axis n, in units of the axis index.  This value is based upon a counter that runs from 1 to NAXISn with an increment of 1 per pixel.  The reference point value need not be that for the center of a pixel nor lie within the actual data array.  Use comments to indicate the location of the index point relative to the pixel.
