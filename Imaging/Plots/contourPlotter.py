@@ -186,34 +186,34 @@ fig, (ax1, ax2) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=ax1,
-            image='aumic_marjune_concat_usermask_natural',
+            image='../cleans/aumic_composite_usermask_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=301,
-            cbtmj=100,
-            cbtmn=20,
-            rms=1.77061756403e-05,
+            cbtmj=50,
+            cbtmn=10,
+            rms=1.47999598994e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
                   (3.65, 3.7, r'natural weighting')])
 
 return_axis(ax=ax2,
-            image='aumic_marjune_concat_usermask_200klam',
+            image='../cleans/aumic_composite_usermask_200klam',
             axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-50,
-            cbmax=601,
-            cbtmj=50,
-            cbtmn=10,
-            rms=2.19239682338e-05,
+            cbmax=551,
+            cbtmj=100,
+            cbtmn=20,
+            rms=1.94809763343e-05,
             cont_levs=np.arange(2, 40, 2),
-            text=[(4.7, 4.3, 'AU Mi c ALMA 1.4mm'),
+            text=[(4.7, 4.3, 'AU Mic ALMA 1.4mm'),
                   (4.15, 3.7, r'200 k$\lambda$ taper')])
 
 
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AUmic_marjune_concat_naturaltaper.png')
+plt.savefig('aumic_composite_naturaltaper.png')
 plt.show()

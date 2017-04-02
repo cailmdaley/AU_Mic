@@ -164,7 +164,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
-    ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
+    ax.plot([0.0], [0.0], '+', markersize=307, markeredgewidth=2, color='k')
 
     # Add PA lines and legend
     ax.plot([5, -5], [0, 0], '-', linewidth=1,
@@ -211,28 +211,28 @@ fig, (natural_ax, taper_ax) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=natural_ax,
-            image='aumic_marjune_usermask_natural',
+            image = '../cleans/aumic_ctrpix_test_usermask_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
-            cbmax=401,
+            cbmax=351,
             cbtmj=50,
             cbtmn=10,
-            rms=1.592382e-05,
+            rms=1.77794445335e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4.43, 3.95, 'natural weighting')])
 
 
 return_axis(ax=taper_ax,
-            image='aumic_marjune_usermask_200klam',
+            image='../cleans/aumic_junmar_usermask_200klam',
             axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=601,
             cbtmj=100,
             cbtmn=20,
-            rms=2.094688e-05,
+            rms=2.23016886594e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
                   (4, 3.95, r'200k$\lambda$ taper')])
@@ -240,5 +240,5 @@ return_axis(ax=taper_ax,
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AU_mic_marjune_PA_lines.png')
+plt.savefig('AU_mic_composite_ctrpix_test_PA_lines.png')
 plt.show()

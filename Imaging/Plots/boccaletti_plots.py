@@ -6,9 +6,8 @@ import seaborn as sns
 import numpy as np
 
 
-# image = 'aumic_18aug_usermask_natural'
-# image = 'aumic_24jun_usermask_natural'
-image = 'aumic_usermask_natural'
+# image = '../cleans/aumic_composite_usermask_natural'
+image = '../cleans/aumic_ctrpix_test_usermask_natural'
 
 # Read the header from the observed FITS continuum image:
 head = fits.getheader(image + ".fits")
@@ -31,7 +30,8 @@ ydelt = head['CDELT2']
 # Convert from degrees to arcsecs
 ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
 dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
-xaxis = ra[1:257][::-1]
+ra[256]
+xaxis = ra[1:256][::-1]
 # print(ra[0],ra[-1])
 # print(dec[256])
 
@@ -66,9 +66,10 @@ bpa = head['bpa']
 b_FWHM = 2* bmin * bmaj / \
     np.sqrt((bmin * np.cos(bpa + angleSE - 90))**2 +
             (bmaj * np.sin(bpa + angleSE - 90))**2)
+print(b_FWHM)
 
-SE_disk_FWHM = np.sqrt((2*SE_sigmas)**2 - b_FWHM**2)
-NW_disk_FWHM = np.sqrt((2*NW_sigmas)**2 - b_FWHM**2)
+SE_disk_FWHM = np.sqrt((2.35482004503*SE_sigmas)**2 - b_FWHM**2)
+NW_disk_FWHM = np.sqrt((2.35482004503*NW_sigmas)**2 - b_FWHM**2)
 
 fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, figsize=(8, 12), sharex=True)
 sns.set_style('whitegrid')
@@ -97,11 +98,11 @@ legend3 = ax3.legend()
 
 ax4.set_xlabel("Projected seperation from star (\")")
 ax4.set_title("Disk Height")
-ax4.set_ylabel(r'Fit $\sigma$ (")')
-ax4.plot(xaxis, SE_sigmas, label='SE')
-ax4.plot(xaxis, NW_sigmas, '--', label='NW')
-ax4.set_ylim(0, 0.5)
+ax4.set_ylabel(r'Fit FWHM (")')
+ax4.plot(xaxis, SE_sigmas*2.3548200450, label='SE')
+ax4.plot(xaxis, NW_sigmas*2.3548200450, '--', label='NW')
+ax4.set_ylim(0, 1)
 legend4 = ax4.legend()
 plt.suptitle("Composite")
-fig.savefig("boccaletti_plots_composite.png")
+fig.savefig("boccaletti_plots_ctrpix_test_composite.png")
 plt.show()
