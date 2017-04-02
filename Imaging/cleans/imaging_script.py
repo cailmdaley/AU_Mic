@@ -14,7 +14,7 @@ print(files)
 # concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
 
 #Clean variables to be changed
-clean_name = "aumic_ctrpix_test"
+clean_name = "aumic_many_pix"
 vis_name = 'aumic_composite_concat'
 mask = '../aumic_larger.mask'
 imsize = 4096
@@ -46,7 +46,7 @@ rms = imstat(imagename='{}.residual'.format(image),
 # User mask:
 image = clean_name + "_usermask_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=vis_name + "_concat.ms",
+tclean(vis=vis_name + ".ms",
        imagename=image,
        imsize=imsize,
        cell=pixsize,
@@ -56,7 +56,7 @@ tclean(vis=vis_name + "_concat.ms",
        usemask='user',
        mask=mask,
        pbmask=None)
-viewer(infile=image + '.image')
+#viewer(infile=image + '.image')
 rms = imstat(imagename='{}.image'.format(image),
              region='../rms.region', listit=False)['rms'][0]
 print(rms)
@@ -69,7 +69,7 @@ exportfits(imagename='{}.image'.format(image),
 # # Natural 200klambda taper: residual is the dirty image
 # image = concat_name + "_dirty_200klam"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=concat_name + "_concat.ms",
+# tclean(vis=concat_name + ".ms",
 #        imagename=image,
 #        imsize=imsize,
 #        cell=pixsize,
@@ -82,7 +82,7 @@ exportfits(imagename='{}.image'.format(image),
 # # User mask:
 # image = concat_name + "_usermask_200klam"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=concat_name + "_concat.ms",
+# tclean(vis=concat_name + ".ms",
 #        imagename=image,
 #        imsize=imsize,
 #        cell=pixsize,
