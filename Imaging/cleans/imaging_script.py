@@ -14,11 +14,11 @@ print(files)
 # concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
 
 #Clean variables to be changed
-clean_name = "aumic_many_pix"
+clean_name = "aumic_few_pix"
 vis_name = 'aumic_composite_concat'
 mask = '../aumic_larger.mask'
-imsize = 4096
-pixsize ='0.00375arcsec',
+imsize = 16
+pixsize ='1arcsec',
 
 #==========================================================
 #rms values for various cleans

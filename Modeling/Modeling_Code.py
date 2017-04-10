@@ -16,18 +16,18 @@ import matplotlib.pylab as plb
 
 # Variables and input files:
 modelname = 'aumic_model'
-filenames = ['18aug2015_aumic_spw0.corrected_weights',
-             '18aug2015_aumic_spw1.corrected_weights',
-             '18aug2015_aumic_spw2.corrected_weights',
-             '18aug2015_aumic_spw3.corrected_weights',
-             '24jun2015_aumic1_spw0.corrected_weights',
-             '24jun2015_aumic1_spw1.corrected_weights',
-             '24jun2015_aumic1_spw2.corrected_weights',
-             '24jun2015_aumic1_spw3.timeflag.corrected_weights',
-             '26mar2014_aumic_spw0.corrected_weights',
-             '26mar2014_aumic_spw1.corrected_weights',
-             '26mar2014_aumic_spw2.corrected_weights',
-             '26mar2014_aumic_spw3.corrected_weights']
+filenames = ['18aug2015_aumic_spw0.reweighted',
+             '18aug2015_aumic_spw1.reweighted',
+             '18aug2015_aumic_spw2.reweighted',
+             '18aug2015_aumic_spw3.reweighted',
+             '24jun2015_aumic1_spw0.reweighted',
+             '24jun2015_aumic1_spw1.reweighted',
+             '24jun2015_aumic1_spw2.reweighted',
+             '24jun2015_aumic1_spw3.reweighted',
+             '26mar2014_aumic_spw0.reweighted',
+             '26mar2014_aumic_spw1.reweighted',
+             '26mar2014_aumic_spw2.reweighted',
+             '26mar2014_aumic_spw3.reweighted']
 coord = ['20h45m09.854710s -031d20m32.52034s',
          '20h45m09.854710s -031d20m32.52034s',
          '20h45m09.854710s -031d20m32.52034s',
@@ -107,7 +107,7 @@ def model_convolve(im, modelname, filename, coord, ra, dec):
     model.close
     subprocess.call(['fits', 'in=model_files/{}.fits'.format(modelname),
                      'op=xyin', 'out=model_files/{}.im'.format(modelname)])
-    subprocess.call(['uvmodel', 'model=model_files/{}.im'.format(modelname), 'vis=data_files/{}.vis'.format(
+    subprocess.call(['uvmodel', 'model=model_files/{}.im'.format(modelname), 'vis=../data_files/{}.vis'.format(
         filename), 'options=replace', 'out=model_files/{}.vis'.format(modelname)])
     subprocess.call(['fits', 'in=model_files/{}.vis'.format(modelname),
                      'op=uvout', 'out=model_files/{}.uvf'.format(modelname)])
@@ -118,7 +118,7 @@ def get_chi(filename, modelname):
     Return chi^2 of model.
     """
 
-    data = fits.open('data_files/{}.uvf'.format(filename))
+    data = fits.open('../data_files/{}.uvf'.format(filename))
     datrlimwt = data[0].data['data']
 
     # splitting visibilities by time removes one index from datrlimwt array:
