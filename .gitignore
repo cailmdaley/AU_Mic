@@ -21,8 +21,8 @@ Modeling/model_files
 Modeling/data_files
 Imaging/uncorrected_data_files
 
-Imaging/seperate_cleans
-Imaging/composite_cleans
+Imaging/old_cleans_seperate
+Imaging/old_cleans_composite
 
 Imaging/Visibility_processing
 Imaging/aumic_ALL
