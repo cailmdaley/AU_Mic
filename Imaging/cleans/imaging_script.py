@@ -5,48 +5,47 @@ import subprocess
 from glob import glob
 
 # Create list of measurement sets to use in clean:
-files = glob("../data_files/*.ms")[4:12]
-print(files)
-
-# Concat before clean to fix proper motion offset
-#concat_name = ...
-# subprocess.call("rm -rf {}".format(concat_name + "_concat.ms"), shell=True)
-# concat(vis=files, concatvis=(concat_name + "_concat.ms"), dirtol='2arcsec' )
+files = glob("../../data_files/*.ms")
 
 #Clean variables to be changed
-clean_name = "aumic_few_pix"
-vis_name = 'aumic_composite_concat'
-mask = '../aumic_larger.mask'
-imsize = 16
-pixsize ='1arcsec',
+concat_files = files[4:8]
+filename = 'aumic_jun'
+mask = 'aumic_jun_mask.region'
+imsize = 512
+pixsize ='0.03arcsec',
+
+# Concat before clean to fix proper motion offset
+subprocess.call("rm -rf {}".format(filename + ".concat.ms"), shell=True)
+concat(vis=concat_files, concatvis=(filename + ".concat.ms"), dirtol='2arcsec' )
 
 #==========================================================
 #rms values for various cleans
-composite_natural_rms = 1.47999598994e-05
-composite_200klam_rms = 1.94809763343e-05
-junmar_natural_rms = 1.77794445335e-05
-junmar_200klam_rms = 2.23016886594e-05
-aug_natural_rms = 2.50784905802e-05
-june_natural_rms = 2.02323226404e-05
-mar_200klam_rms = 2.84779671347e-05
+aug_natural_rms = 3.44968793797e-05
+june_natural_rms = 3.37951933034e-05
+augjun_natural_rms = 2.9192528018e-05
+marjun_natural_rms = 2.27807577176e-05
+composite_natural_rms = 2.06453660212e-05
+marjun_200klam_rms = 2.99919338431e-05
+mar_200klam_rms = 2.92010208796e-05
+composite_200klam_rms = 2.7314921681e-05
 #==========================================================
 
 # Natural no taper: residual is the dirty image
-image = clean_name+"_dirty_natural"
+image = filename+"_dirty_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis= vis_name + ".ms",
+tclean(vis= filename + ".concat.ms",
        imagename=image,
        imsize=imsize,
        cell=pixsize,
        weighting='natural',
        niter=0)
 rms = imstat(imagename='{}.residual'.format(image),
-             region='../rms.region', listit=False)['rms'][0]
+             region='aumic_rms.region', listit=False)['rms'][0]
 
 # User mask:
-image = clean_name + "_usermask_natural"
+image = filename + "_natural"
 subprocess.call("rm -rf {}.*".format(image), shell=True)
-tclean(vis=vis_name + ".ms",
+tclean(vis=filename + ".concat.ms",
        imagename=image,
        imsize=imsize,
        cell=pixsize,
@@ -58,7 +57,7 @@ tclean(vis=vis_name + ".ms",
        pbmask=None)
 #viewer(infile=image + '.image')
 rms = imstat(imagename='{}.image'.format(image),
-             region='../rms.region', listit=False)['rms'][0]
+             region='aumic_rms.region', listit=False)['rms'][0]
 print(rms)
 
 # Export to .fits
@@ -67,37 +66,37 @@ exportfits(imagename='{}.image'.format(image),
 
 
 # # Natural 200klambda taper: residual is the dirty image
-# image = concat_name + "_dirty_200klam"
+# image = filename + "_dirty_200klam"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=concat_name + ".ms",
-#        imagename=image,
-#        imsize=imsize,
-#        cell=pixsize,
-#        weighting='natural',
-#        uvtaper=['200klambda'],
-#        niter=0)
+# tclean(vis=filename + ".concat.ms",
+#       imagename=image,
+#       imsize=imsize,
+#       cell=pixsize,
+#       weighting='natural',
+#       uvtaper=['200klambda'],
+#       niter=0)
 # rms = imstat(imagename='{}.residual'.format(image),
-#              region='../rms.region', listit=False)['rms'][0]
+#             region='aumic_rms.region', listit=False)['rms'][0]
 #
 # # User mask:
-# image = concat_name + "_usermask_200klam"
+# image = filename + "_200klam"
 # subprocess.call("rm -rf {}.*".format(image), shell=True)
-# tclean(vis=concat_name + ".ms",
-#        imagename=image,
-#        imsize=imsize,
-#        cell=pixsize,
-#        weighting='natural',
-#        uvtaper=['200klambda'],
-#        niter=100000,
-#        threshold=rms / 2.,
-#        usemask='user',
-#        mask=mask,
-#        pbmask=None)
+# tclean(vis=filename + ".concat.ms",
+#       imagename=image,
+#       imsize=imsize,
+#       cell=pixsize,
+#       weighting='natural',
+#       uvtaper=['200klambda'],
+#       niter=100000,
+#       threshold=rms / 2.,
+#       usemask='user',
+#       mask=mask,
+#       pbmask=None)
 # viewer(infile=image + '.image')
-# rms = imstat(imagename='{}.image'.format(image), region='../rms.region',
-#              listit=False)['rms'][0]
+# rms = imstat(imagename='{}.image'.format(image), region='aumic_rms.region',
+#             listit=False)['rms'][0]
 # print(rms)
 #
 # # Export to .fits
 # exportfits(imagename='{}.image'.format(image),
-#            fitsimage='{}.fits'.format(image))
+#           fitsimage='{}.fits'.format(image))
