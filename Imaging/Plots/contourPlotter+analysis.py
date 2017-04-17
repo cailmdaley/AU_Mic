@@ -4,6 +4,7 @@ from matplotlib.ticker import MultipleLocator, LinearLocator, AutoMinorLocator
 from scipy.ndimage.interpolation import rotate
 from scipy.ndimage import zoom
 from astropy.io import fits
+from my_colormaps import *
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -13,10 +14,14 @@ import numpy as np
 
 def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, text=None, residuals=None, axislabels=True):
 
-    angleSE = 129.5 - 90
-    angleNW = 311.2 - 90
+    angleSE = 128.0 - 90
+    # angleNW = 311.2 - 90
+    angleNW = angleSE + 181.7
+    angleNW - angleSE
+
     # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
+    print(head)
     # Read in images and rotate so that disk is horizontal
     im = rotate(fits.getdata(image + ".fits").squeeze(),
                 angleSE, reshape=False)
@@ -43,8 +48,8 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     xmax = 5.5
     ymin = -5.5
     ymax = 5.5
-    ax.set_xlim(xmax, xmin)
-    ax.set_ylim(ymin, ymax)
+    # ax.set_xlim(xmax, xmin)
+    # ax.set_ylim(ymin, ymax)
     ax.grid(False)
 
     # Set x and y major and minor tics
@@ -84,6 +89,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
                      extent=[cxmin, cxmax, cymin, cymax],
                      vmin=np.min(im),
                      vmax=np.max(im),
+                     interpolation='nearest',
                      origin='lower',
                      cmap=cpal)
 
@@ -164,14 +170,15 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Plot a cross at the source position
-    ax.plot([0.0], [0.0], '+', markersize=307, markeredgewidth=2, color='k')
+    ax.plot([0.0], [0.0], '*', markersize=8, markeredgewidth=1, color='k')
+    # ax.plot([0.0], [0.0], '+', markersize=307, markeredgewidth=1, color='k')
 
     # Add PA lines and legend
     ax.plot([5, -5], [0, 0], '-', linewidth=1,
-            color='k', label='Boccaletti SE PA')
-    h = 5 * np.sin(np.radians(angleNW - angleSE))
-    ax.plot([5, -5], [-h, h], '--', linewidth=1,
-            color='blue', label='Boccaletti NW PA')
+            color='k', label=r'Boccaletti SE PA - $1.5^\circ$')
+    h = 5 * np.tan(np.radians(angleNW - angleSE))
+    ax.plot([0, -5], [0, h], '--', linewidth=1,
+            color='blue', label=r'Boccaletti NW PA - $1.5^\circ$')
     legend = ax.legend()
 
     # Add cardinal directions:
@@ -180,10 +187,12 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
              width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
     ax.text(0 + np.cos(np.radians(angleSE)), y + np.sin(np.radians(angleSE)) + 0.15,
             'E', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
-    ax.arrow(0, y, np.cos(np.radians(90 + angleSE)), np.sin(np.radians(90 +
-                                                                       angleSE)), width=0.04, head_width=0.2, head_length=0.3, fc='k', ec='k')
-    ax.text(0 + np.cos(np.radians(90 + angleSE)) + 0.4, y + np.sin(np.radians(90 + angleSE)
-                                                                   ) + 0.2, 'N', path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+    ax.arrow(0, y, np.cos(np.radians(90 + angleSE)),
+             np.sin(np.radians(90 + angleSE)), width=0.04,
+             head_width=0.2, head_length=0.3, fc='k', ec='k')
+    ax.text(0 + np.cos(np.radians(90 + angleSE)) + 0.4,
+            y + np.sin(np.radians(90 + angleSE)) + 0.2, 'N',
+            path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
     # Add figure text
     # if text:
@@ -200,7 +209,6 @@ sns.set_context("talk")
 
 
 # Set colorpalette
-from my_colormaps import *
 cpals = [cubehelix_1, cubehelix_2, cubehelix_3, jesse_reds]
 colorsaves = ['cubehelix_1', 'cubehelix_2', 'cubehelix_3', 'jesse_reds']
 which_cpal = 3
@@ -211,34 +219,34 @@ fig, (natural_ax, taper_ax) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=natural_ax,
-            image = '../cleans/aumic_ctrpix_test_usermask_natural',
+            image='../cleans/aumic_few_pix_usermask_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=351,
             cbtmj=50,
             cbtmn=10,
-            rms=1.77794445335e-05,
+            rms=1.47999598994e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4.43, 3.95, 'natural weighting')])
+                  (4.43, 3.95, '4096 pixels')])
 
 
 return_axis(ax=taper_ax,
-            image='../cleans/aumic_junmar_usermask_200klam',
+            image='../cleans/aumic_composite_usermask_natural',
             axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-50,
             cbmax=601,
             cbtmj=100,
             cbtmn=20,
-            rms=2.23016886594e-05,
+            rms=1.94809763343e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4, 3.95, r'200k$\lambda$ taper')])
+                  (4, 3.95, r'256 pixels')])
 
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('AU_mic_composite_ctrpix_test_PA_lines.png')
+plt.savefig('aumic_composite_few_pix_PA_lines.png')
 plt.show()
