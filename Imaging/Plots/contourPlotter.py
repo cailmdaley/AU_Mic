@@ -139,7 +139,7 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     beam_ellipse_color = 'k'
     bmin = head['bmin'] * 3600.
     bmaj = head['bmaj'] * 3600.
-    bpa = head['bpa']
+    bpa = head['bpa']; bpa
     el = Ellipse(xy=[-4.3, -4.3],
                  width=bmin,
                  height=bmaj,
