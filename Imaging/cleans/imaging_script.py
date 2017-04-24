@@ -5,12 +5,16 @@ import subprocess
 from glob import glob
 
 # Create list of measurement sets to use in clean:
-files = glob("../../data_files/*.ms")
+files = glob("../../data_files/*.timing.reweighted.ms")
 
 #Clean variables to be changed
-concat_files = files[4:8]
-filename = 'aumic_jun'
-mask = 'aumic_jun_mask.region'
+concat_files = files
+print(concat_files)
+raw_input('ok?')
+# concat_files.append('../Visibility_processing/24jun2015_aumic1_spw3.timeflag.reweighted.ms')
+
+filename = 'aumic_jun_all_timing'
+mask = '../aumic_larger.mask'
 imsize = 512
 pixsize ='0.03arcsec',
 
@@ -28,6 +32,8 @@ composite_natural_rms = 2.06453660212e-05
 marjun_200klam_rms = 2.99919338431e-05
 mar_200klam_rms = 2.92010208796e-05
 composite_200klam_rms = 2.7314921681e-05
+
+jun_all_timing_rms = 4.31231892435e-05
 #==========================================================
 
 # Natural no taper: residual is the dirty image
@@ -55,7 +61,7 @@ tclean(vis=filename + ".concat.ms",
        usemask='user',
        mask=mask,
        pbmask=None)
-#viewer(infile=image + '.image')
+viewer(infile=image + '.image')
 rms = imstat(imagename='{}.image'.format(image),
              region='aumic_rms.region', listit=False)['rms'][0]
 print(rms)
