@@ -150,7 +150,7 @@ def get_chi(filename, modelname):
     return chi, redchi
 
 
-def vis_cut(vis, cut, suff, filenames):
+def vis_cut(vis, cut, suff):
     """
     Flag/remove part a subset of the data in a miriad.vis file.
     """
@@ -158,7 +158,7 @@ def vis_cut(vis, cut, suff, filenames):
     subprocess.call('rm -r {}.vis'.format(vis + suff), shell=True)
     subprocess.call(['uvaver vis={}.vis select={} out={}.vis'.format(
         vis, cut, vis + suff)], shell=True)
-    filenames.append(vis + suff)
+    # filenames.append(vis + suff)
 
 
 def create_uvf(filename):

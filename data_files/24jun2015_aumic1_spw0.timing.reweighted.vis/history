@@ -8,13 +8,13 @@ FITS:   in=24jun2015_aumic1_spw0.uvf
 FITS:   op=uvin
 FITS:   out=24jun2015_aumic1_spw0.vis
 UVAVER: Miriad UvAver: version 1.0 17-Nov-08
-UVAVER: Executed on: 2017-04-24T11:56:38.0
+UVAVER: Executed on: 2017-04-24T13:27:40.0
 UVAVER: Command line inputs follow:
 UVAVER:   vis=24jun2015_aumic1_spw0.vis
-UVAVER:   select=time(04:23:00,04:35:00)
+UVAVER:   select=time(03:30:00,04:23:00)
 UVAVER:   out=24jun2015_aumic1_spw0.timing.vis
 FITS: Miriad fits: fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
-FITS: Executed on: 17APR24:12:19:42.0
+FITS: Executed on: 17APR24:13:27:40.0
 FITS: Command line inputs follow:
 FITS:    in=24jun2015_aumic1_spw0.timing.vis
 FITS:    op=uvout
@@ -22,7 +22,7 @@ FITS:    out=24jun2015_aumic1_spw0.timing.uvf
 FITS: NOTE: Use options=varwt if loading into Miriad
 AIPS WTSCAL =  1.00000000000E+00
 FITS: Miriad fits: CVS Revision 1.24, 2013/03/14 17:33:00 UTC
-FITS: Executed on: 2017-04-24T12:31:41.0
+FITS: Executed on: 2017-04-24T13:41:59.0
 FITS: Command line inputs follow:
 FITS:   in=../../data_files/24jun2015_aumic1_spw0.timing.reweighted.uvf
 FITS:   op=uvin
