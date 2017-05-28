@@ -11,18 +11,23 @@ from glob import glob
 dates = ['aumic_aug.concat.ms',
          'aumic_jun_timing.concat.ms',
          'aumic_mar.concat.ms']
-concat_files = ['../../data_files/24jun2015_aumic1_spw1.timing.reweighted.ms']
+concat_files = [
+        "../../data_files/18aug2015_aumic_spw0.reweighted.ms",
+        "../../data_files/18aug2015_aumic_spw1.reweighted.ms",
+        "../../data_files/18aug2015_aumic_spw2.reweighted.ms",
+        "../../data_files/18aug2015_aumic_spw3.reweighted.ms" ]
+
 print 'Files to be cleaned are:', concat_files
 raw_input('ok?: ')
 # concat_files.append('../Visibility_processing/24jun2015_aumic1_spw3.timeflag.reweighted.ms')
 
-filename = 'aumic_jun_timing_spw1'
+filename = 'aumic_aug'
 imsize = 512
 pixsize ='0.03arcsec',
 
 
 natural = True
-natural_mask = 'aumic_jun_mask.region'
+natural_mask = 'aumic_aug_mask.region'
 
 taper = False
 taper_mask = 'aumic_marjun_short_bsl_mask.region'
@@ -38,7 +43,7 @@ concat(vis=concat_files, concatvis=(filename + ".concat.ms"), dirtol='2arcsec' )
 
 #==========================================================
 #rms values for various cleans
-aug_natural_rms = 3.83226033591e-05
+aug_natural_rms = 3.8322603359119967e-05
 jun_timing_rms = 2.79580763163e-05
 jun_timing_spw1_rms = 4.26983060606e-05
 mar_200klam_rms = 2.92891236313e-05
