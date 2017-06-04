@@ -18,14 +18,12 @@ cpal = jesse_reds
 
 
 class Observation:
-    def __init__(self, filename, rms, fig=None, pos=0, **kwds):
-        
-        # self.__dict__.update(kwds)
+    def __init__(self, filename, rms, fig=None, pos=0):
+
         self.file = filename
         self.rms = rms
         self.fig = fig
         self.pos = pos
-        
 
     def get_fits(self):
         self.head = fits.getheader(self.file)
@@ -47,17 +45,21 @@ class Observation:
         self.ydelt = self.head['CDELT2']
 
         # Convert from degrees to arcsecs
-        self.ra_offset = np.array(((np.arange(nx) - xpix + 1) * self.xdelt) * 3600)
-        self.dec_offset = np.array(((np.arange(ny) - ypix + 1) * self.ydelt) * 3600)
+        self.ra_offset = np.array(
+            ((np.arange(nx) - xpix + 1) * self.xdelt) * 3600)
+        self.dec_offset = np.array(
+            ((np.arange(ny) - ypix + 1) * self.ydelt) * 3600)
 
         # self.ra_abs = ((np.arange(nx) - xpix + 1) * xdelt + xval) * 3600
         # self.dec_abs = ((np.arange(ny) - ypix + 1) * ydelt + yval) * 3600
         return
 
-
     def make_axis(self):
         if not self.fig:
             self.fig, self.ax = plt.subplots()
+        else:
+            self.ax = self.fig.axes[self.pos[0]]
+        
 
         xmin = -5.0
         xmax = 5.0
@@ -84,65 +86,37 @@ class Observation:
         self.ax.yaxis.set_ticklabels(
             ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
         self.ax.tick_params(which='both', right='on')
+        
 
-        # If marked as the right-most plot, fix labels
-        try:
-            # if self.pos == 'left':
-                # self.ax.tick_params(axis='y', labelright='off')
-                # print(1)
-            if self.pos == 'right':
-                self.ax.set_xlabel('')
-                self.ax.set_ylabel('')
-                self.ax.tick_params(axis='y', labelleft='off', labelright='on')
-        except AttributeError:
-            pass
+        # Set labels depending on position in figure
+        if self.pos[0] == 0: #left
+            self.ax.tick_params(axis='y', labelright='off')
+        elif self.pos[0] == self.pos[1]-1: #right
+            self.ax.set_xlabel('')
+            self.ax.set_ylabel('')
+            self.ax.tick_params(axis='y', labelleft='off', labelright='on')
+        else: #middle
+            self.ax.tick_params(axis='y', labelleft='off')
 
         # Set physical range of colour map
         self.extent = [self.ra_offset[0], self.ra_offset[-1],
-                      self.dec_offset[-1], self.dec_offset[0]]
+                       self.dec_offset[-1], self.dec_offset[0]]
 
         return
-
 
     def fill_axis(self):
         # Plot image as a colour map
         cmap = self.ax.imshow(self.im,
-                             extent=self.extent,
-                             vmin=np.min(self.im),
-                             vmax=np.max(self.im),
-                             cmap=cpal)
+                              extent=self.extent,
+                              vmin=np.min(self.im),
+                              vmax=np.max(self.im),
+                              cmap=cpal)
 
-        # Set contour levels
-        cont_levs = np.arange(2, 40, 2) * self.rms
-        
-        # add residual contours if resdiual exists; otherwise, add image contours
-        try:
-            self.ax.contour(self.resid,
-                           levels=cont_levs,
-                           colors='k',
-                           linewidths=0.75,
-                           linestyles='solid')
-            self.ax.contour(self.resid,
-                           levels=-1 * np.flip(cont_levs, axis=0),
-                           colors='k',
-                           linewidths=0.75,
-                           linestyles='dashed')
-        except AttributeError:
-            self.ax.contour(self.ra_offset, self.dec_offset, self.im,
-                           colors='k',
-                           levels=cont_levs,
-                           linewidths=0.75,
-                           linestyles='solid')
-            self.ax.contour(self.ra_offset, self.dec_offset, self.im,
-                           levels=-1 * np.flip(cont_levs, axis=0),
-                           colors='k',
-                           linewidths=0.75,
-                           linestyles='dashed')
-        
         # Create the colorbar
         divider = make_axes_locatable(self.ax)
         cax = divider.append_axes("top", size="8%", pad=0.0)
-        cbar = self.fig.colorbar(cmap, ax=self.ax, cax=cax, orientation='horizontal')
+        cbar = self.fig.colorbar(
+            cmap, ax=self.ax, cax=cax, orientation='horizontal')
         cbar.ax.xaxis.set_tick_params(direction='out',
                                       length=3,
                                       which='major',
@@ -206,7 +180,8 @@ class Observation:
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
-        self.ax.plot([0.0], [0.0], '+', markersize=5, markeredgewidth=1, color='k')
+        self.ax.plot([0.0], [0.0], '+', markersize=10,
+                     markeredgewidth=1, color='r')
 
         # Add figure text
         self.ax.text(
@@ -217,30 +192,133 @@ class Observation:
         try:
             for t in self.text:
                 self.ax.text(*t, fontsize=18,
-                            path_effects=[PathEffects.withStroke(linewidth=3, foreground="w")])
+                             path_effects=[PathEffects.withStroke(linewidth=3, foreground="w")])
         except AttributeError:
             pass
         return
 
+    def pixel_mean(self, sigma):
+
+        # Get mean position of all pixels above some simga level.
+        level = sigma * self.rms
+        mean_region = np.where(self.im > level)
+        pixel_mean = np.round(np.mean(mean_region, axis=1))
+
+        # Convert pixel position to angular offset, and plot a cross at
+        # position
+        self.arcsec_mean = (self.ra_offset[int(pixel_mean[0])], 
+                            self.dec_offset[int(pixel_mean[1])])
+        self.ax.plot(self.arcsec_mean[0], self.arcsec_mean[1],
+                     '+', markersize=10, markeredgewidth=1, color='k')
+
+        # Plot contour to indicate which part of the disk the mean is taken
+        # over.
+        self.ax.contour(self.ra_offset, self.dec_offset, self.im,
+                        colors='k', levels=[level],
+                        linewidths=1.5, linestyles='solid')
+
+        return
+
+    def gaussian_fit(self, center, box_width):
+
+        #Define region to fit
+        ra_range, = np.where(
+            (center[0] - box_width < self.ra_offset) &
+            (self.ra_offset < center[0] + box_width))
+        dec_range, = np.where(
+            (center[1] - box_width < self.dec_offset) &
+            (self.dec_offset < center[1] + box_width))
+
+        ra_grid, dec_grid = np.meshgrid(
+            self.ra_offset[ra_range],
+            self.dec_offset[dec_range])
+
+        fit_region = self.im[ra_range[0]:ra_range[-1] + 1,
+                             dec_range[0]:dec_range[-1] + 1]
+
+        #Create initial gaussian model
+        gauss_init = models.Gaussian2D(
+            amplitude=np.max(fit_region),
+            x_mean=center[0],
+            y_mean=center[1],
+            x_stddev=0.1,
+            y_stddev=0.3,
+            theta=-129 * np.pi / 180)
+
+        
+        #Fit gaussian to data
+        fitter = fitting.LevMarLSQFitter()
+        gauss_fit = fitter(gauss_init, ra_grid, dec_grid, fit_region)
+        
+        #Save centroid of gaussian
+        vector_difference = np.array([gauss_fit.x_mean.value, gauss_fit.y_mean.value])
+        try:
+            self.vector_difference += vector_difference
+        except AttributeError:
+            self.vector_difference = vector_difference
+
+
+        # Plot ~1 and ~2 sigma contours
+        gauss_model = gauss_fit(ra_grid, dec_grid)
+        levels = np.array([0.66]) * np.max(gauss_model)
+        self.ax.contour(ra_grid, dec_grid, gauss_model,
+                        colors='k', levels=levels,
+                        linewidths=1.5, linestyles='solid')
+
+        return
+
+    def display(self):
+        self.get_fits()
+        self.make_axis()
+        self.fill_axis()
+        return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# fig = plt.subplots(
-#     1, 2, sharex=False, sharey=False, figsize=(11.6, 6.2))[0]
-# plt.subplots_adjust(wspace=-0.07)
 
-jun = Observation('../cleans/aumic_jun_timing_natural.fits', 2.79580763163e-05)
-aug = Observation('../cleans/aumic_aug_natural.fits', 3.8322603359119967e-05)
-    # ax=ax2, pos='right', fig=fig)
-mar = Observation('../cleans/aumic_mar_200klam.fits', 2.92891236313e-05)
-    # fig=fig, ax=ax1, pos='left')
+num = 3
+plot_width=11.6/2
+fig = plt.subplots(1, num, sharex=False, sharey=False, 
+    figsize=(plot_width * num, 6.2))[0]
+plt.subplots_adjust(wspace=-0.07)
 
-for obs in [jun]:
-    obs.get_fits()
-    obs.make_axis()
-    obs.fill_axis()
+mar = Observation('../cleans/aumic_mar_200klam.fits', 2.92891236313e-05,
+                  fig=fig, pos=(0, len(fig.axes)) )
+aug = Observation('../cleans/aumic_aug_natural.fits', 3.8322603359119967e-05,
+                  fig=fig, pos=(1, len(fig.axes)) )
+jun = Observation('../cleans/aumic_jun_timing_natural.fits', 2.79580763163e-05,
+                  fig=fig, pos=(2, len(fig.axes)) )
 
-plt.savefig('star_fit_marjun.png')
+for obs in [mar, aug, jun]:
+    obs.display()
+
+    #Pixel mean star position
+    obs.pixel_mean(6.2)
+    print(obs.arcsec_mean)
+
+    # Single Gaussian Star Position
+    # obs.gaussian_fit((0, 0), 15) #single gaussian
+    # Double Gaussian star position
+    # obs.gaussian_fit((2, -2), 2) #SE gaussian
+    # obs.gaussian_fit((-2, 2), 2) #NW gaussian
+    
+    # obs.ax.plot(*obs.vector_difference, marker='+', markersize=10, 
+    #     markeredgewidth=1, color='k')
+
+         
+    # #Clean pixel star position    
+    # if obs is mar:
+    #     obs.ax.plot(0.01, -0.05, marker='+', markersize=10, 
+    #         markeredgewidth=1, color='c')
+    # elif obs is aug:
+    #     obs.ax.plot(0.01, 0.0, marker='+', markersize=10, 
+    #         markeredgewidth=1, color='c')
+    # elif obs is jun:
+    #     obs.ax.plot(0, 0.09, marker='+', markersize=10, 
+    #         markeredgewidth=1, color='c')
+    # print(obs.vector_difference)
+
+plt.savefig('star_fit_pixel_mean.png')
 plt.show()
 
 # plt.show()
