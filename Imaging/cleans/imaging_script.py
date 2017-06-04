@@ -8,48 +8,52 @@ from glob import glob
 # files = glob("../../data_files/*.timing.reweighted.ms")
 
 #Clean variables to be changed
-dates = ['aumic_aug.concat.ms',
-         'aumic_jun_timing.concat.ms',
-         'aumic_mar.concat.ms']
-concat_files = [
-        "../../data_files/18aug2015_aumic_spw0.reweighted.ms",
-        "../../data_files/18aug2015_aumic_spw1.reweighted.ms",
-        "../../data_files/18aug2015_aumic_spw2.reweighted.ms",
-        "../../data_files/18aug2015_aumic_spw3.reweighted.ms" ]
-
-print 'Files to be cleaned are:', concat_files
-raw_input('ok?: ')
-# concat_files.append('../Visibility_processing/24jun2015_aumic1_spw3.timeflag.reweighted.ms')
-
-filename = 'aumic_aug'
+dates = ['aumic_aug_centered.concat.ms',
+         'aumic_jun_timing_centered.concat.ms',
+         'aumic_mar_centered.concat.ms']
 imsize = 512
 pixsize ='0.03arcsec',
 
 
+concat_files = [dates[1], dates[2]]
+filename = 'aumic_marjun_centered'
 natural = True
-natural_mask = 'aumic_aug_mask.region'
-
-taper = False
+natural_mask = 'aumic_marjun_long_bsl_mask.region'
+taper = True
 taper_mask = 'aumic_marjun_short_bsl_mask.region'
 
 view=True
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
-# if len(concat_files) > 1:
-print('Concatenating...')
-subprocess.call("rm -rf {}".format(filename + ".concat.ms"), shell=True)
-concat(vis=concat_files, concatvis=(filename + ".concat.ms"), dirtol='2arcsec' )
+print('Files to be cleaned are {}, under name {}.concat.ms'.format(concat_files, filename))
+raw_input('ok?: ')
+
+if len(concat_files) > 1:
+    print('Concatenating...')
+    subprocess.call("rm -rf {}".format(filename + ".concat.ms"), shell=True)
+    concat(vis=concat_files, concatvis=(filename + ".concat.ms"), dirtol='2arcsec' )
+
 
 #==========================================================
-#rms values for various cleans
+#rms values for centered cleans
+aug_centered_natural_rms = 3.83357546525e-05
+jun_timing_centered_natural_rms =  2.80185104202e-05
+mar_centered_200klam_rms = 2.92637287203e-05
+augjun_centered_natural_rms = 2.2613137844e-05
+all_centered_natural_rms = 1.8107746655e-05
+all_centered_200klam_rms = 2.15842592297e-05
+marjun_centered_natural_rms = 2.03299914574e-05
+marjun_centered_200klam_rms = 2.39168402913e-05
+
+#rms values for uncentered cleans
 aug_natural_rms = 3.8322603359119967e-05
 jun_timing_rms = 2.79580763163e-05
 jun_timing_spw1_rms = 4.26983060606e-05
 mar_200klam_rms = 2.92891236313e-05
 augjun_natural_rms = 2.25834228331e-05
-composite_natural_rms = 1.79467988346e-05
-composite_200klam_rms = 2.14701703953e-05
+all_natural_rms = 1.79467988346e-05
+all_200klam_rms = 2.14701703953e-05
 marjun_natural_rms = 2.02876035473e-05
 marjun_200klam_rms = 2.39355267695e-05
 #==========================================================
