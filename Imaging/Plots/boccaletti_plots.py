@@ -7,9 +7,9 @@ import numpy as np
 
 
 # Important parameters
-angleSE = 128.0 - 90
+angleSE = 128.6 - 90
 
-image = '../cleans/aumic_composite_usermask_natural'
+image = '../cleans/aumic_composite_natural'
 # image = '../cleans/aumic_ctrpix_test_usermask_natural'
 
 # Read the header from the observed FITS continuum image:
@@ -61,6 +61,7 @@ SE_amps, SE_mus, SE_sigmas = np.zeros(
     len(xaxis)), np.zeros(len(xaxis)), np.zeros(len(xaxis))
 
 for i in range(len(xaxis)):
+    print(i)
     (NW_amps[i], NW_mus[i], NW_sigmas[i]), NW_var_matrix = \
         curve_fit(gauss, dec[y_below:y_above],
         im[y_below:y_above, int(xpix)+i], p0=p0, bounds=bounds)
@@ -121,7 +122,6 @@ ax3.plot(xaxis, NW_disk_FWHM, '--', label='NW')
 # ax3.plot(xaxis, NW_sigmas * 2.3548200450, '--', label='NW')
 ax3.set_ylim(0, 0.5)
 legend4 = ax3.legend(loc=4)
-# plt.suptitle("Composite")
-fig.gca().invert_xaxis()
+plt.suptitle("Composite")
 fig.savefig("boccaletti_plots_composite.png")
 plt.show()

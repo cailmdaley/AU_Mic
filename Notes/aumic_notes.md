@@ -1,19 +1,75 @@
----
-### To Do
-- make seperate regions for each date
-- make august clean
+## To Do
+- clean algorithim fit
 - compare gaussian fit to actual slice of data
 - do percentage noise check
 - Boccaletti plots are jun and march
 - composite for actual images
+
+##### Papers:
 - foremann mackey emcee paper
 - goodman & weare 2010
+- ford paper
+- AU Mic motivating theory paper
 ---
-
-# AU Mic Research Notes: Feb 2017
+## Questions
 
 --------------------------------------------------------------------------------
+# AU Mic Research Notes: Feb 2017
+--------------------------------------------------------------------------------
 
+### 5/31/17: First day of summer research
+##### 
+- Relative position uncertainty (per synthesized beam) = $\frac{\theta_{sb}}{SNR}$
+- Fixvis phasecenter
+
+---
+### 5/28/17: Star position
+Sooo it's been a while since I've written any notes. In the last month and a half,
+I have:
+
+1. Cutting out the last observation window for **(just spw3? all spws?)** fixed the flare date.
+2. While concatenating the different dates before cleaning may have helped with the star offset from the image center, this effect remains. Meredith and I wonder if the flare could have been asymmetric, so that the point source fit to the flaring star that defines the image center is offset from the star itself. This would also explain the asymmetric gap/hole by the star in the June observation.
+3. To fix this issue, I hope to find some metric of determining the center/star position of the disk that gives good agreement with august and march dates and apply it to the June date.
+
+##### Approaches:
+- `pixel_mean:` take the mean position of all pixels with values above 6.2 $\sigma$ 
+    - mar offset from image center: $(0.0, 0.03)$ 
+    - aug offset from image cenger: $(0.0, 0.0)$
+    - jun offset from image center: $(0.06, -0.18)$
+        - visual inspection shows that this is on the wrong side of the disk...
+- `single_gauss:` fit a Gaussian to the whole disk
+    - mar offset from image center: $(-0.04, 0.02)$
+    - aug offset from image center: $(0.07, -0.03)$
+    - jun offset from image center: $(0.25, -0.10)$
+- `double_gauss:` fit a Gaussian to each side of the disk
+    - mar offset from image center: $(0.01, -0.06)$
+    - aug offset from image center: $(0, 0.06)$
+    - jun offset from image center: $(0.13, 0.09)$
+- `clean_pixels:` run clean with a low number of iterations, select the brightest pixel on each side of the disk from the clean component map
+    - March:
+        - NW side: `20:45:09.682  -31.20.30.767`, $(6.77\times10^{-5})$ Jy
+        - SE side: `20:45:10.012  -31.20.34.047`, $(6.78\times10^{-5})$ Jy
+        - Mean: $\to$ `20:45:9.847 -31.20.32.407`; 
+        - Pointing center: `20:45:09.84 -31:20:32.36`
+        - Offset: `0.01 -0.05` arcsec
+    - August:
+        - NW side: `20:45:09.68  -31.20.30.75`, $(3.69\times10^{-5})$ Jy
+        - SE side: `20:45:10.03  -31.20.34.29`, $(3.24\times10^{-5})$ Jy
+        - Mean: $\to$ `20:45:9.855 -31.20.32.52`; 
+        - Pointing center: `20:45:09.85  -31:20:32.52`
+        - Offset: `0.01 0.00` arcsec
+    - June:
+        - NW side: `20:45:09.702  -31.20.31.099`, $(1.03\times10^{-4})$ Jy
+        - SE side: `20:45:10.036  -31.20.34.504`, $(6.70\times10^{-4})$ Jy
+        - Mean: $\to$ `20:45:09.869 -31.20.32.802`; 
+        - Pointing center: `20:45:09.87 -31:20:32.89`
+        - Offset: `0.00 0.09` arcsec  
+
+The 'clean pixel' method gives the best agreement for the March and August dates,
+and we will use this method going forward. The coordinates calculated above will
+be used as the new phasecenters (`fixvis` will be applied to all three dates for
+consistency).
+---
 ## 4/8/17: Final iteration of data files?
 
 Aug $\chi^2$ | Jun $\chi^2$   | Mar $\chi^2$
@@ -30,6 +86,7 @@ Aug $\chi^2$ | Jun $\chi^2$   | Mar $\chi^2$
 0.97191927   | 2.59185666     | 1.97182168
 1.02544892   | **2.29280139** | 1.97257757
 
+---
 ## 3/21/17: Pixel location:
 
 - ctrpix remains the same if I make image 257 pixels
@@ -49,7 +106,7 @@ From STSCI:
 
 Recently I realized that the time window we split out to fix the bad spw in the June date was exactly the time window of the flare. This makes me somewhat suspicious, and Meredith and I decided I should do some more digging, espcially considering all the work we put into making the flare data useable.
 
-The `plotms` of amp vs. time for spw3 (the bad one) and spw1 (well behaved) are roughly the same--both show a huge spike in the last (flare) time window. This leads me to believe that it's not the flare itself that's screwing up spw3; if this were the case, we should see the same thing for spw1.
+The `plotms` of amp vs. time for spw3 (the bad one) and spw1 (well behaved) are roughly the same--both show a huge spike in the last (flare) time window. This leads me to believe that it's not the flare itself that's messing up spw3; if this were the case, we should see the same thing for spw1.
 
 - Antenna 1 and 2 are almost constantly 'on' in last time window, as opposed to dashed in previous windows?
 - same for baseline, phase
