@@ -9,14 +9,11 @@ __*
 *.fls
 *.latex
 *.nfs
-*.mask
-*.region
-*.mask
-*.image
-*.residual
 
 final_visibilities
 
 imaging
 !imaging/cleans/*.fits
 !imaging/plots
+
+!Notes/Figures/*
