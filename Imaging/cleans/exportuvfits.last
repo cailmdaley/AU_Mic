@@ -1,0 +1,16 @@
+taskname           = "exportuvfits"
+vis                =  "aumic_jun_timing_spw1.concat.ms"
+fitsfile           =  "aumic_jun_timing_spw1.concat.uvf"
+datacolumn         =  "corrected"
+field              =  ""
+spw                =  ""
+antenna            =  ""
+timerange          =  ""
+avgchan            =  1
+writesyscal        =  False
+multisource        =  True
+combinespw         =  True
+writestation       =  True
+padwithflags       =  True
+overwrite          =  False
+#exportuvfits(vis="aumic_jun_timing_spw1.concat.ms",fitsfile="aumic_jun_timing_spw1.concat.uvf",datacolumn="corrected",field="",spw="",antenna="",timerange="",avgchan=1,writesyscal=False,multisource=True,combinespw=True,writestation=True,padwithflags=True,overwrite=False)

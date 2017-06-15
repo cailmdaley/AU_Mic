@@ -17,7 +17,6 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     angleSE = 128.0 - 90
     # angleNW = 311.2 - 90
     angleNW = angleSE + 181.7
-    angleNW - angleSE
 
     # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
@@ -218,7 +217,7 @@ fig, (natural_ax, taper_ax) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=natural_ax,
-            image='../cleans/aumic_aug_natural',
+            image='../cleans/aumic_aug_centered_natural',
             axislabels=False,
             cpal=cpals[which_cpal],
             cbmin=-400,
@@ -231,7 +230,7 @@ return_axis(ax=natural_ax,
                   (4, 3.95, r'aug')])
 
 return_axis(ax=taper_ax,
-            image='../cleans/aumic_jun_timing_natural',
+            image='../cleans/aumic_all_natural',
             axislabels=True,
             cpal=cpals[which_cpal],
             cbmin=-100,

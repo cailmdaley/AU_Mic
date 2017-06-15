@@ -38,7 +38,7 @@ if len(concat_files) > 1:
 #==========================================================
 #rms values for centered cleans
 aug_centered_natural_rms = 3.83357546525e-05
-jun_timing_centered_natural_rms =  2.80185104202e-05
+jun_timing_centered_natural_rms = 2.80185104202e-05
 mar_centered_200klam_rms = 2.92637287203e-05
 augjun_centered_natural_rms = 2.2613137844e-05
 all_centered_natural_rms = 1.8107746655e-05
