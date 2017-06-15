@@ -3,6 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import emcee
 
+class Observation:
+    def __init__(self, filename, coords):
+        self.file = filename
+        self.coords = coords
+
+aug = UVfits('../final_visibilities/aumic_aug_allspws_corrected.uvf', coords)
 
 def model_convolve(modelfile, obsfile, coord, ra, dec):
     """
