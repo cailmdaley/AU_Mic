@@ -17,4 +17,7 @@ imaging
 !imaging/cleans/imaging_script.py
 !imaging/plots
 
+modeling/obs_data
+modeling/model_data
+
 !Notes/Figures/*
