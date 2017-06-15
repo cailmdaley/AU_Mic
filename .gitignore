@@ -14,6 +14,7 @@ final_visibilities
 
 imaging
 !imaging/cleans/*.fits
+!imaging/cleans/imaging_script.py
 !imaging/plots
 
 !Notes/Figures/*
