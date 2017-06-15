@@ -9,22 +9,11 @@ __*
 *.fls
 *.latex
 *.nfs
-*.mask
-*.region
-*.mask
-*.image
-*.residual
 
+final_visibilities
 
-
-Modeling/model_files
-Modeling/data_files
-Imaging/uncorrected_data_files
-
-Imaging/old_cleans_seperate
-Imaging/old_cleans_composite
-
-Imaging/Visibility_processing
-Imaging/aumic_ALL
+imaging
+!imaging/cleans/*.fits
+!imaging/plots
 
 !Notes/Figures/*
