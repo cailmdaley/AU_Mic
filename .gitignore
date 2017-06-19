@@ -1,23 +1,22 @@
 radmc3dPy-0.28.1
 radmc3dPy
-.DS*
-__*
-*.pyc
-*.gz
-*.aux
-*.fdb_latexmk
-*.fls
-*.latex
-*.nfs
 
-final_visibilities
+*.image
+*.ms
+*.uvf
+*.vis
+*.region
 
-imaging
-!imaging/cleans/*.fits
-!imaging/cleans/imaging_script.py
-!imaging/plots
+imaging/old_cleans
+imaging/older_cleans_composite
+imaging/older_cleans_seperate
+imaging/older_plots
+imaging/visibility_processing
 
 modeling/obs_data
 modeling/model_data
 
-!Notes/Figures/*
+
+
+
+
