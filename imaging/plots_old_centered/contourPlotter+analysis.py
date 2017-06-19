@@ -17,11 +17,9 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     angleSE = 128.0 - 90
     # angleNW = 311.2 - 90
     angleNW = angleSE + 181.7
-    angleNW - angleSE
 
     # Read the header from the observed FITS continuum image:
     head = fits.getheader(image + ".fits")
-    print(head)
     # Read in images and rotate so that disk is horizontal
     im = rotate(fits.getdata(image + ".fits").squeeze(),
                 angleSE, reshape=False)
@@ -48,8 +46,8 @@ def return_axis(ax, image, cpal, cbmin, cbmax, cbtmj, cbtmn, rms, cont_levs, tex
     xmax = 5.5
     ymin = -5.5
     ymax = 5.5
-    # ax.set_xlim(xmax, xmin)
-    # ax.set_ylim(ymin, ymax)
+    ax.set_xlim(xmax, xmin)
+    ax.set_ylim(ymin, ymax)
     ax.grid(False)
 
     # Set x and y major and minor tics
@@ -219,34 +217,32 @@ fig, (natural_ax, taper_ax) = plt.subplots(
 
 # Plot subplots on seperate axes
 return_axis(ax=natural_ax,
-            image='../cleans/aumic_few_pix_usermask_natural',
-            axislabels=True,
-            cpal=cpals[which_cpal],
-            cbmin=-50,
-            cbmax=351,
-            cbtmj=50,
-            cbtmn=10,
-            rms=1.47999598994e-05,
-            cont_levs=np.arange(2, 40, 2),
-            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4.43, 3.95, '4096 pixels')])
-
-
-return_axis(ax=taper_ax,
-            image='../cleans/aumic_composite_usermask_natural',
+            image='../cleans/aumic_aug_centered_natural',
             axislabels=False,
             cpal=cpals[which_cpal],
-            cbmin=-50,
-            cbmax=601,
+            cbmin=-400,
+            cbmax=201,
             cbtmj=100,
             cbtmn=20,
-            rms=1.94809763343e-05,
+            rms=3.02602056763e-05,
             cont_levs=np.arange(2, 40, 2),
             text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
-                  (4, 3.95, r'256 pixels')])
+                  (4, 3.95, r'aug')])
 
+return_axis(ax=taper_ax,
+            image='../cleans/aumic_all_natural',
+            axislabels=True,
+            cpal=cpals[which_cpal],
+            cbmin=-100,
+            cbmax=401,
+            cbtmj=100,
+            cbtmn=20,
+            rms=2.09834179259e-05,
+            cont_levs=np.arange(2, 40, 2),
+            text=[(4.8, 4.4, 'AU Mic ALMA 1.4mm'),
+                  (4.43, 3.95, r'jun')])
 plt.subplots_adjust(wspace=0)
 
 # Save and show figure
-plt.savefig('aumic_composite_few_pix_PA_lines.png')
+plt.savefig('aumic_aug_and_jun.png')
 plt.show()
