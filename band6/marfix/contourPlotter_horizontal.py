@@ -244,52 +244,14 @@ class Observation:
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-num = 2
-plot_width=11.6/2
-fig = plt.subplots(1, num, sharex=False, sharey=False, 
-    figsize=(plot_width * num, 6.2))[0]
-plt.subplots_adjust(wspace=-0.055)
+mar = Observation('aumic_mar_with_star_taper.fits', 2.96353882732e-05)
 
-# mar = Observation('../cleans/aumic_mar_centered_200klam.fits', 2.92637287203e-05,
-#     fig=fig, pos=(0, num), 
-#     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-#           [4.7, 3.4, 'March 2014']])
-# aug = Observation('../cleans/aumic_aug_centered_natural.fits', 3.83357546525e-05,
-#     fig=fig, pos=(1, num), 
-#     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-#           [4.7, 3.4, 'August 2014']])
-#     
-# jun = Observation('../cleans/aumic_jun_timing_centered_natural.fits',
-#     2.80185104202e-05, fig=fig, pos=(2, num), 
-#     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-#           [4.7, 3.4, 'June 2015']])
-
-all_natural = Observation('../cleans/aumic_all_centered_natural.fits', 
-    1.8107746655e-05, pa_SE=128.5, fig=fig, pos=(0, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, 'natural weighting']])
-          
-all_200klam = Observation('../cleans/aumic_all_centered_200klam.fits',
-    2.15842592297e-05, pa_SE=128.5, fig=fig, pos=(1, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, r'200 k$\lambda$ taper']])
-          
-marjun_natural = Observation('../cleans/aumic_marjun_centered_natural.fits', 
-    2.03299914574e-05, pa_SE=128.5, fig=fig, pos=(0, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, 'natural weighting']])
-    
-marjun_200klam = Observation('../cleans/aumic_marjun_centered_200klam.fits',
-    2.39168402913e-05, pa_SE=128.5, fig=fig, pos=(1, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, r'200 k$\lambda$ taper']])
-
-for obs in [all_natural, all_200klam]:
+for obs in [mar]:
     obs.get_fits()
     obs.make_axis()
     obs.fill_axis()
 
-plt.savefig('aumic_centered_all_horizontal.png')
+plt.savefig('aumic_mar_with_star.png')
 plt.show()
 
 # plt.show()
