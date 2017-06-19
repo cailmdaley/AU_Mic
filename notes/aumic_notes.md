@@ -13,7 +13,25 @@
 - Thebault 2009
 ---
 ##### For Meredith:
+- Should noise remain the same across all models for a given observation?
 - Evan's model has ctrpix 256.5, while I have 257?
+
+---
+#### 6/16/17: Final corrections on visibility files, and exclusion of flare 
+Although I previously said that the March date seemed find, visual inspection indicates that we are oversubtracting the stellar flux:
+![](Figures/aumic_mar_oversubtracted.png)
+
+    ``` python
+    cl.addcomponent(flux=0.000514113, fluxunit='Jy', shape='point', 
+        dir='J2000 20:45:09.84238 -31.20.32.35898')  
+    cl.rename('point_fit.cl')  
+    cl.close()
+    ft(vis='aumic_mar_allspws.fixvis.ms', complist='point_fit.cl')
+    uvsub(vis='aumic_mar_allspws.fixvis.ms')
+    split(vis='aumic_mar_allspws.fixvis.ms',
+        outputvis='aumic_mar_allspws_corrected.ms',
+    	datacolumn='corrected')
+   ```
 
 ---
 #### 6/14/17: Final corrections on visibility files, and exclusion of flare 
