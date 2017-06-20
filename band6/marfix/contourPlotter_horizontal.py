@@ -242,6 +242,9 @@ class Observation:
         except AttributeError:
             pass
         
+        plt.savefig('mar_with_star_taper.png')
+        plt.show()
+        
     def get_horizontal_profile(self):
     
         # Define x and y extent of profile slice
@@ -271,20 +274,30 @@ class Observation:
         
         
             
-        def polynomial(x, *p):
-            a, b, c, d, e = p
-            return a*x**4 + b*x**3 + c*x**2 + d*x + e
+        def polynomial(x, p):
+            return np.sum([p[i]*x**(len(p) - 1 - i) for i in range(len(p))], axis=0)
             
         
+        fit_params = np.polyfit(ra_subset, profile_subset, 28)
+        model = polynomial(self.ra_offset, fit_params)
         
-        plt.plot(ra_subset, profile_subset)
+        
+        # plt.plot(ra_subset, profile_subset)
+        plt.plot(self.ra_offset, self.profile, label='data')
+        plt.plot(self.ra_offset, model, label='fit')
+        plt.axvline(self.ra_offset[np.where(self.profile == left_trough)[0][0]])
+        plt.axvline(self.ra_offset[np.where(self.profile == right_trough)[0][0]])
+        
+        plt.legend()
         plt.gca().invert_xaxis()
+        plt.savefig('mar_taper_profile_fit.png')
+        plt.show()
             
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mar = Observation('aumic_mar_with_star_taper.fits', 
+mar = Observation('mar_with_star_taper.fits', 
     rms=2.96353882732e-05, pa_SE=128.5)
 
 mar.get_fits()
@@ -292,8 +305,6 @@ mar.get_fits()
 # mar.make_axis()
 # mar.fill_axis()
 mar.get_horizontal_profile()
-# plt.savefig('aumic_mar_with_star.png')
 
-plt.show()
 
 # plt.show()
