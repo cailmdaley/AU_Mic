@@ -8,8 +8,8 @@ pixsize ='0.03arcsec',
 
 
 
-visibilities = ['aumic_mar_allspws.concat.ms']
-filename = 'aumic_mar_with_star'
+visibilities = ['aumic_mar_allspws.fixvis.ms']
+filename = 'mar_with_star'
 natural = False
 natural_mask = 'aumic_jun_mask.region'
 taper = True
