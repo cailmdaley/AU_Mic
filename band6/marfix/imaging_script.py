@@ -10,9 +10,9 @@ pixsize ='0.03arcsec',
 
 visibilities = ['aumic_mar_allspws.fixvis.ms']
 filename = 'mar_with_star'
-natural = False
-natural_mask = 'aumic_jun_mask.region'
-taper = True
+natural = True
+natural_mask = 'aumic_mar_mask_natural.region'
+taper = False
 taper_mask = 'aumic_mar_mask.region'
 view=True
 
@@ -30,7 +30,8 @@ else:
 
 #==========================================================
 #rms values 
-rms = 2.96353882732e-05
+rms_taper = 2.96353882732e-05
+rms_natural = 2.70607160928e-05
 #==========================================================
 
 print('Cleaning...')
@@ -51,9 +52,9 @@ if natural:
 
     if view:
         #Show dirty image, then clean up and delete all dirty clean files
-        viewer(infile=image + '.residual', displaytype='contour')
         print 'dirty natural: {}'.format(dirty_natural_rms)
         raw_input('mask ready? ')
+        viewer(infile=image + '.residual', displaytype='contour')
     subprocess.call("rm -rf {}.*".format(image), shell=True)
 
     # Clean with correct mask and rms
