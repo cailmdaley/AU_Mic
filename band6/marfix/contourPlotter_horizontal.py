@@ -3,6 +3,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.patches import Ellipse
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator
 from my_colormaps import *
+from scipy.optimize import curve_fit
 from scipy.ndimage.interpolation import rotate
 import matplotlib.patheffects as PathEffects
 import matplotlib.pyplot as plt
@@ -42,21 +43,21 @@ class Observation:
 
         # Read in header spatial info to create ra
         nx = self.head['NAXIS1']
-        xpix = self.head['CRPIX1']
-        xval = self.head['CRVAL1']
-        self.xdelt = self.head['CDELT1']
+        self.xval = self.head['CRVAL1']
+        self.xpix = self.head['CRPIX1'] - 1 
+        self.xdelt = self.head['CDELT1'] 
 
         ny = self.head['NAXIS2']
-        ypix = self.head['CRPIX2']
-        yval = self.head['CRVAL2']
+        self.yval = self.head['CRVAL2']
+        self.ypix = self.head['CRPIX2'] - 1
         self.ydelt = self.head['CDELT2']
 
         # Convert from degrees to arcsecs
-        self.ra_offset = np.array(((np.arange(nx) - xpix + 1) * self.xdelt) * 3600)
-        self.dec_offset = np.array(((np.arange(ny) - ypix + 1) * self.ydelt) * 3600)
+        self.ra_offset = np.array(((np.arange(nx) - self.xpix) * self.xdelt) * 3600)
+        self.dec_offset = np.array(((np.arange(ny) - self.ypix) * self.ydelt) * 3600)
 
-        # self.ra_abs = ((np.arange(nx) - xpix + 1) * xdelt + xval) * 3600
-        # self.dec_abs = ((np.arange(ny) - ypix + 1) * ydelt + yval) * 3600
+        # self.ra_abs = ((np.arange(nx) - xpix) * xdelt + xval) * 3600
+        # self.dec_abs = ((np.arange(ny) - ypix) * ydelt + yval) * 3600
         return
 
 
@@ -120,7 +121,7 @@ class Observation:
                              cmap=cpal)
 
         # Set contour levels
-        cont_levs = np.arange(2, 40, 4) * self.rms
+        cont_levs = np.arange(2, 40, 2) * self.rms
         
         # add residual contours if resdiual exists; otherwise, add image contours
         try:
@@ -240,18 +241,59 @@ class Observation:
                     
         except AttributeError:
             pass
+        
+    def get_horizontal_profile(self):
+    
+        # Define x and y extent of profile slice
+        dec_pix = np.where(np.abs(self.dec_offset) <= 0.1)
+        
+        
+        
+        self.profile = []
+        for ra_pix in range(len(self.ra_offset)):
+            self.profile.append(np.mean(self.im[dec_pix, ra_pix]))
+        self.profile= np.array(self.profile)    
+            
+        left_side  = np.where((self.ra_offset > 0)  & (self.ra_offset < 3))
+        right_side = np.where((self.ra_offset > -3) & (self.ra_offset < 0))
+        
+        left_trough  = np.min(self.profile[left_side])
+        right_trough = np.min(self.profile[right_side])
+        
+        ra_subset = np.append(
+            self.ra_offset[:np.where(self.profile == left_trough)[0][0]+1],
+            self.ra_offset[np.where(self.profile == right_trough)[0][0]:])
+        
+        profile_subset = []
+        for ra in ra_subset:
+            profile_subset.append(self.profile[np.where(self.ra_offset == ra)][0])
+            
+        
+        
+            
+        def polynomial(x, *p):
+            a, b, c, d, e = p
+            return a*x**4 + b*x**3 + c*x**2 + d*x + e
+            
+        
+        
+        plt.plot(ra_subset, profile_subset)
+        plt.gca().invert_xaxis()
+            
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mar = Observation('aumic_mar_with_star_taper.fits', 2.96353882732e-05)
+mar = Observation('aumic_mar_with_star_taper.fits', 
+    rms=2.96353882732e-05, pa_SE=128.5)
 
-for obs in [mar]:
-    obs.get_fits()
-    obs.make_axis()
-    obs.fill_axis()
+mar.get_fits()
+# mar.im[253:259, :] = 0
+# mar.make_axis()
+# mar.fill_axis()
+mar.get_horizontal_profile()
+# plt.savefig('aumic_mar_with_star.png')
 
-plt.savefig('aumic_mar_with_star.png')
 plt.show()
 
 # plt.show()

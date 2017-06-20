@@ -20,16 +20,16 @@ im = rotate(fits.getdata(image + ".fits").squeeze(),
 
 # Generate x and y axes: offset position in arcsec
 nx = head['NAXIS1']
-xpix = head['CRPIX1']
+xpix = head['CRPIX1'] - 1
 xdelt = head['CDELT1']
 
 ny = head['NAXIS2']
-ypix = head['CRPIX2']
+ypix = head['CRPIX2'] - 1
 ydelt = head['CDELT2']
 
 # Convert from degrees to arcsecs
-ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
-dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
+ra = ((np.arange(nx) - xpix) * xdelt) * 3600
+dec = ((np.arange(ny) - ypix) * ydelt) * 3600
 xaxis = ra[2:int(xpix)][::-1]
 
 # Define y extent of gaussian
