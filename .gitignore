@@ -6,15 +6,21 @@ radmc3dPy
 *.uvf
 *.vis
 *.region
+*.uvsub
+*.fixvis
+uid*
 
 band6/imaging/cleans/old
 band6/imaging/cleans/older_composite/
 band6/imaging/cleans/older_separate/
 
+band6/visibility_processing/*
+!band6/visibility_processing/FINAL_VISIBILITY_CORRECTION
+
 modeling/obs_data
 modeling/model_data
 
-band6/visibility_processing
+
 
 
 
