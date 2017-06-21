@@ -3,50 +3,56 @@
 ------------------------------------------------------------
 
 ### To Do
-- Boccaletti plots
-    - also, use all three dates!
-- do imfit without flare time
-- just show combined image
-- reclean with robust=0.5, uniform
+-   Boccaletti plots
+    -   also, use all three dates!
+-   do imfit without flare time
+-   just show combined image
+-   reclean with robust=0.5, uniform
 
 ##### Papers:
-- Thebault 2009
----
+-   Thebault 2009
+------------------------------------------------------------
 ##### For Meredith:
-- Should noise remain the same across all models for a given observation?
-- Evan's model has ctrpix 256.5, while I have 257?
+-   Should noise remain the same across all models for a given observation?
+-   Evan's model has ctrpix 256.5, while I have 257?
 
----
+------------------------------------------------------------
 
-#### 6/16/17: Final corrections on visibility files, and exclusion of flare 
-Although I previously said that the March date seemed find, visual inspection indicates that we are oversubtracting the stellar flux:
+#### 6/16/17: Fixing March
+Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
 ![](Figures/aumic_mar_oversubtracted.png)
 
 Because the March baselines are so short ($<450$ m), we are not able to obtain the star flux by fitting a point source to the longest baselines; the flux of the disk is present at even the longest baselines. 
 As such, I am employing an image-domain approach. 
-I fit a 24th order polynomial to the radial surface brightness profile of the disk, excluding the inner radii at which stellar emission is present. Using the fit, I am able to derive an estimate of the disk flux at the location of the star, and thus find the star flux. 
+I fit a 24th order polynomial to the radial surface brightness profile of the disk, excluding the inner radii where stellar emission is present. 
+Using the fit, I am able to derive an estimate of the disk flux at the location of the star, and thus find the star flux. 
+Derived values can be found below.
 
 | Component | Flux ($\mu$Jy) | 
 |---|---|
 | Disk | 781 |
 | Star | 367 |
 
-
-
-
+I use the following procedure to subtract the stellar flux from the March visibilities:
 ``` python
-cl.addcomponent(flux=0.000514113, fluxunit='Jy', shape='point', 
+fixvis(vis = 'aumic_mar_allspws.concat.ms', 
+    phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
+    outputvis = 'aumic_mar_allspws.fixvis.ms')
+os.system('rm -rf point_fit.cl')
+cl.addcomponent(flux=0.000367, fluxunit='Jy', shape='point', 
     dir='J2000 20:45:09.84238 -31.20.32.35898')  
 cl.rename('point_fit.cl')  
 cl.close()
 ft(vis='aumic_mar_allspws.fixvis.ms', complist='point_fit.cl')
 uvsub(vis='aumic_mar_allspws.fixvis.ms')
+os.system('rm -rf aumic_mar_allspws_corrected.ms')
 split(vis='aumic_mar_allspws.fixvis.ms',
     outputvis='aumic_mar_allspws_corrected.ms',
 	datacolumn='corrected')
 ```
+The resulting visibilities appear very slighltly oversubtracted, but it's good enough for now.
 
----
+------------------------------------------------------------
 #### 6/14/17: Final corrections on visibility files, and exclusion of flare 
 Now that we a more reliable result for the June star position, Meredith and I have decided that it would be a good idea to re-subtract the stellar componenet from the actual star position, rather than the flare position. I apply `uvmodelfit` to the I used the following code to fit a point source to several different baseline ranges; the point source flux should converge to the stellar flux as the shorter baselines are excluded.
 ``` python
@@ -66,7 +72,7 @@ The procedure for June is as follows:
         phasecenter = 'J2000 20:45:09.871593 -31.20.32.838199',
         outputvis = 'aumic_jun_noflare_allspws.fixvis.ms')
     ```
-2. Subtract stellar component, and split out corrected data:
+2.  Subtract stellar component, and split out corrected data:
     ``` python
     cl.addcomponent(flux=0.000262055, fluxunit='Jy', shape='point', 
         dir='J2000 20:45:09.871593 -31.20.32.838199')  
@@ -78,7 +84,7 @@ The procedure for June is as follows:
         outputvis='aumic_jun_noflare_allspws_corrected.ms',
     	datacolumn='corrected')
    ```
-3. Now, pull all files from the `24jun2015_flare_main`, which contains all flare-subtracted visibilities, and concatenate into single file:
+3.  Now, pull all files from the `24jun2015_flare_main`, which contains all flare-subtracted visibilities, and concatenate into single file:
 ``` python
 import subprocess
 from glob import glob
@@ -89,7 +95,7 @@ When the output vis is cleaned, some stellar emission clearly remains. This is w
 
 ***Given the difficulties that I experienced with the bad spectral window during the flare timewindow, the persistent flare/stellar flux in the supposedly corrected flare visibilities, and general uncertainty about how we fit the point sources to the star/flare the first time around, I'm deciding to fully eliminate the flare timewindow (4:23:38-4:29:58) from the data we use for imaging and modeling.***
 
----
+------------------------------------------------------------
 **Other dates:** I went back to re-check March and August using a for loop similar to that above---March seems fine, but I'm redoing August. I went with `uvrange='500~1200`, which yields `I = 0.00012281 +/- 1.17063e-08`. Jy The procedure is as follows:
 
 1.  Fix phasecenter:      
@@ -98,7 +104,8 @@ When the output vis is cleaned, some stellar emission clearly remains. This is w
         phasecenter = 'J2000 20:45:09.85274 -31.20.32.50258',
         outputvis = 'aumic_aug_allspws.fixvis.ms')
     ```
-2. Subtract stellar component, and split out corrected data:
+        
+2.  Subtract stellar component, and split out corrected data:
     ``` python
     cl.addcomponent(flux=0.00012281, fluxunit='Jy', shape='point', 
         dir='J2000 20:45:09.85274 -31.20.32.50258')  
@@ -109,15 +116,18 @@ When the output vis is cleaned, some stellar emission clearly remains. This is w
     split(vis='aumic_aug_allspws.fixvis.ms',
         outputvis='aumic_aug_allspws_corrected.ms',
     	datacolumn='corrected')
-   ```
-For March, all we have to do is phase shift:  
+    ```
+
+For **March**, all we have to do is phase shift:  
 ``` python
 fixvis(vis = 'aumic_mar_allspws.concat.ms', 
     phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
 ```
+
 For consistency, I'm also creating a copy called `aumic_mar_allspws_corrected.ms`
----
+
+------------------------------------------------------------
 #### 6/13/17: Position fixing: imfit on non-flare component of June date
 A different method to fix the June flare offset problem: if the flare is indeed asymmetric and pulled the imfit position away from the true star position, this can be remedied by calling imfit on the non-flare part of the June observation. First,
 I will use March and August as controls.
@@ -168,62 +178,63 @@ Compare to previously used imfit values:
 
 For all dates, the imfit coordinates are just about exactly at the stellar emission (by visual inspection). For June, the previously used coordinates are significantly below and to the right of the star position.
 
----
+------------------------------------------------------------
 ####5/31/17: First day of summer research
 - Relative position uncertainty (per synthesized beam) = $\frac{\theta_{sb}}{SNR}$
 - $\to$ Fixvis phasecenter
 
----
+------------------------------------------------------------
 ####5/28/17: Star position
 Sooo it's been a while since I've written any notes. In the last month and a half,
 I have:
 
-1. Cutting out the last observation window for **(just spw3? all spws?)** fixed the flare date.
-2. While concatenating the different dates before cleaning may have helped with the star offset from the image center, this effect remains. Meredith and I wonder if the flare could have been asymmetric, so that the point source fit to the flaring star that defines the image center is offset from the star itself. This would also explain the asymmetric gap/hole by the star in the June observation.
-3. To fix this issue, I hope to find some metric of determining the center/star position of the disk that gives good agreement with august and march dates and apply it to the June date.
+1.  Cutting out the last observation window for **(just spw3? all spws?)** fixed the flare date.
+2.  While concatenating the different dates before cleaning may have helped with the star offset from the image center, this effect remains. Meredith and I wonder if the flare could have been asymmetric, so that the point source fit to the flaring star that defines the image center is offset from the star itself. This would also explain the asymmetric gap/hole by the star in the June observation.
+3.  To fix this issue, I hope to find some metric of determining the center/star position of the disk that gives good agreement with august and march dates and apply it to the June date.
 
 ##### Approaches:
-- `pixel_mean:` take the mean position of all pixels with values above 6.2 $\sigma$ 
-    - mar offset from image center: $(0.0, 0.03)$ 
-    - aug offset from image cenger: $(0.0, 0.0)$
-    - jun offset from image center: $(0.06, -0.18)$
-        - visual inspection shows that this is on the wrong side of the disk...
-- `single_gauss:` fit a Gaussian to the whole disk
-    - mar offset from image center: $(-0.04, 0.02)$
-    - aug offset from image center: $(0.07, -0.03)$
-    - jun offset from image center: $(0.25, -0.10)$
-- `double_gauss:` fit a Gaussian to each side of the disk
-    - mar offset from image center: $(0.01, -0.06)$
-    - aug offset from image center: $(0, 0.06)$
-    - jun offset from image center: $(0.13, 0.09)$
-- `clean_pixels:` run clean with a low number of iterations, select the brightest pixel on each side of the disk from the clean component map
-    - March:
-        - NW side: `20:45:09.682  -31.20.30.767`, $(6.77\times10^{-5})$ Jy
-        - SE side: `20:45:10.012  -31.20.34.047`, $(6.78\times10^{-5})$ Jy
-        - Mean: $\to$ `20:45:9.847 -31.20.32.407`; 
-        - Pointing center: `20:45:09.84 -31:20:32.36`
-        - Offset: `0.01 -0.05` arcsec
-    - August:
-        - NW side: `20:45:09.68  -31.20.30.75`, $(3.69\times10^{-5})$ Jy
-        - SE side: `20:45:10.03  -31.20.34.29`, $(3.24\times10^{-5})$ Jy
-        - Mean: $\to$ `20:45:9.855 -31.20.32.52`; 
-        - Pointing center: `20:45:09.85  -31:20:32.52`
-        - Offset: `0.01 0.00` arcsec
-    - June:
-        - NW side: `20:45:09.702  -31.20.31.099`, $(1.03\times10^{-4})$ Jy
-        - SE side: `20:45:10.036  -31.20.34.504`, $(6.70\times10^{-4})$ Jy
-        - Mean: $\to$ `20:45:09.869 -31.20.32.802`; 
-        - Pointing center: `20:45:09.87 -31:20:32.89`
-        - Offset: `0.00 0.09` arcsec  
+-   `pixel_mean:` take the mean position of all pixels with values above 6.2 $\sigma$ 
+    -   mar offset from image center: $(0.0, 0.03)$ 
+    -   aug offset from image cenger: $(0.0, 0.0)$
+    -   jun offset from image center: $(0.06, -0.18)$
+        -   visual inspection shows that this is on the wrong side of the disk...
+-   `single_gauss:` fit a Gaussian to the whole disk
+    -   mar offset from image center: $(-0.04, 0.02)$
+    -   aug offset from image center: $(0.07, -0.03)$
+    -   jun offset from image center: $(0.25, -0.10)$
+-   `double_gauss:` fit a Gaussian to each side of the disk
+    -   mar offset from image center: $(0.01, -0.06)$
+    -   aug offset from image center: $(0, 0.06)$
+    -   jun offset from image center: $(0.13, 0.09)$
+-   `clean_pixels:` run clean with a low number of iterations, select the brightest pixel on each side of the disk from the clean component map
+    -   March:
+        -   NW side: `20:45:09.682  -31.20.30.767`, $(6.77\times10^{-5})$ Jy
+        -   SE side: `20:45:10.012  -31.20.34.047`, $(6.78\times10^{-5})$ Jy
+        -   Mean: $\to$ `20:45:9.847 -31.20.32.407`; 
+        -   Pointing center: `20:45:09.84 -31:20:32.36`
+        -   Offset: `0.01 -0.05` arcsec
+    -   August:
+        -   NW side: `20:45:09.68  -31.20.30.75`, $(3.69\times10^{-5})$ Jy
+        -   SE side: `20:45:10.03  -31.20.34.29`, $(3.24\times10^{-5})$ Jy
+        -   Mean: $\to$ `20:45:9.855 -31.20.32.52`; 
+        -   Pointing center: `20:45:09.85  -31:20:32.52`
+        -   Offset: `0.01 0.00` arcsec
+    -   June:
+        -   NW side: `20:45:09.702  -31.20.31.099`, $(1.03\times10^{-4})$ Jy
+        -   SE side: `20:45:10.036  -31.20.34.504`, $(6.70\times10^{-4})$ Jy
+        -   Mean: $\to$ `20:45:09.869 -31.20.32.802`; 
+        -   Pointing center: `20:45:09.87 -31:20:32.89`
+        -   Offset: `0.00 0.09` arcsec  
 
 The 'clean pixel' method gives the best agreement for the March and August dates,
 and we will use this method going forward. The coordinates calculated above will
 be used as the new phasecenters (`fixvis` will be applied to all three dates for
 consistency).
----
+
+------------------------------------------------------------
 ####4/8/17: Final iteration of data files?
 
-Aug $\chi^2$ | Jun $\chi^2$   | Mar $\chi^2$
+Aug $\chi^2$|Jun $\chi^2$|Mar $\chi^2$
 ------------ | -------------- | ------------
 0.96209719   | 2.77836548     | 1.9568517
 0.96680418   | 2.52863844     | 1.96150345
