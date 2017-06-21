@@ -21,7 +21,8 @@ cpal = jesse_reds
 class Observation:
     def __init__(self, filename, rms, pa_SE, fig=None, pos=(0,1), **kwds):
         
-        self.file = filename
+        self.filename = filename
+        self.name = filename[:-5]
         self.rms = rms
         self.pa_SE = pa_SE
         self.pa_NW = pa_SE+181.7
@@ -32,9 +33,9 @@ class Observation:
 
     def get_fits(self):
         #read in header and image, rotate so that disk is horizontal
-        self.head = fits.getheader(self.file)
+        self.head = fits.getheader(self.filename)
         
-        im = fits.getdata(self.file).squeeze()
+        im = fits.getdata(self.filename).squeeze()
         self.im = rotate(im, self.pa_SE-90, reshape=False)
 
         # change units to micro Jy
@@ -242,10 +243,10 @@ class Observation:
         except AttributeError:
             pass
         
-        plt.savefig('mar_with_star_taper.png')
+        plt.savefig(self.name + '_horzontal.png')
         plt.show()
         
-    def get_horizontal_profile(self):
+    def get_horizontal_profile(self, order):
     
         # Define x and y extent of profile slice
         dec_pix = np.where(np.abs(self.dec_offset) <= 0.1)
@@ -278,8 +279,12 @@ class Observation:
             return np.sum([p[i]*x**(len(p) - 1 - i) for i in range(len(p))], axis=0)
             
         
-        fit_params = np.polyfit(ra_subset, profile_subset, 28)
+        fit_params = np.polyfit(ra_subset, profile_subset, order)
         model = polynomial(self.ra_offset, fit_params)
+        
+        self.diskflux = polynomial(0, fit_params)
+        self.starflux = np.max(self.profile) - self.diskflux
+        
         
         
         # plt.plot(ra_subset, profile_subset)
@@ -290,21 +295,27 @@ class Observation:
         
         plt.legend()
         plt.gca().invert_xaxis()
-        plt.savefig('mar_taper_profile_fit.png')
+        plt.savefig(self.name + '_profile_fit_order{}.png'.format(order))
         plt.show()
-            
+        
+        
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mar = Observation('mar_with_star_taper.fits', 
-    rms=2.96353882732e-05, pa_SE=128.5)
+# mar = Observation('mar_with_star_taper.fits', 
+#     rms=2.96353882732e-05, pa_SE=128.5)
+#     
+mar = Observation('mar_with_star_natural.fits', 
+    rms=2.70607160928e-05, pa_SE=128.5)
 
 mar.get_fits()
 # mar.im[253:259, :] = 0
 # mar.make_axis()
 # mar.fill_axis()
-mar.get_horizontal_profile()
+mar.get_horizontal_profile(order=24)
+mar.diskflux
+mar.starflux
 
 
 # plt.show()
