@@ -6,18 +6,14 @@ import subprocess
 from glob import glob
 
 # Create list of measurement sets to use in clean:
-# files = glob("../../data_files/*.timing.reweighted.ms")
+# files = glob("../24jun2015_flare_main/*")
 
-#Clean variables to be changed
-dates = ['aumic_aug_centered.concat.ms',
-         'aumic_jun_timing_centered.concat.ms',
-         'aumic_mar_centered.concat.ms']
 imsize = 512
 pixsize ='0.03arcsec',
 
 
-visname = 'aumic_mar.concat.ms'
-filename = 'marl_allspws.concat'
+visname = 'aumic_mar_allspws_corrected.ms'
+filename = 'mar_allspws_corrected'
 
 natural = True
 imfit=False
@@ -37,6 +33,9 @@ if natural:
            niter=0)
     dirty_natural_rms = imstat(imagename='{}.residual'.format(image),
                  region='aumic_rms.region', listit=False)['rms'][0]
+                 
+    subprocess.call("rm -rf {}.*".format(image), shell=True)
+    
     # User mask:
     image = filename + "_natural"
     subprocess.call("rm -rf {}.*".format(image), shell=True)
