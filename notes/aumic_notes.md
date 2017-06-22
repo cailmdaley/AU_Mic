@@ -39,6 +39,7 @@ for ms in mses:
 
 ------------------------------------------------------------
 #### 6/16/17: Fixing March
+
 Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
 ![](Figures/aumic_mar_oversubtracted.png)
 
@@ -58,14 +59,25 @@ I use the following procedure to subtract the stellar flux from the March visibi
 fixvis(vis = 'aumic_mar_allspws.concat.ms', 
     phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
+<<<<<<< HEAD
 os.system('rm -rf point_fit.cl')
+=======
+<<<<<<< HEAD
+os.system('rm -rf point_fit.cl')
+=======
+>>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
+>>>>>>> dd14226a1858136646324d3fac739f41224b19ba
 cl.addcomponent(flux=0.000367, fluxunit='Jy', shape='point', 
     dir='J2000 20:45:09.84238 -31.20.32.35898')  
 cl.rename('point_fit.cl')  
 cl.close()
 ft(vis='aumic_mar_allspws.fixvis.ms', complist='point_fit.cl')
 uvsub(vis='aumic_mar_allspws.fixvis.ms')
+<<<<<<< HEAD
 os.system('rm -rf aumic_mar_allspws.fixvis.uvsub.ms')
+=======
+os.system('rm -rf aumic_mar_allspws_corrected.ms')
+>>>>>>> dd14226a1858136646324d3fac739f41224b19ba
 split(vis='aumic_mar_allspws.fixvis.ms',
     outputvis='aumic_mar_allspws.fixvis.uvsub.ms',
 	datacolumn='corrected')
