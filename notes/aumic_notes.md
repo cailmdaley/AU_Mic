@@ -19,7 +19,11 @@
 ------------------------------------------------------------
 
 #### 6/16/17: Fixing March
+<<<<<<< HEAD
 Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
+=======
+Although I previously said that the March date seemed find, visual inspection indicates that we are oversubtracting the stellar flux:
+>>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
 ![](Figures/aumic_mar_oversubtracted.png)
 
 Because the March baselines are so short ($<450$ m), we are not able to obtain the star flux by fitting a point source to the longest baselines; the flux of the disk is present at even the longest baselines. 
@@ -38,7 +42,10 @@ I use the following procedure to subtract the stellar flux from the March visibi
 fixvis(vis = 'aumic_mar_allspws.concat.ms', 
     phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
+<<<<<<< HEAD
 os.system('rm -rf point_fit.cl')
+=======
+>>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
 cl.addcomponent(flux=0.000367, fluxunit='Jy', shape='point', 
     dir='J2000 20:45:09.84238 -31.20.32.35898')  
 cl.rename('point_fit.cl')  
