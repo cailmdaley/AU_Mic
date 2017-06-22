@@ -1,4 +1,4 @@
-#  AU Mic Research Notes 
+.fixvis.uvsub#  AU Mic Research Notes 
 ##### Spring/Summer 2017
 ------------------------------------------------------------
 
@@ -16,14 +16,40 @@
 -   Should noise remain the same across all models for a given observation?
 -   Evan's model has ctrpix 256.5, while I have 257?
 
-------------------------------------------------------------
 
+------------------------------------------------------------
+#### 6/16/17: Reweighting
+Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code.
+The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
+
+```python
+#CASA
+from glob import glob
+mses = glob('*.uvsub.ms')
+for ms in mses:
+    exportuvfits(vis=ms, fitsfile = ms[:-3] + '.uvf')
+    
+#exit CASA; enter ipython
+%run var_vis.py
+from glob import glob
+uvfs = glob('*.uvsub.uvf')
+for uvf in uvfs:
+    final_name = uvf[:17] + '_FINAL'
+    var_vis(uvf[:-4], final_name)
+    create_vis(final_name)
+    
+#back to casa
+from glob import glob
+uvfs = glob('*FINAL.uvf'
+for uvf in uvfs:
+    importuvfits(fitsfile=uvf, vis=uvf[]+'.ms')
+
+```
+
+
+------------------------------------------------------------
 #### 6/16/17: Fixing March
-<<<<<<< HEAD
 Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
-=======
-Although I previously said that the March date seemed find, visual inspection indicates that we are oversubtracting the stellar flux:
->>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
 ![](Figures/aumic_mar_oversubtracted.png)
 
 Because the March baselines are so short ($<450$ m), we are not able to obtain the star flux by fitting a point source to the longest baselines; the flux of the disk is present at even the longest baselines. 
@@ -42,19 +68,16 @@ I use the following procedure to subtract the stellar flux from the March visibi
 fixvis(vis = 'aumic_mar_allspws.concat.ms', 
     phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
-<<<<<<< HEAD
 os.system('rm -rf point_fit.cl')
-=======
->>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
 cl.addcomponent(flux=0.000367, fluxunit='Jy', shape='point', 
     dir='J2000 20:45:09.84238 -31.20.32.35898')  
 cl.rename('point_fit.cl')  
 cl.close()
 ft(vis='aumic_mar_allspws.fixvis.ms', complist='point_fit.cl')
 uvsub(vis='aumic_mar_allspws.fixvis.ms')
-os.system('rm -rf aumic_mar_allspws_corrected.ms')
+os.system('rm -rf aumic_mar_allspws.fixvis.uvsub.ms')
 split(vis='aumic_mar_allspws.fixvis.ms',
-    outputvis='aumic_mar_allspws_corrected.ms',
+    outputvis='aumic_mar_allspws.fixvis.uvsub.ms',
 	datacolumn='corrected')
 ```
 The resulting visibilities appear very slighltly oversubtracted, but it's good enough for now.
@@ -88,7 +111,7 @@ The procedure for June is as follows:
     ft(vis='aumic_jun_noflare_allspws.fixvis.ms', complist='point_fit.cl')
     uvsub(vis='aumic_jun_noflare_allspws.fixvis.ms')
     split(vis='aumic_jun_noflare_allspws.fixvis.ms',
-        outputvis='aumic_jun_noflare_allspws_corrected.ms',
+        outputvis='aumic_jun_noflare_allspws.fixvis.uvsub.ms',
     	datacolumn='corrected')
    ```
 3.  Now, pull all files from the `24jun2015_flare_main`, which contains all flare-subtracted visibilities, and concatenate into single file:
@@ -96,7 +119,7 @@ The procedure for June is as follows:
 import subprocess
 from glob import glob
 files = glob("../24jun2015_flare_reduced/*.uvsub")
-concat(vis=files, concatvis='aumic_jun_flare_allspws_corrected.ms')
+concat(vis=files, concatvis='aumic_jun_flare_allspws.fixvis.uvsub.ms')
 ```
 When the output vis is cleaned, some stellar emission clearly remains. This is weird, because I haven't seen stellar emission in any of the previously made clean images... 
 
@@ -121,7 +144,7 @@ When the output vis is cleaned, some stellar emission clearly remains. This is w
     ft(vis='aumic_aug_allspws.fixvis.ms', complist='point_fit.cl')
     uvsub(vis='aumic_aug_allspws.fixvis.ms')
     split(vis='aumic_aug_allspws.fixvis.ms',
-        outputvis='aumic_aug_allspws_corrected.ms',
+        outputvis='aumic_aug_allspws.fixvis.uvsub.ms',
     	datacolumn='corrected')
     ```
 
@@ -132,7 +155,7 @@ fixvis(vis = 'aumic_mar_allspws.concat.ms',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
 ```
 
-For consistency, I'm also creating a copy called `aumic_mar_allspws_corrected.ms`
+For consistency, I'm also creating a copy called `aumic_mar_allspws.fixvis.uvsub.ms`
 
 ------------------------------------------------------------
 #### 6/13/17: Position fixing: imfit on non-flare component of June date
