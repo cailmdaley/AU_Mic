@@ -20,7 +20,7 @@
 ------------------------------------------------------------
 #### 6/16/17: Reweighting
 Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code.
-The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
+The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows, with `nclose=1500` and `uvwidth=22`:
 
 ```python
 #CASA
@@ -39,12 +39,13 @@ for uvf in uvfs:
     create_vis(final_name)
     
 #back to casa
-from glob import glob
-uvfs = glob('*FINAL.uvf'
-for uvf in uvfs:
-    importuvfits(fitsfile=uvf, vis=uvf[]+'.ms')
+# from glob import glob
+# uvfs = glob('*FINAL.uvf'
+# for uvf in uvfs:
+#     importuvfits(fitsfile=uvf, vis=uvf[]+'.ms')
 
 ```
+
 
 
 ------------------------------------------------------------

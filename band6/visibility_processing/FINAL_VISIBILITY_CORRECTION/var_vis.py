@@ -30,8 +30,8 @@ def var_vis(infile, outfile):
     print(" Max v baseline = {}".format(np.max(v)*klam))
     nfreq = 1
     uv = u**2+v**2
-    nclose = 500 #number of nearby visibility points to use when measuring the dispersion
-    uvwidth = 30 #area around a particular uv point to consider when searching for the nearest nclose neighbors (smaller numbers help make the good run faster, but could result in many points for which the weight cannot be calculated and is left at 0)
+    nclose = 1500 #number of nearby visibility points to use when measuring the dispersion
+    uvwidth = 22 #area around a particular uv point to consider when searching for the nearest nclose neighbors (smaller numbers help make the good run faster, but could result in many points for which the weight cannot be calculated and is left at 0)
     max_dist = np.zeros(nuv)
 
     import time
