@@ -208,7 +208,7 @@ class Observation:
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
-        self.ax.plot([0.0], [0.0], '+', markersize=9, markeredgewidth=1, color='k')
+        self.ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
 
         # Add figure text
         try:
@@ -247,13 +247,13 @@ all_natural = Observation('../../cleans/current/aumic_all_natural.fits',
     1.4494822607957758e-05, fig=fig, pos=(0, num), 
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Natural']])
-all_briggs = Observation('../../cleans/current/aumic_all_uniform.fits', 
-    1.89688053069e-05, fig=fig, pos=(1, num), 
+all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits', 
+    1.578679439262487e-05, fig=fig, pos=(1, num), 
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-          [4.7, 3.4, 'Briggs']])
+          [4.7, 3.4, 'Robust=0.5']])
           
 all_uniform = Observation('../../cleans/current/aumic_all_uniform.fits', 
-    1.578679439262487e-05, fig=fig, pos=(2, num), 
+    3.4449552913429216e-05, fig=fig, pos=(2, num), 
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Uniform']])
           

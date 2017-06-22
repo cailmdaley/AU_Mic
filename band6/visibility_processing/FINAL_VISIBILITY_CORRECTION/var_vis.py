@@ -6,11 +6,11 @@ import subprocess
 from glob import glob
 
 
-def var_vis(filename):
+def var_vis(infile, outfile):
     ''' Calculate the variance in a visibility map at each u,v point and each channel. Calculate the variance based on the 70 nearest neighbors'''
     plt.clf(); plt.close()
 
-    im = fits.open('{}.uvf'.format(start_dir + filename))
+    im = fits.open('{}.uvf'.format(infile))
     u,v = im[0].data['UU'],im[0].data['VV']
     freq0 = im[0].header['crval4']
     klam = freq0/1e3
@@ -24,13 +24,13 @@ def var_vis(filename):
         imag = vis[:,:,1]
 
     nuv = u.size
-    print(filename)
+    print(infile)
     print("{} visibilities".format(nuv))
     print(" Max u baseline = {}".format(np.max(u)*klam))
     print(" Max v baseline = {}".format(np.max(v)*klam))
     nfreq = 1
     uv = u**2+v**2
-    nclose = 75 #number of nearby visibility points to use when measuring the dispersion
+    nclose = 500 #number of nearby visibility points to use when measuring the dispersion
     uvwidth = 30 #area around a particular uv point to consider when searching for the nearest nclose neighbors (smaller numbers help make the good run faster, but could result in many points for which the weight cannot be calculated and is left at 0)
     max_dist = np.zeros(nuv)
 
@@ -70,7 +70,7 @@ def var_vis(filename):
     #plt.plot(imag_weight, imag_weight)
     #plt.xlabel("Real Weight")
     #plt.ylabel("Imaginary Weight")
-    #plt.savefig("{}_weight_scatter.png".format(filename))
+    #plt.savefig("{}_weight_scatter.png".format(infile))
 
     #Calculating total weight from imaginary and real components
     total_weight = np.sqrt(real_weight*imag_weight)
@@ -84,8 +84,8 @@ def var_vis(filename):
         im[0].data['data'][:,0,0,0,0,2], im[0].data['data'][:,0,0,0,1,2] = total_weight, total_weight
 
 
-    subprocess.call('rm {}.reweighted.uvf'.format(end_dir + filename), shell=True)
-    im.writeto('{}.reweighted.uvf'.format(end_dir + filename), overwrite=True)
+    subprocess.call('rm {}.uvf'.format(outfile), shell=True)
+    im.writeto('{}.uvf'.format(outfile), overwrite=True)
     im.close()
 
     print("{}% visibilities have zero weight".format((len(bad_points)/float(nuv)) / 100.))
@@ -95,23 +95,23 @@ def var_vis(filename):
 
 
 def create_vis(filename):
-    subprocess.call('rm -r {}.vis'.format(end_dir + filename), shell=True)
+    subprocess.call('rm -r {}.vis'.format(filename), shell=True)
     subprocess.call('fits in={}.uvf op=uvin out={}.vis'.format(
-        end_dir + filename, end_dir + filename), shell=True)
+        filename, filename), shell=True)
 
 
 # uvfs = ['18aug2015_aumic_spw0','18aug2015_aumic_spw1','18aug2015_aumic_spw2','18aug2015_aumic_spw3','24jun2015_aumic1_spw0','24jun2015_aumic1_spw1','24jun2015_aumic1_spw2','24jun2015_aumic1_spw3','26mar2014_aumic_spw0','26mar2014_aumic_spw1','26mar2014_aumic_spw2','26mar2014_aumic_spw3']
 
-files = glob("*.timing.uvf")
-files = [f[:-4] for f in files]
-print(files)
-input('ok?')
-start_dir = './'
-end_dir = '../../data_files/'
-
-for f in files:
-    var_vis(f)
-    create_vis("{}.reweighted".format(f))
+# files = glob("*.timing.uvf")
+# files = [f[:-4] for f in files]
+# print(files)
+# input('ok?')
+# start_dir = './'
+# end_dir = '../../data_files/'
+# 
+# for f in files:
+#     var_vis(f)
+#     create_vis("{}.reweighted".format(f))
 
 #var_vis("../24jun2015_aumic1_spw3.timeflag.corrected_weights")
 #var_vis("24jun2015_aumic1_spw3")
