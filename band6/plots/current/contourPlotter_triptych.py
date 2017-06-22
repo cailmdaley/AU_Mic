@@ -19,13 +19,13 @@ cpal = jesse_reds
 
 class Observation:
     def __init__(self, filename, rms, fig=None, pos=(0,1), **kwds):
-        
+
         self.file = filename
         self.rms = rms
         self.fig = fig
         self.pos = pos
         self.__dict__.update(kwds)
-        
+
 
     def get_fits(self):
         self.head = fits.getheader(self.file)
@@ -116,7 +116,7 @@ class Observation:
 
         # Set contour levels
         cont_levs = np.arange(2, 40, 2) * self.rms
-        
+
         # add residual contours if resdiual exists; otherwise, add image contours
         try:
             self.ax.contour(self.resid,
@@ -140,7 +140,7 @@ class Observation:
                            colors='k',
                            linewidths=0.75,
                            linestyles='dashed')
-        
+
         # Create the colorbar
         divider = make_axes_locatable(self.ax)
         cax = divider.append_axes("top", size="8%", pad=0.0)
@@ -208,14 +208,22 @@ class Observation:
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
+<<<<<<< HEAD
         self.ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
+=======
+<<<<<<< HEAD
+        self.ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
+=======
+        self.ax.plot([0.0], [0.0], '+', markersize=9, markeredgewidth=1, color='k')
+>>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
+>>>>>>> dd14226a1858136646324d3fac739f41224b19ba
 
         # Add figure text
         try:
             for t in self.text:
                 self.ax.text(*t, fontsize=18,
                     path_effects=[PathEffects.withStroke(linewidth=3, foreground="w")])
-                    
+
         except AttributeError:
             pass
 
@@ -224,39 +232,39 @@ class Observation:
 
 num = 3
 plot_width=11.6/2
-fig = plt.subplots(1, num, sharex=False, sharey=False, 
+fig = plt.subplots(1, num, sharex=False, sharey=False,
     figsize=(plot_width * num, 6.2))[0]
 plt.subplots_adjust(wspace=-0.1)
 
 mar = Observation('../cleans/aumic_mar_centered_200klam.fits', 2.92637287203e-05,
-    fig=fig, pos=(0, num), 
+    fig=fig, pos=(0, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'March 2014']])
 aug = Observation('../cleans/aumic_aug_centered_natural.fits', 3.83357546525e-05,
-    fig=fig, pos=(1, num), 
+    fig=fig, pos=(1, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'August 2014']])
-    
+
 # jun = Observation('../cleans/aumic_jun_timing_centered_natural.fits', 2.80185104202e-05,
-#     fig=fig, pos=(2, num), 
+#     fig=fig, pos=(2, num),
 #     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
 #           [4.7, 3.4, 'June 2015']])
 
 
-all_natural = Observation('../../cleans/current/aumic_all_natural.fits', 
-    1.4494822607957758e-05, fig=fig, pos=(0, num), 
+all_natural = Observation('../../cleans/current/aumic_all_natural.fits',
+    1.4494822607957758e-05, fig=fig, pos=(0, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Natural']])
-all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits', 
-    1.578679439262487e-05, fig=fig, pos=(1, num), 
+all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits',
+    1.578679439262487e-05, fig=fig, pos=(1, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Robust=0.5']])
-          
-all_uniform = Observation('../../cleans/current/aumic_all_uniform.fits', 
-    3.4449552913429216e-05, fig=fig, pos=(2, num), 
+
+all_uniform = Observation('../../cleans/current/aumic_all_uniform.fits',
+    3.4449552913429216e-05, fig=fig, pos=(2, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Uniform']])
-          
+
 
 for obs in [all_natural, all_briggs, all_uniform]:
     obs.get_fits()
