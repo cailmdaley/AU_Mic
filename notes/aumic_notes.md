@@ -23,7 +23,6 @@ Now that I've (more or less) finished processing the visibilities, I need to rew
 The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
 
 ```python
-<<<<<<< HEAD
 #CASA
 from glob import glob
 mses = glob('*.uvsub.ms')
@@ -44,28 +43,12 @@ from glob import glob
 uvfs = glob('*FINAL.uvf'
 for uvf in uvfs:
     importuvfits(fitsfile=uvf, vis=uvf[]+'.ms')
-=======
-from glob import glob
-execfile 'var_vis.py'
-mses = glob('*.uvsub.ms')
-for ms in mses:
-    final_name = ms[:17] + '_FINAL'
-    exportuvfits(vis=ms, fitsfile = final_name + '.uvf')
-    var_vis(final_name)
-    create_vis(final_name)
-    importuvfits(fitsfile=final_name+'.uvf', vi=final_name+'.ms')
-    
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
 
 ```
 
 
 ------------------------------------------------------------
 #### 6/16/17: Fixing March
-<<<<<<< HEAD
-=======
-
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
 Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
 ![](Figures/aumic_mar_oversubtracted.png)
 
@@ -86,30 +69,13 @@ fixvis(vis = 'aumic_mar_allspws.concat.ms',
     phasecenter = 'J2000 20:45:09.84238 -31.20.32.35898',
     outputvis = 'aumic_mar_allspws.fixvis.ms')
 os.system('rm -rf point_fit.cl')
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-os.system('rm -rf point_fit.cl')
-=======
->>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
->>>>>>> dd14226a1858136646324d3fac739f41224b19ba
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
 cl.addcomponent(flux=0.000367, fluxunit='Jy', shape='point', 
     dir='J2000 20:45:09.84238 -31.20.32.35898')  
 cl.rename('point_fit.cl')  
 cl.close()
 ft(vis='aumic_mar_allspws.fixvis.ms', complist='point_fit.cl')
 uvsub(vis='aumic_mar_allspws.fixvis.ms')
-<<<<<<< HEAD
 os.system('rm -rf aumic_mar_allspws.fixvis.uvsub.ms')
-=======
-<<<<<<< HEAD
-os.system('rm -rf aumic_mar_allspws.fixvis.uvsub.ms')
-=======
-os.system('rm -rf aumic_mar_allspws_corrected.ms')
->>>>>>> dd14226a1858136646324d3fac739f41224b19ba
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
 split(vis='aumic_mar_allspws.fixvis.ms',
     outputvis='aumic_mar_allspws.fixvis.uvsub.ms',
 	datacolumn='corrected')

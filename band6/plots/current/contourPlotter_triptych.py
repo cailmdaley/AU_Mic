@@ -209,16 +209,6 @@ class Observation:
 
         # Plot a cross at the source position
         self.ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-        self.ax.plot([0.0], [0.0], '*', markersize=9, markeredgewidth=1, color='k')
-=======
-        self.ax.plot([0.0], [0.0], '+', markersize=9, markeredgewidth=1, color='k')
->>>>>>> e9f67cf7d03847a538c7cad00695551ba7ac96a8
->>>>>>> dd14226a1858136646324d3fac739f41224b19ba
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
 
         # Add figure text
         try:
@@ -257,7 +247,6 @@ all_natural = Observation('../../cleans/current/aumic_all_natural.fits',
     1.4494822607957758e-05, fig=fig, pos=(0, num),
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Natural']])
-<<<<<<< HEAD
 all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits', 
     1.578679439262487e-05, fig=fig, pos=(1, num), 
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
@@ -265,15 +254,6 @@ all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits',
           
 all_uniform = Observation('../../cleans/current/aumic_all_uniform.fits', 
     3.4449552913429216e-05, fig=fig, pos=(2, num), 
-=======
-all_briggs = Observation('../../cleans/current/aumic_all_briggs.fits',
-    1.578679439262487e-05, fig=fig, pos=(1, num),
-    text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-          [4.7, 3.4, 'Robust=0.5']])
-
-all_uniform = Observation('../../cleans/current/aumic_all_uniform.fits',
-    3.4449552913429216e-05, fig=fig, pos=(2, num),
->>>>>>> 39d6ffdfcfdcf7bd402a4a694c1a1b0defd77abd
     text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
           [4.7, 3.4, 'Uniform']])
 
