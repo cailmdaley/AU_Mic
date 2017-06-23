@@ -185,7 +185,7 @@ class Observation:
                      height=bmaj,
                      angle=-bpa,
                      edgecolor='k',
-                     hatch='/////',
+                     hatch='////',
                      facecolor='none',
                      zorder=10)
 
