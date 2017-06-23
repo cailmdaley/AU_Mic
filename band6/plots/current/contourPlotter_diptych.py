@@ -10,6 +10,7 @@ import seaborn as sns
 import numpy as np
 
 # Set seaborn plot styles and color pallete
+plt.close()
 sns.set_style("ticks",
               {"xtick.direction": "in",
                "ytick.direction": "in"})
@@ -80,13 +81,13 @@ class Observation:
         self.ax.yaxis.set_minor_locator(minorLocator)
 
         # Set x and y labels
-        self.ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=15)
-        self.ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=15)
+        self.ax.set_xlabel(r'$\Delta \alpha$ (")', fontsize=18)
+        self.ax.set_ylabel(r'$\Delta \delta$ (")', fontsize=18)
         self.ax.xaxis.set_ticklabels(
-            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=18)
         self.ax.yaxis.set_ticklabels(
-            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=13)
-        self.ax.tick_params(which='both', right='on')
+            ['', '', '-4', '', '-2', '', '0', '', '2', '', '4', ''], fontsize=18)
+        self.ax.tick_params(which='both', right='on', labelsize=18)
 
         # Set labels depending on position in figure
         if self.pos[0] == 0: #left
@@ -166,11 +167,11 @@ class Observation:
         minorLocator = AutoMinorLocator(self.cbspace[0] / self.cbspace[1])
         cbar.ax.xaxis.set_minor_locator(minorLocator)
         cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(),
-                                rotation=45, fontsize=11)
+                                rotation=45, fontsize=18)
         cbar.set_ticks(np.arange(-10000, 10000, self.cbspace[1]))
 
         # Colorbar label
-        cbar.ax.text(0.432, 0.365, r'$\mu Jy / bm$', fontsize=13,
+        cbar.ax.text(0.425, 0.340, r'$\mu Jy / bm$', fontsize=15,
                      path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Overplot the beam ellipse
@@ -198,8 +199,8 @@ class Observation:
             [y, y],
             '-', linewidth=2, color='k')
         self.ax.text(
-            x + 0.2, y + 0.15, "10 au",
-            fontsize=17,
+            x + 0.32, y + 0.15, "10 au",
+            fontsize=18,
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
@@ -214,31 +215,29 @@ class Observation:
         except AttributeError:
             pass
 
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 num = 2
 plot_width=11.6/2
 fig = plt.subplots(1, num, sharex=False, sharey=False, 
-    figsize=(plot_width * num, 6.2))[0]
-plt.subplots_adjust(wspace=-0.055)
+    figsize=(plot_width * num, 6.5))[0]
+plt.subplots_adjust(wspace=-0.0)
 
 all_natural = Observation('../../cleans/current/aumic_all_natural.fits',
     1.4494822607957758e-05, fig=fig, pos=(0, num),
-    text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-          [4.7, 3.4, 'natural weighting']])
+    text=[[4.6, 4.0, 'AU Mic ALMA 1.4mm'],
+          [4.6, 3.0, 'natural weighting']])
           
 all_taper = Observation('../../cleans/current/aumic_all_taper.fits',
     1.89688053069e-05, fig=fig, pos=(1, num),
-    text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-          [4.7, 3.4, r'$200 k\lambda$ taper']])
+    text=[
+        [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
+        [4.6, 3.0, r'$200 k\lambda$ taper']])
 
 for obs in [all_natural, all_taper]:
     obs.get_fits()
-    obs.make_axis()
+    obs.make_axis() 
     obs.fill_axis()
 
 plt.savefig('aumic_diptych_all.png', dpi=700)
-plt.show()
-
-# plt.show()
+plt.show(block=False)
