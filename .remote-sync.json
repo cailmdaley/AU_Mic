@@ -11,8 +11,6 @@
   ],
   "username": "cdaley",
   "keyfile": "/Users/cdaley/.ssh/id_rsa",
-  "watch": [
-    "/modeling/emcee_modeling.py"
-  ],
+  "watch": [],
   "transport": "scp"
 }
