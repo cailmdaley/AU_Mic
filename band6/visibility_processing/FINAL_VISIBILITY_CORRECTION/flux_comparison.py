@@ -6,15 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import seaborn as sns
-
 plt.close()
 sns.set_style('ticks')
 
-
-#INPUT VARIABLES//Opening fits file
-
-# fileinp = raw_input('If you would like to deproject observed data, please enter its filename here. Otherwise, please hit return: ')
-def uvplot(uvf, bins=20, binning='lin', uv_bounds=None):
+def uvplot(uvf, bins=20, binning='lin', uv_bounds=None, label=None):
     
     dfits = fits.open(uvf)
     
@@ -50,6 +45,7 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None):
     
     if not uv_bounds:
         uv_bounds = (np.min(uv_dist), np.max(uv_dist))
+        print(np.min(uv_dist), np.max(uv_dist))
         
     if binning == 'lin':
         binbounds = np.linspace(uv_bounds[0], uv_bounds[1], bins+1)
@@ -74,65 +70,51 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None):
     for i in range(bins):
         binctr[i] = (binbounds[i] + binbounds[i+1])/2.0
         
-        rlavg[i] = (np.sum((rlcor*wtcor)[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )]) / (np.sum(wtcor[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )])))*1e03
-        imavg[i] = (np.sum((imcor*wtcor)[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )]) / (np.sum(wtcor[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )])))*1e03
-
+        rlavg[i] = (np.nansum((rlcor*wtcor)[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )]) / (np.nansum(wtcor[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )])))*1e03
+        imavg[i] = (np.nansum((imcor*wtcor)[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )]) / (np.nansum(wtcor[np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) )])))*1e03
+        
 
         #Standard Error of the Mean
         N[i] = np.size(np.where( (uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]) ))
-        rlxbar[i] = np.sum((rlcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])/np.sum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])
-        imxbar[i] = np.sum((imcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])/np.sum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])
-        rlterm1[i] = np.sum(((rlcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*rlxbar[i])**2)
-        rlterm2[i] = -2*rlxbar[i]*np.sum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))*((wtcor*rlcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*rlxbar[i]))
-        rlterm3[i] = rlxbar[i]**2*np.sum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))**2)
-        imterm1[i] = np.sum(((imcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*imxbar[i])**2)
-        imterm2[i] = -2*imxbar[i]*np.sum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))*((wtcor*imcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*imxbar[i]))
-        imterm3[i] = imxbar[i]**2*np.sum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))**2)
-        rlwtedSEM[i] = np.sqrt((N[i]/((N[i]-1)*np.sum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])**2))*(rlterm1[i]+rlterm2[i]+rlterm3[i]))
-        imwtedSEM[i] = np.sqrt((N[i]/((N[i]-1)*np.sum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])**2))*(imterm1[i]+imterm2[i]+imterm3[i]))
+        rlxbar[i] = np.nansum((rlcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])/np.nansum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])
+        imxbar[i] = np.nansum((imcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])/np.nansum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])
+        rlterm1[i] = np.nansum(((rlcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*rlxbar[i])**2)
+        rlterm2[i] = -2*rlxbar[i]*np.nansum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))*((wtcor*rlcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*rlxbar[i]))
+        rlterm3[i] = rlxbar[i]**2*np.nansum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))**2)
+        imterm1[i] = np.nansum(((imcor*wtcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*imxbar[i])**2)
+        imterm2[i] = -2*imxbar[i]*np.nansum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))*((wtcor*imcor)[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])*imxbar[i]))
+        imterm3[i] = imxbar[i]**2*np.nansum((wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]-np.mean(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))]))**2)
+        
+        rlwtedSEM[i] = np.sqrt((N[i]/((N[i]-1)*np.nansum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])**2))*(rlterm1[i]+rlterm2[i]+rlterm3[i]))
+        imwtedSEM[i] = np.sqrt((N[i]/((N[i]-1)*np.nansum(wtcor[np.where((uv_dist>=binbounds[i]) & (uv_dist<=binbounds[i+1]))])**2))*(imterm1[i]+imterm2[i]+imterm3[i]))
         
     rlwtedSEM = rlwtedSEM*1e03
     imstedSEM = imwtedSEM*1e03
 
 
-    #Plotting: setting y scales to be the same for both plots
-    rlmax = np.ceil(max(rlavg) + rlwtedSEM[np.where(rlavg==max(rlavg))])
-    rlmin = np.floor(min(rlavg) - rlwtedSEM[np.where(rlavg==min(rlavg))])
-    imrange = np.ceil(max(np.absolute(imavg)) + max(imwtedSEM))
-    
-    rlrange = rlmax - rlmin
-
     #Plotting: setting up gridspec, setting ticks and labels, etc.
-    gs = gridspec.GridSpec(2, 1, height_ratios=[rlrange,2*imrange])
-
-    
     rlax.set_xlim(uv_bounds)
-    rlax.axhline(c='k', ls='--', linewidth=2)
+    rlax.set_xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
     
+    rlax.axhline(c='k', ls='--', linewidth=1)
+    rlax.errorbar(binctr, rlavg, yerr=rlwtedSEM, fmt=':o', markersize=5)
     rlax.set_ylabel('Re (mJy)', fontsize=15)
-    
-    rlax.errorbar(binctr, rlavg, yerr=rlwtedSEM, marker='.', c='b', fmt=' ' )
 
-    # plt.xticks(np.arange(, max(binbounds)+.0001, 20))
 
-    imax.errorbar( binctr, imavg, yerr=imwtedSEM, marker='.', fmt=' ' )
-    imax.set_xlim(uv_bounds)
-    imax.axhline(c='k', ls='--', linewidth=2)
-    # plt.xticks(np.arange(0, max(binbounds)+.0001, 20))
-    # plt.yticks(np.linspace(-1*imrange, imrange, 3))
-    imax.set_xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
+    imax.errorbar( binctr, imavg, yerr=imwtedSEM, fmt=':o', markersize=5, label=label)
+    imax.axhline(c='k', ls='--', linewidth=1)
+    imax.set_ylim(rlax.get_ylim())
     imax.set_ylabel('Im (mJy)', fontsize=15)
-    
-fig, (rlax, imax) = plt.subplots(1, 2, sharey=True)
-
-
+    imax.legend()
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+fig, (rlax, imax) = plt.subplots(2, 1, sharey=False, sharex=True)
 files = glob("*FINAL.uvf")
+labels = ['mar', 'aug', 'jun']
 savefig = None
 
-uvplot(files[0])
+for uvf, label in zip(files, labels):
+    uvplot(uvf, bins = 10, binning='lin', uv_bounds=(23, 100), label=label)
 
-    
-    
     
     
 # if savefig:
