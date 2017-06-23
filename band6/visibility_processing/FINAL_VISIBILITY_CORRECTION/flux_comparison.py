@@ -6,7 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import seaborn as sns
+
 plt.close()
+sns.set_style('ticks')
+
 
 #INPUT VARIABLES//Opening fits file
 
@@ -14,11 +17,14 @@ plt.close()
 def uvplot(uvf, bins=20, binning='lin', uv_bounds=None):
     
     dfits = fits.open(uvf)
-
+    
     #Reading in polarized real & imaginary visibilities & weights (assuming ALMA data)
     rlimwt = dfits[0].data['data']
+    rlimwt = np.mean(rlimwt, axis=3)
+    
     
     rlxx = rlimwt[:,0,0,:,0,0]
+    print(rlxx.shape)
     rlyy = rlimwt[:,0,0,:,1,0]
     imxx = rlimwt[:,0,0,:,0,1]
     imyy = rlimwt[:,0,0,:,1,1]
@@ -100,22 +106,22 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None):
     gs = gridspec.GridSpec(2, 1, height_ratios=[rlrange,2*imrange])
 
     
-    fig.xlim(uv_bounds)
-    fig.axhline(c='k', ls='--', linewidth=2)
+    rlax.set_xlim(uv_bounds)
+    rlax.axhline(c='k', ls='--', linewidth=2)
     
-    rlax.ylabel('Re (mJy)', fontsize=15)
+    rlax.set_ylabel('Re (mJy)', fontsize=15)
     
     rlax.errorbar(binctr, rlavg, yerr=rlwtedSEM, marker='.', c='b', fmt=' ' )
 
     # plt.xticks(np.arange(, max(binbounds)+.0001, 20))
 
     imax.errorbar( binctr, imavg, yerr=imwtedSEM, marker='.', fmt=' ' )
-    # plt.xlim(0, xmax)
-    # imax.axhline(c='k', ls='--', linewidth=2)
+    imax.set_xlim(uv_bounds)
+    imax.axhline(c='k', ls='--', linewidth=2)
     # plt.xticks(np.arange(0, max(binbounds)+.0001, 20))
     # plt.yticks(np.linspace(-1*imrange, imrange, 3))
-    imax.xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
-    imax.ylabel('Im (mJy)', fontsize=15)
+    imax.set_xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
+    imax.set_ylabel('Im (mJy)', fontsize=15)
     
 fig, (rlax, imax) = plt.subplots(1, 2, sharey=True)
 
@@ -131,4 +137,4 @@ uvplot(files[0])
     
 # if savefig:
 #     plt.savefig(''+savefig+'.eps')
-plt.show()
+plt.show(block=False)
