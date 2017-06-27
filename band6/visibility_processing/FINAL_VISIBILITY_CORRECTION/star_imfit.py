@@ -12,8 +12,8 @@ imsize = 512
 pixsize ='0.03arcsec',
 
 
-visname = 'aumic_mar_allspws_corrected.ms'
-filename = 'mar_allspws_corrected'
+visname = 'aumic_jun_noflare_allspws.fixvis.uvsub.ms'
+filename = 'fluxtest_jun'
 
 natural = True
 imfit=False
@@ -26,6 +26,7 @@ if natural:
     image = filename+"_dirty_natural"
     subprocess.call("rm -rf {}.*".format(image), shell=True)
     tclean(vis=visname,
+           uvrange='23~312klambda',
            imagename=image,
            imsize=imsize,
            cell=pixsize,
@@ -40,6 +41,7 @@ if natural:
     image = filename + "_natural"
     subprocess.call("rm -rf {}.*".format(image), shell=True)
     tclean(vis=visname,
+           uvrange='23~312klambda',
            imagename=image,
            imsize=imsize,
            cell=pixsize,
@@ -54,6 +56,9 @@ if natural:
     natural_rms = imstat(imagename='{}.image'.format(image),
                  region='aumic_rms.region', listit=False)['rms'][0]
     print 'Natural clean rms is', natural_rms
+    fluxsum = imstat(imagename='{}.image'.format(image),
+        region='fluxtest.region', listit=True)['sum'][0]
+    print('Region flux sum: {}'.format(fluxsum))
 
 #Call imfit on region around star
 if imfit:

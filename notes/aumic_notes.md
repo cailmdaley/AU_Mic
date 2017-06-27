@@ -7,7 +7,7 @@
     -   also, use all three dates!
 -   do imfit without flare time
 -   just show combined image
--   reclean with robust=0.5, uniform
+-   check preweighted uvf
 
 ##### Papers:
 -   Thebault 2009
@@ -19,20 +19,22 @@
 
 ------------------------------------------------------------
 #### 6/16/17: Reweighting
-Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code.
-The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows, with `nclose=1500` and `uvwidth=22`:
 
+**note:** I changed the June visibilities name from `aumic_jun_noflare_allspws` to simply `aumic_jun_allspws` since we're certainly not using the flare anymore.
+
+
+Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code.
+The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
 
 ```python
+
 #CASA
 from glob import glob
 mses = glob('*.uvsub.ms')
 for ms in mses:
     exportuvfits(vis=ms, fitsfile = ms[:-3] + '.uvf')
     
-#exit CASA; enter ipython
-%run var_vis.py
-from glob import glob
+#put at bottom of var_vis, then run:
 uvfs = glob('*.uvsub.uvf')
 for uvf in uvfs:
     final_name = uvf[:17] + '_FINAL'
@@ -40,10 +42,10 @@ for uvf in uvfs:
     create_vis(final_name)
     
 #back to casa
-# from glob import glob
-# uvfs = glob('*FINAL.uvf'
-# for uvf in uvfs:
-#     importuvfits(fitsfile=uvf, vis=uvf[]+'.ms')
+from glob import glob
+uvfs = glob('*FINAL.uvf'
+for uvf in uvfs:
+    importuvfits(fitsfile=uvf, vis=uvf[:-4]+'.ms')
 
 ```
 
