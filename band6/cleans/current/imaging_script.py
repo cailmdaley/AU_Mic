@@ -9,7 +9,7 @@ import numpy as np
 # files = glob("../../data_files/*.timing.reweighted.ms")
 
 #Clean variables to be changed
-dates = ['../../final_visibilities/aumic_mar_allspws_corrected.ms',
+dates = ['../../final_visibilities/aumic_mar_allspws_FINAL.ms',
          '../../final_visibilities/aumic_aug_allspws_corrected.ms',
          '../../final_visibilities/aumic_jun_noflare_allspws_corrected.ms']
 imsize = 512
@@ -17,11 +17,11 @@ pixsize ='0.03arcsec',
 
 
 
-visibilities = dates[:]
+visibilities = [dates[0]]
 filename = 'aumic_all'
 
-natural = False
-taper = True
+natural = True
+taper = False
 uniform = False
 briggs = False
 

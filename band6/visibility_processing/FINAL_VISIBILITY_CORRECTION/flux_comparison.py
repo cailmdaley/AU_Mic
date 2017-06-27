@@ -29,6 +29,15 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None, label=None):
     u_meters = dfits[0].data['UU']
     v_meters = dfits[0].data['VV']
     
+    pa = 0.0
+    inc = np.radians(85.0)
+    u1 = (u_meters*np.cos(pa)-v_meters*np.sin(pa))*np.cos(inc)
+    v1 = (u_meters*np.sin(pa)+v_meters*np.cos(pa))
+    #Rotation of (u,v) coordinates back to sky PA
+    u2 = u1*np.cos(-1.0*pa)-v1*np.sin(-1.0*pa)
+    v2 = u1*np.sin(-1.0*pa)+v1*np.cos(-1.0*pa)
+
+    
 
     #Taking weighted average of polarized visibilities & weights
     rlcor = np.array(0.25*(1.0/wtxx + 1.0/wtyy)*(rlxx*wtxx + rlyy*wtyy))
@@ -37,11 +46,12 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None, label=None):
 
     #Converting to kilolambda and Jy*km/s
     freq = dfits[0].header['CRVAL4']
-    u_klam = u_meters*freq*1e-03
-    v_klam = v_meters*freq*1e-03
+    u_klam = u2*freq*1e-03
+    v_klam = v2*freq*1e-03
     
     #Radial Averaging
     uv_dist = (u_klam**2 + v_klam**2)**0.5
+    print(len(np.where((uv_dist > 23) & (uv_dist < 312))[0]))
     
     if not uv_bounds:
         uv_bounds = (np.min(uv_dist), np.max(uv_dist))
@@ -94,7 +104,7 @@ def uvplot(uvf, bins=20, binning='lin', uv_bounds=None, label=None):
 
     #Plotting: setting up gridspec, setting ticks and labels, etc.
     rlax.set_xlim(uv_bounds)
-    rlax.set_xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
+    imax.set_xlabel(r'$\mathcal{R}_{uv}$ ($k\lambda$)', fontsize=15, labelpad=10)
     
     rlax.axhline(c='k', ls='--', linewidth=1)
     rlax.errorbar(binctr, rlavg, yerr=rlwtedSEM, fmt=':o', markersize=5)
@@ -113,7 +123,7 @@ labels = ['mar', 'aug', 'jun']
 savefig = None
 
 for uvf, label in zip(files, labels):
-    uvplot(uvf, bins = 10, binning='lin', uv_bounds=(23, 100), label=label)
+    uvplot(uvf, bins = 6, binning='lin', uv_bounds=(23, 100), label=label)
 
     
     
