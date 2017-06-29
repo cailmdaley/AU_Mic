@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import subprocess as sp
 import emcee
-    
+cgdisp_start = False
+
 class Observation:
     def __init__(self, name):
         self.name = name
@@ -15,25 +16,27 @@ class Observation:
 class Model:
     def obs_sample(self, obs):
         """
-        Create model fits file with correct header information, remove stellar emission, convolve with ALMA visiblities to create model .vis and .uvf files.
+        Create model fits file with correct header information and sample using 
+        ALMA observation uv coverage to to create model .vis and .uvf files.
         """
+        
         print('')
         print('================================================================================')
         print('                                 obs_sample({})                               ').format(obs.name)
         print('================================================================================')
         
+        # make observation-specific model name
         filename = self.name + '_' + obs.name
 
-        # first, delete all model files with same name
+        # First, delete all model files with same name
         sp.call('rm -rf model_data/{}*'.format(filename), shell=True)
         
-        # align with observation
+        # Align with observation and save observation-specific fits file
         self.im[0].header['CRVAL1'] = obs.ra
         self.im[0].header['CRVAL2'] = obs.dec
-
         self.im.writeto('model_data/{}.fits'.format(filename))
 
-        # Convert model into MIRIAD .im
+        # Convert model into MIRIAD .im image file
         sp.call(['fits', 'op=xyin', 
             'in=model_data/{}.fits'.format(filename),
             'out=model_data/{}.im'.format(filename)])
@@ -52,8 +55,9 @@ class Model:
             
     def get_chi(self, obs):
         """
-        Return chi^2 of model.
+        Return chi^2 statistics of model.
         """
+        
         print('')
         print('================================================================================')
         print('                                  get_chi({})                                  ').format(obs.name)
@@ -80,12 +84,14 @@ class Model:
                      (datimI - modimI)**2 * weights)
         redchi = chi / len(datrlI)
 
-        return redchi
+        self.redchis.append(redchi)
 
     def clean(self, obs, residual=False, show=True):
         """
-        Clean and image a miriad visibility file; uses imstat to print rms, and then asks the user to input a clean cutoff level.
+        Clean and image (if desired) a observation-specific model.
+        Either model image or residuals may be chosen.
         """
+        
         print('')
         print('================================================================================')
         if residual:
@@ -93,14 +99,14 @@ class Model:
         else:
             print('                                   clean({})                                   ').format(obs.name)
         print('================================================================================')
+        
+        # Set observation-specific clean filename; clear filenames
         filename = self.name + '_' + obs.name
         if residual == True:
             filename += '.residual'
-
-        #Clear filenames 
         sp.call('rm -rf model_data/{}.{{mp,bm,cl,cm}}'.format(filename), shell=True)
         
-        #Dirty clean; save rms to variable
+        #Dirty clean; save rms for clean cutoff
         sp.call(['invert', 
             'vis=model_data/{}.vis'.format(filename), 
             'map=model_data/{}.mp'.format(filename), 
@@ -113,30 +119,36 @@ class Model:
         print("Dirty rms is {}".format(dirty_rms))
             
         
+        # Clean down to half the rms
         sp.call(['clean', 
             'map=model_data/{}.mp'.format(filename), 
             'beam=model_data/{}.bm'.format(filename), 
             'out=model_data/{}.cl'.format(filename), 
             'niters=10000', 'cutoff={}'.format(dirty_rms/2)])
-             
         sp.call(['restor',
             'map=model_data/{}.mp'.format(filename),
             'beam=model_data/{}.bm'.format(filename),
             'model=model_data/{}.cl'.format(filename),
             'out=model_data/{}.cm'.format(filename)])
         
+        # Display clean image with 2,4,6 sigma contours, if desired
         if show == True:
+            
+            # Display an unimportant image to get around the fact that the first 
+            # image displayed with cgdisp in a session can't be deleted
             global cgdisp_start
             if cgdisp_start == False:
                 sp.call(['cgdisp', 'in=cgdisp_start.im', 'type=p', 'device=/xs'])
                 cgdisp_start = True
             
+            #Get rms for countours
             imstat_out = sp.check_output(['imstat', 
                 'in=model_data/{}.cm'.format(filename), 
                 "region='boxes(256,0,512,200)'"])
             clean_rms = float(imstat_out[-38:-29])
             print("Clean rms is {}".format(clean_rms))
             
+            # Display
             sp.call(['cgdisp', 
                 'in=model_data/{}.cm,model_data/{}.cm'.format(filename, filename), 
                 'type=p,c', 'device=/xs', 
@@ -145,8 +157,14 @@ class Model:
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
 
     def residuals(self, obs, show=True):
+        """
+        Create model residuals (data - model), and clean//display if desired
+        """
+        
+        #Set observation-specific filename
         filename = self.name + '_' + obs.name
         
+        # Subtract model visibilities from data; outfile is residual visibilities
         sp.call(['uvmodel', 'options=subtract',
             'model=model_data/{}.im'.format(filename),
             'vis=obs_data/{}.vis'.format(obs.name),
@@ -160,21 +178,23 @@ class Model:
         self.name = name
         self.im = fits.open(path + '.fits')
         
+        # Associate observations with data
         self.observations = observations
         
+        # For each observation, append reduced chi^2 to list
         self.redchis = []
         for obs in observations:
             self.obs_sample(obs)
-            self.redchis.append(self.get_chi(obs))
+            self.get_chi(obs)
         self.im.close
         
-cgdisp_start = False
 mar = Observation('mar')
 aug = Observation('aug')
 jun = Observation('jun')
 first_model = Model('first_model', [mar,aug,jun])
 
-for obs in [first_model.observations[0]]:
+# Display clean images and residuals for each observation
+for obs in first_model.observations:
     first_model.clean(obs)
     raw_input('cool?')
     first_model.residuals(obs)

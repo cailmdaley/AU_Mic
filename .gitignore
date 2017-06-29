@@ -16,13 +16,8 @@ band6/imaging/cleans/older_separate/
 
 band6/visibility_processing/*
 !band6/visibility_processing/FINAL_VISIBILITY_CORRECTION
+!band6/visibility_processing/marfix
+
 
 modeling/obs_data
 modeling/model_data
-
-
-
-
-
-
-

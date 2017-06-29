@@ -9,32 +9,21 @@ import numpy as np
 # files = glob("../../data_files/*.timing.reweighted.ms")
 
 #Clean variables to be changed
-dates = ['../../final_visibilities/aumic_mar_allspws_FINAL.ms',
-         '../../final_visibilities/aumic_aug_allspws_FINAL.ms',
-         '../../final_visibilities/aumic_jun_noflare_allspws_FINAL.ms']
-dates2 = [
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_mar_allspws.fixvis.uvsub.ms',
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_aug_allspws.fixvis.uvsub.ms',
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_jun_noflare_allspws.fixvis.uvsub.ms']
 imsize = 512
 pixsize ='0.03arcsec',
 
 
 
-visibilities = dates2
-filename = 'aumic_all_unweighted'
+visibilities = ['../calibrated_final.ms']
+filename = 'aumic_band9_natural'
 
 natural = True
 taper = True
-uniform = False
-briggs = False
 
-natural_mask = 'aumic_mask_all_natural.region'
-taper_mask = 'aumic_mask_all_taper.region'
-uniform_mask = 'aumic_mask_all_uniform.region'
-briggs_mask = 'aumic_mask_all_briggs.region'
+natural_mask = 'aumic_band9_mask_natural.region'
+taper_mask = 'aumic_band9_mask_taper.region'
 
-view=False
+view=True
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
@@ -42,7 +31,7 @@ if len(visibilities) > 1:
     print('Files to be concatenated are:')
     print(np.array(visibilities))
     print('They will be cleaned under name "{}"'.format(filename))
-    
+
     raw_input('ok?: ')
     print('Concatenating...')
     subprocess.call("rm -rf {}".format(filename + ".ms"), shell=True)
@@ -155,4 +144,4 @@ if taper:
     # Export to .fits
     exportfits(imagename='{}.image'.format(image),
         fitsimage='{}.fits'.format(image))
-        
+
