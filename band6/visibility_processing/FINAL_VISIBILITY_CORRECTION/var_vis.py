@@ -16,6 +16,7 @@ def var_vis(infile, outfile):
     freq0 = im[0].header['crval4']
     klam = freq0/1e3
     u,v = im[0].data['UU'] * klam, im[0].data['VV'] * klam
+    uvdist = np.sqrt(u**2 + v**2)
     
     nuv = u.size
     nfreq = 1
@@ -36,14 +37,26 @@ def var_vis(infile, outfile):
     print('')
     print("{}: {} visibilities".format(infile, nuv))
     
+    
+    # estimate good uvwidth using time-smearing equation 
+    # (eq. 3.194 in "Essential Radio Astronomy")
+    synth_beam = 0.5  # arcsec
+    angular_sep = 5. # arcsec
+    delta_t = synth_beam/angular_sep * 1/(2*np.pi) # days
+    
+    # go from time to uv plane arc length
+    baseline = np.median(np.sqrt(u**2 + v**2))
+    delta_uv = delta_t * 2*np.pi*baseline
+    
+    
     # uvwidth: area around a particular uv point to consider when searching for the nearest nclose neighbors .
     #(smaller numbers help make the good run faster, # but could result in many points for which the weight cannot be calculated  and is left at 0)
     # make sure it's less than 1/10th of the shortest leg of the rectangle defined by the longest u and v baseline
-    uvwidth = np.min((u.max(), v.max())) / 10.
+    uvwidth = delta_uv*2
     print('uvwidth is {}'.format(uvwidth))
     
     # nclose: number of nearby visibility points to use when measuring the dispersion
-    nclose = 60
+    nclose = 55
     
     
     import time
@@ -51,7 +64,7 @@ def var_vis(infile, outfile):
 
     acceptance_ratio = 0
     
-    while not (0.980< acceptance_ratio < 0.995):
+    while not (0.980< acceptance_ratio < 0.9975):
         print('nclose is {}'.format(nclose))
         
         real_weight = np.zeros((nuv,nfreq), dtype=np.float32)
@@ -86,8 +99,8 @@ def var_vis(infile, outfile):
         acceptance_ratio = 1. - len(bad_points)/float(nuv)
         print("acceptance ration: {}".format(acceptance_ratio))
         
-        if acceptance_ratio <= 0.990: nclose -= 1
-        if acceptance_ratio >= 0.995: nclose += 1
+        if acceptance_ratio <= 0.980: nclose -= 1
+        if acceptance_ratio >= 0.9974: nclose += 1
 
     #plt.plot(np.sqrt(u**2+v**2),nclose_arr,'.')
     #plt.scatter(real_weight, imag_weight)
@@ -125,6 +138,6 @@ def create_vis(filename):
         
 uvfs = glob('*.uvsub.uvf')
 for uvf in uvfs:
-    final_name = 'test'
+    final_name = uvf[:17] + '_FINAL'
     var_vis(uvf[:-4], final_name)
     create_vis(final_name)
