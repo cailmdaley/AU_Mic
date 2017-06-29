@@ -1,4 +1,4 @@
-.fixvis.uvsub#  AU Mic Research Notes 
+#  AU Mic Research Notes 
 ##### Spring/Summer 2017
 ------------------------------------------------------------
 
@@ -8,9 +8,16 @@
 -   do imfit without flare time
 -   just show combined image
 -   check preweighted uvf
+-   clean down to data rms, not model
+-   for band9:
+    -   split out by date to check for flares
+    -   split out by pointing for uvmodel $\chi^2$
 
 ##### Papers:
 -   Thebault 2009
+-   Wyatt 2008
+-   matthews et al. 2014
+-   hughes 2017
 ------------------------------------------------------------
 ##### For Meredith:
 -   Should noise remain the same across all models for a given observation?
@@ -23,7 +30,16 @@
 **note:** I changed the June visibilities name from `aumic_jun_noflare_allspws` to simply `aumic_jun_allspws` since we're certainly not using the flare anymore.
 
 
-Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code.
+Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code. There are three important factors for determining good weights:
+1. `uvwidth` the size of the box within which to search for neighboring visibilities in order to calculate standard devation/weight. This value is determined using the time smearing equation (3.194) from Essential Radio Astronomy:
+    $$ \Delta t \ll \frac{\theta_s}{\Delta \theta} \frac{1}{2\pi} \implies \text{uvwidth} = 2\pi d_{uv} \Delta t $$
+    where $\theta_s$ is the synthesized beam, $\Delta \theta$ is the largest phasecenter offset of concern, and $d_{uv}$ is the median $uv$ distance.
+2. `nclose:` the number of points used to calculate the standard devation/weight. If there are not nclose visibilities within uvwidth, the weight is set to zero.
+3. `acceptance fraction:` the fraction of points for which weights are sucessfully calculated.
+
+I start by setting `nclose` to 55, and then increase/decrease `nclose` by 1 (while holding `uvwidth` fixed) until the acceptance fraction is in between 0.98 and 0.9975. 
+
+
 The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
 
 ```python

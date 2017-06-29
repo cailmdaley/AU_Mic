@@ -10,18 +10,22 @@ import numpy as np
 
 #Clean variables to be changed
 dates = ['../../final_visibilities/aumic_mar_allspws_FINAL.ms',
-         '../../final_visibilities/aumic_aug_allspws_corrected.ms',
-         '../../final_visibilities/aumic_jun_noflare_allspws_corrected.ms']
+         '../../final_visibilities/aumic_aug_allspws_FINAL.ms',
+         '../../final_visibilities/aumic_jun_noflare_allspws_FINAL.ms']
+dates2 = [
+    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_mar_allspws.fixvis.uvsub.ms',
+    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_aug_allspws.fixvis.uvsub.ms',
+    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_jun_noflare_allspws.fixvis.uvsub.ms']
 imsize = 512
 pixsize ='0.03arcsec',
 
 
 
-visibilities = [dates[0]]
-filename = 'aumic_all'
+visibilities = dates2
+filename = 'aumic_all_unweighted'
 
 natural = True
-taper = False
+taper = True
 uniform = False
 briggs = False
 
@@ -30,7 +34,7 @@ taper_mask = 'aumic_mask_all_taper.region'
 uniform_mask = 'aumic_mask_all_uniform.region'
 briggs_mask = 'aumic_mask_all_briggs.region'
 
-view=True
+view=False
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
@@ -52,9 +56,8 @@ else:
 
 #==========================================================
 #rms values for centered cleans
-all_natural_rms = 1.4494822607957758e-05
-all_briggs_rms = 1.578679439262487e-05
-all_taper_rms = 1.89688053069e-05
+all_natural_rms = 1.57988852152e-05
+all_taper_rms = 1.97743011086e-05
 #==========================================================
 
 
@@ -153,90 +156,3 @@ if taper:
     exportfits(imagename='{}.image'.format(image),
         fitsimage='{}.fits'.format(image))
         
-        
-# Uniform
-if uniform:
-    #Dirty clean to get rms and check if mask is good
-    image = filename + "_dirty_uniform"
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-    tclean(vis=visibilities,
-           imagename=image,
-           imsize=imsize,
-           cell=pixsize,
-           weighting='uniform',
-           niter=0)
-    dirty_uniform_rms = imstat(imagename='{}.residual'.format(image),
-                region='aumic_rms.region', listit=False)['rms'][0]
-    if view:
-        #Show dirty image, then clean up and delete all dirty clean files
-        viewer(infile=image + '.residual', displaytype='contour')
-        print 'uniform dirty rms: {}'.format(dirty_uniform_rms)
-        raw_input('mask ready? ')
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-
-    # Clean with correct mask and rms
-    image = filename + "_uniform"
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-    tclean(vis=visibilities,
-           imagename=image,
-           imsize=imsize,
-           cell=pixsize,
-           weighting='uniform',
-           niter=1000000000,
-           threshold=dirty_uniform_rms / 2.,
-           usemask='user',
-           mask=uniform_mask,
-           pbmask=None)
-
-    if view: viewer(infile=image + '.image')
-    uniform_rms = imstat(imagename='{}.image'.format(image), region='aumic_rms.region',
-        listit=False)['rms'][0]
-    print 'Uniform clean rms is', uniform_rms
-
-    # Export to .fits
-    exportfits(imagename='{}.image'.format(image),
-        fitsimage='{}.fits'.format(image))
-        
-# briggs
-if briggs:
-    #Dirty clean to get rms and check if mask is good
-    image = filename + "_dirty_briggs"
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-    tclean(vis=visibilities,
-           imagename=image,
-           imsize=imsize,
-           cell=pixsize,
-           weighting='uniform',
-           niter=0)
-    dirty_briggs_rms = imstat(imagename='{}.residual'.format(image),
-                region='aumic_rms.region', listit=False)['rms'][0]
-    if view:
-        #Show dirty image, then clean up and delete all dirty clean files
-        print 'dirty briggs: {}'.format(dirty_briggs_rms)
-        viewer(infile=image + '.residual', displaytype='contour')
-        raw_input('mask ready? ')
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-
-    # Clean with correct mask and rms
-    image = filename + "_briggs"
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-    tclean(vis=visibilities,
-           imagename=image,
-           imsize=imsize,
-           cell=pixsize,
-           weighting='briggs',
-           robust=0.5,
-           niter=1000000000,
-           threshold=dirty_briggs_rms / 2.,
-           usemask='user',
-           mask=briggs_mask,
-           pbmask=None)
-
-    briggs_rms = imstat(imagename='{}.image'.format(image), region='aumic_rms.region',
-        listit=False)['rms'][0]
-    print 'briggs clean rms is', briggs_rms
-    if view: viewer(infile=image + '.image')
-
-    # Export to .fits
-    exportfits(imagename='{}.image'.format(image),
-        fitsimage='{}.fits'.format(image))
