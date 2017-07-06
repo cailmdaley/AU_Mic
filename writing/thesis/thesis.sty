@@ -1,0 +1,133 @@
+% Master Style file for thesis
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{thesis}
+
+
+%===============================================================================
+% Packages
+\RequirePackage{
+  % NECESSARY PACKAGES
+  booktabs,      % pretty tables
+  fancyhdr,      % enables use of fancy pagestyle
+  geometry,      % defines page layout
+  graphicx,      % allows for inclusion of graphics and page scaling and rotation
+  lscape,        % allows for the creation of landscape pages-- important for large tables
+  natbib,        % allows for the citations and Bibtex
+  setspace,      % allows for doublespacing
+  rotating,      % allows landscape tables
+  titlesec       % allows for the definition of title layouts
+  % alltt,       % 
+  % amssymb,     % for math symbols
+  % amsmath,     % for math formatting for things like matrices 
+  % epstopdf,    % allows the conversion of eps files to pdf and is required for figures
+  % here,        % makes !h forces float here and !t forces float to top 
+  % ifthen,      % 
+  % indentfirst, % 
+  % longtable,   % 
+  % moreverb,    % 
+  % multicol,    % 
+  % multirow,    % 
+  % relsize,     % 
+  % rotating     % 
+  % wasysym,     % 
+  % xfrac,       % 
+  }
+\RequirePackage[small,bf]{caption} % allows the captioning of figures
+%===============================================================================
+
+
+
+%===============================================================================
+% General style and formatting things
+\geometry{letterpaper}
+
+%The "raggedbottom" command allows LaTeX to take some liberty with where the text on a page ends. This saved me some weird formatting problems I was having.
+ % \raggedbottom
+
+%set the pagestyle:
+\fancypagestyle{plain}{
+\fancyhf{} % clear all header and footer fields, we will re-format them later
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+\newcommand{\upperRomannumeral}[1]{\uppercase\expandafter{\romannumeral#1}}
+\newcommand{\lowerromannumeral}[1]{\romannumeral#1\relax}
+
+%This has something to do with headers and margins and stuff:
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\textwidth 5.750in \textheight=8.50in \headheight 0.0625in \topmargin 0.0in % book strict
+
+% Uncomment below for one sided printing (margins the same on even and odd pages)
+\oddsidemargin 0.500in \evensidemargin 0.500in
+
+% Uncomment below for two sided printing (margins different on even and odd pages)
+%\oddsidemargin 0.563in \evensidemargin 0.2500in
+
+% "Chapter" formatting for acknowledgements
+% \titleformat{\chapter}{\bf\Huge}
+% {Chapter \thechapter}{-4.4em}{\\}
+% \titlespacing*{\chapter}{0pt}{-.57in}{*3}
+% 
+% %This formats the section headings:
+% \titleformat{\section}{\bf\Large}
+% {\thesection}{1em}{}
+% \titlespacing*{\section}{0pt}{*2}{*2}
+
+%This sets how we want the formatting of chapter titles to look (bold face and Huge):
+\titleformat{\chapter}{\bf\Huge}
+{Chapter \thechapter}{-4.4em}{\\}
+\titlespacing*{\chapter}{0pt}{*2}{*3}
+
+\titleformat{\section}{\bf\Large}
+{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{*2}{*2}
+
+%Number your pages!  
+\pagenumbering{arabic}
+
+%Let's double-space the document:
+\doublespacing
+
+% HEADERS
+%This took me forever to figure out properly, and you may want to change it.  There's also different thing you can do if you want doublesided printing.  Your final thesis, as published by the University, is one-sided.
+\renewcommand{\chaptermark}[1]{ \markboth{\sc\thechapter.\ #1}{}}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+%===============================================================================
+
+
+
+
+%===============================================================================
+% Journal Definitions
+\newcommand{\aap}{{\it A\&A}}
+\newcommand{\aaps}{{\it A\&AS}}
+\newcommand{\aj}{{\it AJ}}
+\newcommand{\apj}{{\it ApJ}}
+\newcommand{\apjl}{{\it ApJL}} 
+\newcommand{\apjs}{{\it ApJS}}
+\newcommand{\araa}{{\it ARA\&A}}
+\newcommand{\iaucirc}{{\it IAU Circular}}
+\newcommand{\mnras}{{\it MNRAS}} 
+\newcommand{\nat}{{\it Nature}}
+\newcommand{\pasj}{{\it PASJ}}
+\newcommand{\pasp}{{\it PASP}}
+\newcommand{\ssr}{{\it SSRv}}
+\newcommand{\sciam}{{\it Scientific American}}
+\newcommand{\jgr}{{\it JGR}}
+\newcommand{\grl}{{\it GRL}}
+\newcommand{\icarus}{{\it ICAR}}
+\newcommand{\na}{{\it NA}}
+\newcommand{\actaa}{{\it ACA}}
+\newcommand{\apss}{{\it Ap\&SS}}
+%===============================================================================
+
+% Our citation style will be aa (astronomy style):
+\citestyle{aa}
+
+\endinput
