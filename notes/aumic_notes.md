@@ -3,11 +3,6 @@
 ------------------------------------------------------------
 
 ### To Do
--   Boccaletti plots
-    -   also, use all three dates!
--   do imfit without flare time
--   just show combined image
--   check preweighted uvf
 -   clean down to data rms, not model
 -   for band9:
     -   split out by date to check for flares
@@ -20,9 +15,14 @@
 -   hughes 2017
 ------------------------------------------------------------
 ##### For Meredith:
--   Should noise remain the same across all models for a given observation?
 -   Evan's model has ctrpix 256.5, while I have 257?
+-   What's up with March spw1?
+-   Could we get around uvmodel by quadrupling the number of visibilities?
 
+------------------------------------------------------------
+#### 6/30/17:
+
+We have to treat each spectral window seperately, as `uvmodel` can't handle spectral windows.
 
 ------------------------------------------------------------
 #### 6/16/17: Reweighting
@@ -31,13 +31,13 @@
 
 
 Now that I've (more or less) finished processing the visibilities, I need to reweight them using Kevin's code. There are three important factors for determining good weights:
-1. `uvwidth` the size of the box within which to search for neighboring visibilities in order to calculate standard devation/weight. This value is determined using the time smearing equation (3.194) from Essential Radio Astronomy:
+1. `uvwidth:` the size of the box within which to search for neighboring visibilities in order to calculate standard devation/weight. This value is determined using the time smearing equation (3.194) from Essential Radio Astronomy:
     $$ \Delta t \ll \frac{\theta_s}{\Delta \theta} \frac{1}{2\pi} \implies \text{uvwidth} = 2\pi d_{uv} \Delta t $$
     where $\theta_s$ is the synthesized beam, $\Delta \theta$ is the largest phasecenter offset of concern, and $d_{uv}$ is the median $uv$ distance.
 2. `nclose:` the number of points used to calculate the standard devation/weight. If there are not nclose visibilities within uvwidth, the weight is set to zero.
 3. `acceptance fraction:` the fraction of points for which weights are sucessfully calculated.
 
-I start by setting `nclose` to 55, and then increase/decrease `nclose` by 1 (while holding `uvwidth` fixed) until the acceptance fraction is in between 0.98 and 0.9975. 
+I start by setting `nclose` to 50, and then increase/decrease `nclose` by 1 (while holding `uvwidth` fixed) until the acceptance fraction is just above 0.99.
 
 
 The procedure to go from CASA `.ms` to correctly weighted visibilities of all file formats is as follows:
@@ -59,7 +59,7 @@ for uvf in uvfs:
     
 #back to casa
 from glob import glob
-uvfs = glob('*FINAL.uvf'
+uvfs = glob('*FINAL.uvf')
 for uvf in uvfs:
     importuvfits(fitsfile=uvf, vis=uvf[:-4]+'.ms')
 

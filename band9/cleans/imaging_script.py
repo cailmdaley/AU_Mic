@@ -15,7 +15,7 @@ pixsize ='0.03arcsec',
 
 
 visibilities = ['../calibrated_final.ms']
-filename = 'aumic_band9_natural'
+filename = 'aumic_band9'
 
 natural = True
 taper = True
@@ -56,20 +56,20 @@ if natural:
 
     #Dirty clean to get rms and check if mask is good
     image = filename+"_dirty_natural"
-    subprocess.call("rm -rf {}.*".format(image), shell=True)
-    tclean(vis=visibilities,
-           imagename=image,
-           imsize=imsize,
-           cell=pixsize,
-           weighting='natural',
-           niter=0)
-    dirty_natural_rms = imstat(imagename='{}.residual'.format(image),
-        region='aumic_rms.region', listit=False)['rms'][0]
+    # subprocess.call("rm -rf {}.*".format(image), shell=True)
+    # tclean(vis=visibilities,
+    #        imagename=image,
+    #        imsize=imsize,
+    #        cell=pixsize,
+    #        weighting='natural',
+    #        niter=0)
+    dirty_natural_rms = imstat(imagename='{}.image'.format(image),
+        region='aumic_band9_rms.region', listit=False)['rms'][0]
 
     if view:
         #Show dirty image, then clean up and delete all dirty clean files
-        print 'dirty natural: {}'.format(dirty_natural_rms)
-        viewer(infile=image + '.residual', displaytype='contour')
+        print 'dirty natural rms: {}'.format(dirty_natural_rms)
+        viewer(infile=image + '.image', displaytype='contour')
         raw_input('mask ready? ')
     subprocess.call("rm -rf {}.*".format(image), shell=True)
 
@@ -88,7 +88,7 @@ if natural:
            pbmask=None)
 
     natural_rms = imstat(imagename='{}.image'.format(image),
-        region='aumic_rms.region', listit=False)['rms'][0]
+        region='aumic_band9_rms.region', listit=False)['rms'][0]
     print 'Natural clean rms is', natural_rms
     if view: viewer(infile=image + '.image')
 
@@ -112,12 +112,12 @@ if taper:
            weighting='natural',
            uvtaper=['200klambda'],
            niter=0)
-    dirty_taper_rms = imstat(imagename='{}.residual'.format(image),
-                region='aumic_rms.region', listit=False)['rms'][0]
+    dirty_taper_rms = imstat(imagename='{}.image'.format(image),
+                region='aumic_band9_rms.region', listit=False)['rms'][0]
     if view:
         #Show dirty image, then clean up and delete all dirty clean files
-        print 'dirty taper: {}'.format(dirty_taper_rms)
-        viewer(infile=image + '.residual', displaytype='contour')
+        print 'dirty taper rms: {}'.format(dirty_taper_rms)
+        viewer(infile=image + '.image', displaytype='contour')
         raw_input('mask ready? ')
     subprocess.call("rm -rf {}.*".format(image), shell=True)
 
@@ -137,11 +137,10 @@ if taper:
            pbmask=None)
 
     if view: viewer(infile=image + '.image')
-    taper_rms = imstat(imagename='{}.image'.format(image), region='aumic_rms.region',
+    taper_rms = imstat(imagename='{}.image'.format(image), region='aumic_band9_rms.region',
         listit=False)['rms'][0]
     print 'Taper clean rms is', taper_rms
 
     # Export to .fits
     exportfits(imagename='{}.image'.format(image),
         fitsimage='{}.fits'.format(image))
-
