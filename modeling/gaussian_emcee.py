@@ -73,7 +73,7 @@ def pairplot(sampler, param_names):
     plt.subplots_adjust(top=0.9)
     corner.fig.suptitle("Corner Plot")
     plt.show(False)
-    # plt.savefig('MH_lightcurve1_pairgrid.png')
+    plt.savefig('pairgrid.png')
     
     
 ndim, nwalkers = 5, 10

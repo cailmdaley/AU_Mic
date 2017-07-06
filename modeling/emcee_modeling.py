@@ -2,7 +2,7 @@ import emcee
 import numpy as np
 import subprocess as sp
 import matplotlib.pyplot as plt
-from disk_model import debris_disk
+from disk_model import debris_disk, raytrace
 from astropy.io import fits
 cgdisp_start = False
 
@@ -81,6 +81,30 @@ class Observation:
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
 
 class Model:
+    def __init__(self, observations, name='model'):
+        self.observations = observations
+        self.name = name
+
+    def make_fits(self, params):
+        disk_params = params[:-1]
+        PA = params[-1]
+        
+        model_disk = debris_disk.Disk(disk_params, obs=[300, 131, 300, 20])
+        raytrace.total_model(model_disk,
+            distance=9.91, # pc
+            imres=0.03, # arcsec/pix
+            xnpix=512, #image size in pixels
+            freq0=self.observations[0].uvf[0].header['CRVAL4']*1e-9, # obs frequeency
+            PA=PA,
+            offs=[0.0,0.0], # offset from image center
+            nchans=1, # continum
+            isgas=False, # continuum!
+            includeDust=True, #continuuum!!
+            extra=0.0, # ?
+            modfile = 'model_data/{}'.format(self.name))
+        
+        self.im = fits.open('model_data/{}.fits'.format(self.name))
+
     def obs_sample(self, obs):
         """
         Create model fits file with correct header information and sample using 
@@ -118,7 +142,7 @@ class Model:
         sp.call(['fits', 'op=uvout', 
             'in=model_data/{}.vis'.format(filename),
             'out=model_data/{}.uvf'.format(filename)])
-            
+
     def get_chi(self, obs):
         """
         Return chi^2 statistics of model.
@@ -142,9 +166,64 @@ class Model:
         # Calculate chi^2
         chi = np.sum((datrl_stokes - modrl_stokes)**2 * weights +
                      (datim_stokes - modim_stokes)**2 * weights)
-        redchi = chi / len(datrl_stokes)
+                     
+        self.chis.append(chi)
 
-        self.redchis.append(redchi)
+    def mcmc(self, steps):
+        
+        self.chis = []
+        def lnlike(theta):
+            
+            params = [
+                -0.5,         # T_INDEX - qq parameter                 
+                # 3.67e-08,     # disk mass
+                theta[0],     # disk mass
+                # 2.3,          # radial power law index
+                theta[1],          # radial power law index
+                8.8,          # inner radius
+                40.3,         # outer radius
+                150.0,        # critical radius
+                89.5,         # inclination
+                0.31,         # solar mass
+                0.0001,       # CO gas fraction
+                0.081,        # turbulence velocity
+                70.0,         # Zq at critical radius (AU)
+                [0.79, 1000], # upper and lower column densities
+                [50, 500],    # inner and outer abundance boundaries
+                -1,           # handed??
+                500,          # radial grid size
+                500,          # vertical grid size
+                0.09,         # stellar luminosity
+                # 0.1,          # scale height
+                theta[2],          # scale height
+                128.41]       # position angle
+            self.make_fits(params)
+            
+            for obs in observations:
+                self.obs_sample(obs)
+                self.get_chi(obs)
+            return sum(self.chis)
+            
+        def lnprior(theta):
+            # disk_mass, = theta
+            # 
+            # if disk_mass > 0 and scale_height > 0:
+            #     return 0.0
+            # return -np.inf
+            return 0.0
+
+        def lnprob(theta):
+            lp = lnprior(theta)
+            if not np.isfinite(lp):
+                return -np.inf
+            return lp + lnlike(theta)
+        
+        
+        ndim, nwalkers = 3, 8
+        pos = [[3.67e-08, 2.3, 0.1] + np.array([1e-12, 1e-4, 1e-5]) *
+            np.random.randn(ndim) for i in range(nwalkers)]
+        self.sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
+        self.sampler.run_mcmc(pos, steps)
 
     def clean(self, obs, residual=False, show=True):
         """
@@ -225,20 +304,6 @@ class Model:
         if show == True:
             self.clean(obs, residual=True)
 
-    def __init__(self, path, observations, name='model'):
-        self.path = path
-        self.name = name
-        self.im = fits.open(path + '.fits')
-        
-        # Associate observations with data
-        self.observations = observations
-        
-        # For each observation, append reduced chi^2 to list
-        self.redchis = []
-        for obs in observations:
-            self.obs_sample(obs)
-            self.get_chi(obs)
-        self.im.close
         
 mar0 = Observation('aumic_mar_spw0_FINAL', rms=6.5e-05)
 mar1 = Observation('aumic_mar_spw1_FINAL', rms=6.124e-05)
@@ -256,7 +321,7 @@ observations=[mar0, mar1, mar2, mar3,
               aug0, aug1, aug2, aug3,
               jun0, jun1, jun2, jun3]
 
-first_model = Model('first_model', observations)
+first_model = Model(observations)
 
 # Display clean images and residuals for each observation
 # for obs in first_model.observations:
