@@ -9,6 +9,7 @@ radmc3dPy
 *.uvsub
 *.fixvis
 uid*
+.DS*
 
 band6/imaging/cleans/old
 band6/imaging/cleans/older_composite/

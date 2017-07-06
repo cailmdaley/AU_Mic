@@ -24,9 +24,6 @@ def var_vis(infile, outfile):
     # read in visiblities
     vis = (im[0].data['data']).squeeze()
     
-    if vis.ndim == 4: # multiple spws
-        vis = np.mean(vis, axis=1) #average together spws
-        
     if vis.shape[1] == 2: # polarized; turn to stokes
         real = (vis[:,0,0]+vis[:,1,0])/2.
         imag = (vis[:,0,1]+vis[:,1,1])/2.
@@ -56,15 +53,15 @@ def var_vis(infile, outfile):
     print('uvwidth is {}'.format(uvwidth))
     
     # nclose: number of nearby visibility points to use when measuring the dispersion
-    nclose = 55
-    
+    nclose = 50
     
     import time
     start=time.time()
 
     acceptance_ratio = 0
     
-    while not (0.980< acceptance_ratio < 0.9975):
+    going_up = False
+    while True:
         print('nclose is {}'.format(nclose))
         
         real_weight = np.zeros((nuv,nfreq), dtype=np.float32)
@@ -99,8 +96,13 @@ def var_vis(infile, outfile):
         acceptance_ratio = 1. - len(bad_points)/float(nuv)
         print("acceptance ration: {}".format(acceptance_ratio))
         
-        if acceptance_ratio <= 0.980: nclose -= 1
-        if acceptance_ratio >= 0.9974: nclose += 1
+        if acceptance_ratio <= 0.99: 
+            nclose -= 1
+            going_up = True
+        elif acceptance_ratio >= 0.99 and going_up == False: 
+            nclose += 1
+        else: 
+            break
 
     #plt.plot(np.sqrt(u**2+v**2),nclose_arr,'.')
     #plt.scatter(real_weight, imag_weight)
@@ -129,6 +131,7 @@ def var_vis(infile, outfile):
 
     return real_weight, imag_weight
 
+    
 
 def create_vis(filename):
     subprocess.call('rm -r {}.vis'.format(filename), shell=True)
@@ -136,8 +139,8 @@ def create_vis(filename):
         filename, filename), shell=True)
 
         
-uvfs = glob('*.uvsub.uvf')
+uvfs = glob('unweighted_spws/*.uvf')
 for uvf in uvfs:
-    final_name = uvf[:17] + '_FINAL'
+    final_name = 'weighted_spws/' + uvf[16:30] + '_FINAL'
     var_vis(uvf[:-4], final_name)
     create_vis(final_name)
