@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: thesis_master_template.aux
+A level-1 auxiliary file: 0_Epigraph.aux
+A level-1 auxiliary file: 0_Thanks.aux
+A level-1 auxiliary file: 1_Introduction.aux
+A level-1 auxiliary file: 2_Observations.aux
+A level-1 auxiliary file: 3_Results.aux
+A level-1 auxiliary file: 4_Analysis.aux
+A level-1 auxiliary file: 5_Discussion.aux
+A level-1 auxiliary file: 6_Conclusions.aux
+The style file: apj.bst
+Database file #1: bibliography.bib
+Warning--empty publisher in Houk88
+You've used 113 entries,
+            2964 wiz_defined-function locations,
+            1379 strings with 30808 characters,
+and the built_in function-call counts, 63043 in all, are:
+= -- 5153
+> -- 5223
+< -- 37
++ -- 1928
+- -- 1814
+* -- 5862
+:= -- 11881
+add.period$ -- 113
+call.type$ -- 113
+change.case$ -- 1191
+chr.to.int$ -- 112
+cite$ -- 114
+duplicate$ -- 2149
+empty$ -- 3105
+format.name$ -- 2170
+if$ -- 11959
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 106
+newline$ -- 343
+num.names$ -- 456
+pop$ -- 1257
+preamble$ -- 1
+purify$ -- 1191
+quote$ -- 0
+skip$ -- 1796
+stack$ -- 0
+substring$ -- 2342
+swap$ -- 46
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 1014
+warning$ -- 1
+while$ -- 431
+width$ -- 0
+write$ -- 1128
+(There was 1 warning)
