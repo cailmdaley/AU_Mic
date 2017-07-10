@@ -1,0 +1,50 @@
+\chapter{Observations}
+\label{chap2}
+
+\section{CARMA Observations}
+\label{CARMA Observations}
+We observed 49 Ceti with the Combined Array for Research in Millimeter-wave Astronomy (CARMA) over 7 nights in late 2012 and early 2013 for a total of 15 hours. CARMA is a 23 antenna interferometer located at an elevation of 2200\,m in the Inyo Mountains of California. Our observations used the 15 element subarray that consists of six 10.4\,m diameter antennas and nine 6.1\,m diameter antennas in the compact configuration, providing baseline lengths between 11 and 147 meters. The data provide a spatial resolution of $\sim$ 2.2 by $\sim$ 3.0 arcsec when imaged (see Section \ref{CARMAResults} for details). Table~\ref{tab:obs_CARMA} contains the date of observation, length of observation per night on target, number of antennas used, estimated opacity at 230 GHz ($\tau_{230GHz}$), local oscillator (LO) frequency, and derived flux of the gain calibrator, the quasar J0132-169. 
+
+The weather was mediocre, with 230 GHz opacity varying between 0.11 and 0.37. Data from malfunctioning antennas and from periods of time when the phase RMS varied widely were not used in imaging. These factors resulted in somewhat lower than expected sensitivity and spatial resolution. Due to the southern declination of the source relative to the array's location, the resolution was better in the east-west direction than the north-south direction. The correlator was configured to take advantage of the maximum continuum bandwidth available, with the LO set as to avoid the CO J=2-1 line at 230.538\,GHz from appearing in any of the 16 spectral windows. Each window had a bandwidth of 487.5\,MHz for a total bandwidth of 7.8\,GHz per polarization. 
+%Uranus was used as the flux calibrator, the bright quasar 3c84 was used as the bandpass calibrator, and the quasar J0132-169 was used as the gain calibrator for all observations. 
+
+Each night of observation began with short exposures of Uranus ($\sim$ 5 minutes) to set the flux scale, followed by the bright radio source 3c84 ($\sim$ 10 minutes) to act as a backup flux calibrator and as the bandpass calibrator. Bandpass calibration corrects for the variation of amplitude and phase with frequency for every baseline. Observations cycled through the quasar J0132-169, 49 Ceti, and J0204-170. J0132-169, 1.3$^{\circ}$ from 49 Ceti, was used as the gain calibrator. As point sources, quasars have the same flux observed by all baselines, allowing for differences in antenna gain between telescopes to be ironed out. J0204-170, another nearby quasar, allowed us to asses the quality of the phase transfer from J0132-169. A conservative estimate for the systematic uncertainty in the flux scale set by Uranus is $\sim$ 20\%, based on the typical uncertainty in flux models of solar system objects.
+
+\begin{table*}
+\caption{Observational Parameters for CARMA Data}
+\resizebox{\textwidth}{!}{
+%\begin{center}
+%\begin{multicols*}{2}
+%\setlength\columnsep{12pt}
+%\def\arraystretch{1}
+%\begin{tabular}{1*{5}{c}r}
+\begin{tabular}{ccccccc}
+    \hline
+    Date & \multicolumn{1}{p{4cm}}{\centering Observation Time \\ on 49 Ceti (hrs)} & \multicolumn{1}{p{2cm}}{\centering Number of \\ Antennas} & $\tau_{230GHz}$ & LO Freq (GHz) & \multicolumn{1}{p{3.5cm}}{\centering Derived Flux \\ of J0132-169 (Jy)} \\ \hline
+    2012 Nov 4 & 2.48 & 13 & 0.27-0.37 & 227.5215 & 0.858 \\ 
+    2012 Nov 14 & 1.79 & 13 & 0.17-0.23 & 227.5185 & 0.619 \\     
+    2012 Nov 15 & 2.23 & 9 & 0.20-0.23 & 227.5184 & 0.659 \\     
+    2012 Nov 23 & 2.51 & 15 & 0.20-0.23 & 227.5158 & 0.637 \\     
+    2012 Nov 25 & 2.52 & 14 & 0.17-0.21 & 227.5153 & 0.583 \\     
+    2012 Nov 27 & 1.56 & 13 & 0.17-0.18 & 227.5147 & 0.600 \\     
+    2013 Feb 16 & 1.86 & 13 & 0.11-0.26 & 227.5150 & 0.375 \\         
+    \hline
+\end{tabular}
+%    \end{multicols*}
+%    \end{center}
+%\end{adjustbox}
+}
+\label{tab:obs_CARMA}
+\end{table*}
+
+
+\section{ALMA Observations}
+\label{ALMA Observations}
+49 Ceti was observed with the Atacama Large Millimeter/submillimeter Array (ALMA) for one night, on November 4, 2013, for a total of 40 minutes on source. ALMA is a radio interferometer located at an altitude of 5000\,m in the Atacama desert of northern Chile. For our Cycle 1 observations, the array included twenty-eight 12\,m antennas providing baseline lengths between 30 and 1300\,m. Three spectral windows with bandwidths of 1.875\,GHz were combined for a total bandwidth of 5.625\,GHz per polarization in order to image the continuum emission. The fourth spectral window, with a resolution of 0.05\,km/s and bandwidth of 0.23\,GHz, was centered on the CO J = 3-2 line at a frequency of 345.79599\,GHz. The continuum data were time-averaged in one minute intervals and averaged over the total number of channels in each spectral window to create a single continuum channel for computational efficiency in modeling. Flux calibration was bootstrapped for this observation from a solar system object observed earlier in the night. The bright, nearby quasar J0006-0623 was used as a backup flux calibrator for the observation, and the quasar J0132-1654 was used as the gain calibrator. The uncertainty in flux models of solar system objects that plagues CARMA also is an issue for ALMA, resulting in a systematic uncertainty for the flux scale of $\sim$ 20\% for these data as well. 
+
+
+
+%49 Ceti was observed with ALMA with baseline lengths between 30 and 1300m in November 2013 using 28 12m antennas tuned to 350GHz (850$\mu$m) for 45 minutes. Three spectral windows with bandwidths of 1.875GHz were combined for a total bandwidth of 5.625GHz per polarization. The fourth spectral window, with a resolution of 0.05 km/s and bandwidth of .23GHz, was centered on the CO J=3-2 line. The results pertaining to the CO will be discussed elsewhere. The continuum data were time-averaged in one minute intervals and averaged over the total number of channels in each spectral window for computational efficiency in modeling. The bright, nearby quasar J0006-0623 was used as a flux calibrator for the observation, and the quasar J0132-1654 was used as the gain calibrator. 
+
+	 
+% \ifthenelse{\isodd{\thepage}}{\clearemptydoublepage}{}

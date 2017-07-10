@@ -2,9 +2,11 @@ import emcee
 import numpy as np
 import subprocess as sp
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+from collections import OrderedDict
 from disk_model import debris_disk, raytrace
 from astropy.io import fits
-cgdisp_start = False
 
 class Observation:
     def __init__(self, name, rms):
@@ -15,7 +17,6 @@ class Observation:
         
         self.dec = self.uvf[3].data['DECEPO'][0]
         self.ra = self.uvf[3].data['RAEPO'][0]
-        
     def clean(self, show=True):
         """
         Clean and image (if desired) a observation-specific model.
@@ -28,7 +29,7 @@ class Observation:
         print('================================================================================')
         
         # Set observation-specific clean filename; clear filenames
-        sp.call('rm -rf {}.{{mp,bm,cl,cm}}'.format(self.name), shell=True)
+        sp.call('rm -rf obs_data/{}.{{mp,bm,cl,cm}}'.format(self.name), shell=True)
         
         #Dirty clean; save rms for clean cutoff
         sp.call(['invert', 
@@ -48,7 +49,7 @@ class Observation:
             'map=obs_data/{}.mp'.format(self.name), 
             'beam=obs_data/{}.bm'.format(self.name), 
             'out=obs_data/{}.cl'.format(self.name), 
-            'niters=10000', 'cutoff={}'.format(dirty_rms/2)])
+            'niters=100000', 'cutoff={}'.format(dirty_rms/2)])
         sp.call(['restor',
             'map=obs_data/{}.mp'.format(self.name),
             'beam=obs_data/{}.bm'.format(self.name),
@@ -58,7 +59,7 @@ class Observation:
         # Display clean image with 2,4,6 sigma contours, if desired
         if show == True:
             
-            # Display an unimportant image to get around the fact that the first 
+            # Display an unimportant imaage to get around the fact that the first 
             # image displayed with cgdisp in a session can't be deleted
             global cgdisp_start
             if cgdisp_start == False:
@@ -79,12 +80,7 @@ class Observation:
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
-
 class Model:
-    def __init__(self, observations, name='model'):
-        self.observations = observations
-        self.name = name
-
     def make_fits(self, params):
         disk_params = params[:-1]
         PA = params[-1]
@@ -104,7 +100,6 @@ class Model:
             modfile = 'model_data/{}'.format(self.name))
         
         self.im = fits.open('model_data/{}.fits'.format(self.name))
-
     def obs_sample(self, obs):
         """
         Create model fits file with correct header information and sample using 
@@ -142,7 +137,6 @@ class Model:
         sp.call(['fits', 'op=uvout', 
             'in=model_data/{}.vis'.format(filename),
             'out=model_data/{}.uvf'.format(filename)])
-
     def get_chi(self, obs):
         """
         Return chi^2 statistics of model.
@@ -168,63 +162,7 @@ class Model:
                      (datim_stokes - modim_stokes)**2 * weights)
                      
         self.chis.append(chi)
-
-    def mcmc(self, steps):
         
-        self.chis = []
-        def lnlike(theta):
-            
-            params = [
-                -0.5,         # T_INDEX - qq parameter                 
-                # 3.67e-08,     # disk mass
-                theta[0],     # disk mass
-                # 2.3,          # radial power law index
-                theta[1],          # radial power law index
-                8.8,          # inner radius
-                40.3,         # outer radius
-                150.0,        # critical radius
-                89.5,         # inclination
-                0.31,         # solar mass
-                0.0001,       # CO gas fraction
-                0.081,        # turbulence velocity
-                70.0,         # Zq at critical radius (AU)
-                [0.79, 1000], # upper and lower column densities
-                [50, 500],    # inner and outer abundance boundaries
-                -1,           # handed??
-                500,          # radial grid size
-                500,          # vertical grid size
-                0.09,         # stellar luminosity
-                # 0.1,          # scale height
-                theta[2],          # scale height
-                128.41]       # position angle
-            self.make_fits(params)
-            
-            for obs in observations:
-                self.obs_sample(obs)
-                self.get_chi(obs)
-            return sum(self.chis)
-            
-        def lnprior(theta):
-            # disk_mass, = theta
-            # 
-            # if disk_mass > 0 and scale_height > 0:
-            #     return 0.0
-            # return -np.inf
-            return 0.0
-
-        def lnprob(theta):
-            lp = lnprior(theta)
-            if not np.isfinite(lp):
-                return -np.inf
-            return lp + lnlike(theta)
-        
-        
-        ndim, nwalkers = 3, 8
-        pos = [[3.67e-08, 2.3, 0.1] + np.array([1e-12, 1e-4, 1e-5]) *
-            np.random.randn(ndim) for i in range(nwalkers)]
-        self.sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
-        self.sampler.run_mcmc(pos, steps)
-
     def clean(self, obs, residual=False, show=True):
         """
         Clean and image (if desired) a observation-specific model.
@@ -255,7 +193,7 @@ class Model:
             'map=model_data/{}.mp'.format(filename), 
             'beam=model_data/{}.bm'.format(filename), 
             'out=model_data/{}.cl'.format(filename), 
-            'niters=10000', 'cutoff={}'.format(obs.rms/2)])
+            'niters=100000', 'cutoff={}'.format(obs.rms/2)])
         sp.call(['restor',
             'map=model_data/{}.mp'.format(filename),
             'beam=model_data/{}.bm'.format(filename),
@@ -286,8 +224,8 @@ class Model:
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
-
     def residuals(self, obs, show=True):
+
         """
         Create model residuals (data - model), and clean//display if desired
         """
@@ -304,28 +242,166 @@ class Model:
         if show == True:
             self.clean(obs, residual=True)
 
+    def __init__(self, params, observations, name='model'):
+        self.params = params
+        self.observations = observations
+        self.name = name
         
-mar0 = Observation('aumic_mar_spw0_FINAL', rms=6.5e-05)
-mar1 = Observation('aumic_mar_spw1_FINAL', rms=6.124e-05)
-mar2 = Observation('aumic_mar_spw2_FINAL', rms=6.068e-05)
-mar3 = Observation('aumic_mar_spw3_FINAL', rms=6.468e-05)
-aug0 = Observation('aumic_aug_spw0_FINAL', rms=5.879e-05)
-aug1 = Observation('aumic_aug_spw1_FINAL', rms=5.336e-05)
-aug2 = Observation('aumic_aug_spw2_FINAL', rms=6.092e-05)
-aug3 = Observation('aumic_aug_spw3_FINAL', rms=5.558e-05)
-jun0 = Observation('aumic_jun_spw0_FINAL', rms=5.369e-05)
-jun1 = Observation('aumic_jun_spw1_FINAL', rms=4.658e-05)
-jun2 = Observation('aumic_jun_spw2_FINAL', rms=5.083e-05)
-jun3 = Observation('aumic_jun_spw3_FINAL', rms=5.559e-05)
-observations=[mar0, mar1, mar2, mar3,
-              aug0, aug1, aug2, aug3,
-              jun0, jun1, jun2, jun3]
+        self.make_fits(params)
+        
+        self.chis = []
+        for obs in self.observations:
+            self.obs_sample(obs)
+            self.get_chi(obs)
+for i in range(1):
+    #==============================================================================#
+    # Create observations, default parameter dict, and let code know to display
+    # test image before any others
+    #==============================================================================#
+    cgdisp_start = False
+    mar0 = Observation('aumic_mar_spw0_FINAL', rms=6.5e-05)
+    mar1 = Observation('aumic_mar_spw1_FINAL', rms=6.124e-05)
+    mar2 = Observation('aumic_mar_spw2_FINAL', rms=6.068e-05)
+    mar3 = Observation('aumic_mar_spw3_FINAL', rms=6.468e-05)
+    aug0 = Observation('aumic_aug_spw0_FINAL', rms=5.879e-05)
+    aug1 = Observation('aumic_aug_spw1_FINAL', rms=5.336e-05)
+    aug2 = Observation('aumic_aug_spw2_FINAL', rms=6.092e-05)
+    aug3 = Observation('aumic_aug_spw3_FINAL', rms=5.558e-05)
+    jun0 = Observation('aumic_jun_spw0_FINAL', rms=5.369e-05)
+    jun1 = Observation('aumic_jun_spw1_FINAL', rms=4.658e-05)
+    jun2 = Observation('aumic_jun_spw2_FINAL', rms=5.083e-05)
+    jun3 = Observation('aumic_jun_spw3_FINAL', rms=5.559e-05)
+    band6_observations=[mar0, mar1, mar2, mar3,
+                        aug0, aug1, aug2, aug3,
+                        jun0, jun1, jun2, jun3]
+                  
+    params = OrderedDict([
+        ('temp_index',        -0.5),
+        ('m_disk',            3.67e-08),
+        ('sb_law',            2.3),
+        ('r_in',              8.8),
+        ('r_out',             40.3),
+        ('r_crit',            150.0),
+        ('inc',               89.5),
+        ('m_star',            0.31),
+        ('co_frac',           0.0001),
+        ('v_turb',            0.081),
+        ('Zq',                70.0),
+        ('column_densities', [0.79, 1000]),
+        ('abundance_bounds', [50, 500]),
+        ('hand',              -1),
+        ('rgrid_size',        500),
+        ('zgrid_size',        500),
+        ('l_star',            0.09),
+        ('scale_factor',      0.1),
+        ('pa',                128.41)])
+        
+def run_mcmc(nsteps, nwalkers, to_vary, observations=band6_observations):
+    
+    # define likelehood functions
+    def lnlike(theta):
+        # default parameter values
+        params = OrderedDict([
+            ('temp_index',        -0.5),
+            ('m_disk',            3.67e-08),
+            ('sb_law',            2.3),
+            ('r_in',              8.8),
+            ('r_out',             40.3),
+            ('r_crit',            150.0),
+            ('inc',               89.5),
+            ('m_star',            0.31),
+            ('co_frac',           0.0001),
+            ('v_turb',            0.081),
+            ('Zq',                70.0),
+            ('column_densities', [0.79, 1000]),
+            ('abundance_bounds', [50, 500]),
+            ('hand',              -1),
+            ('rgrid_size',        500),
+            ('zgrid_size',        500),
+            ('l_star',            0.09),
+            ('scale_factor',      0.1),
+            ('pa',                128.41)])
+        
+        # reassign parameters to vary to those input by emcee
+        for i in range(len(to_vary)):
+            params[to_vary[i][0]] = theta[i]
+            
+        params['m_disk'] = 3.67 * 10**params['m_disk']
+        
+        # create model
+        model = Model(params.values(), observations=observations)
+        
+        # return chi^2
+        return sum(model.chis)
+    def lnprior(theta):
+        disk_mass, pow_law, scale_factor = theta
+        
+        if scale_factor > 0:
+            return 0.0
+        return -np.inf
+    def lnprob(theta):
+        lp = lnprior(theta)
+        if not np.isfinite(lp):
+            return -np.inf
+        return lp + lnlike(theta)
+    
+    
+    # run sampler chain
+    ndim = len(to_vary)
+    pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
+        for i in range(nwalkers)] 
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
+    
+    sample_df = pd.DataFrame(columns=[param[0] for param in to_vary])
+    for result in sampler.sample(pos, iterations=nsteps, storechain=False):
+        return result
 
-first_model = Model(observations)
+        # sampler.run_mcmc(pos, nsteps)
+
+    # # save to dataframe
+    # if columns is None:
+    #     columns = list(range(sampler.chain.shape[-1]))
+    #     
+    # self.df = pd.DataFrame(data=sampler.flatchain, columns=columns)
+    # self.df['lnprob'] = sampler.flatlnprobability
+    # self.df['chain'] = np.concatenate([i * np.ones(nsteps, dtype=int) for i in range(nwalkers)])
+    
+def pairplot(self, param_names):
+    """ Plot 'corner plot' of fit"""
+    posterior = pd.DataFrame(self.sampler.flatchain, columns=param_names)
+
+    # cmap = sns.cubehelix_palette(as_cmap=True, start=2.3, dark=0, light=1, reverse=True)
+    cmap = "Blues"
+    corner = sns.PairGrid(posterior, diag_sharey=False, despine=False)
+    corner.map_diag(sns.kdeplot)
+    corner.map_lower(sns.kdeplot, cmap=cmap, n_levels=5, shade=True)
+    corner.map_upper(plt.scatter, s=0.3)
+    
+    plt.subplots_adjust(top=0.9)
+    corner.fig.suptitle("Corner Plot")
+    plt.show(False)
+    plt.savefig('pairgrid.png')
+    
+
+#==============================================================================#
+# Sandbox
+#==============================================================================#
+
+blah = run_mcmc(1, 8, to_vary = [
+    ('m_disk', -8, 2),
+    ('sb_law', 2.3, 4), 
+    ('scale_factor', 0.1, 0.05)])
+
+
+            
+
+# first_model.mcmc(130)
+# first_model.pairplot(['disk mass', 'radial power law', 'scale height'])
 
 # Display clean images and residuals for each observation
-# for obs in first_model.observations:
-#     first_model.clean(obs)
+# standard_model = Model(params.values(), band6_observations)
+# for obs in standard_model.observations:
+#     standard_model.clean(obs)
 #     raw_input('cool?')
-#     first_model.residuals(obs)
+#     standard_model.residuals(obs)
 #     raw_input('cool?')

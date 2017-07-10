@@ -12,8 +12,8 @@ imsize = 512
 pixsize ='0.03arcsec',
 
 
-visname = 'aumic_jun_noflare_allspws.fixvis.uvsub.ms'
-filename = 'fluxtest_jun'
+visname = 'weighted_spws/aumic_mar_spw1_FINAL.ms'
+filename = 'mar_bad_spw1'
 
 natural = True
 imfit=False
@@ -34,9 +34,9 @@ if natural:
            niter=0)
     dirty_natural_rms = imstat(imagename='{}.residual'.format(image),
                  region='aumic_rms.region', listit=False)['rms'][0]
-                 
+
     subprocess.call("rm -rf {}.*".format(image), shell=True)
-    
+
     # User mask:
     image = filename + "_natural"
     subprocess.call("rm -rf {}.*".format(image), shell=True)
