@@ -11,7 +11,7 @@ import numpy as np
 #Clean variables to be changed
 dates = ['../../final_visibilities/aumic_mar_allspws_FINAL.ms',
          '../../final_visibilities/aumic_aug_allspws_FINAL.ms',
-         '../../final_visibilities/aumic_jun_noflare_allspws_FINAL.ms']
+         '../../final_visibilities/aumic_jun_allspws_FINAL.ms']
 dates2 = [
     '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_mar_allspws.fixvis.uvsub.ms',
     '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_aug_allspws.fixvis.uvsub.ms',
@@ -21,7 +21,7 @@ pixsize ='0.03arcsec',
 
 
 
-visibilities = dates2
+visibilities = dates
 filename = 'aumic_all_unweighted'
 
 natural = True
@@ -34,7 +34,7 @@ taper_mask = 'aumic_mask_all_taper.region'
 uniform_mask = 'aumic_mask_all_uniform.region'
 briggs_mask = 'aumic_mask_all_briggs.region'
 
-view=False
+view=True
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
