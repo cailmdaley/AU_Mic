@@ -194,7 +194,7 @@ class Model:
             'map=model_data/{}.mp'.format(filename), 
             'beam=model_data/{}.bm'.format(filename), 
             'out=model_data/{}.cl'.format(filename), 
-            'niters=100000', 'cutoff={}'.format(obs.rms/2)])
+            'niters=10000', 'cutoff={}'.format(obs.rms/2)])
         sp.call(['restor',
             'map=model_data/{}.mp'.format(filename),
             'beam=model_data/{}.bm'.format(filename),
@@ -224,7 +224,7 @@ class Model:
                 'type=p,c', 'device=/xs', 
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
-                'labtyp=arcsec', 'beamtyp=b,l,3',])
+                'labtyp=arcsec', 'options=full', 'beamtyp=b,l,3',])
     def residuals(self, obs, show=True):
 
         """
@@ -327,13 +327,14 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
         for i in range(len(to_vary)):
             params[to_vary[i][0]] = theta[i]
             
-        params['m_disk'] = 3.67 * 10**params['m_disk']
+        params['m_disk'] = 10**params['m_disk']
         
         # create model
         model = Model(params.values(), observations=observations)
         
         # return chi^2
         return sum(model.chis)
+        
     def lnprior(theta):
         m_disk, sb_law, scale_factor = theta
         
@@ -352,11 +353,11 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
     
     # run sampler chain
     ndim = len(to_vary)
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, threads=24)
     
     try:
         df = pd.read_csv(run_name + '.csv')
-        pos = np.array(df[-8:].ix[:, :-1])
+        pos = np.array(df[-nwalkers:].ix[:, :-1])
     except IOError:
         with open(run_name + '.csv', 'w') as f:
             np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob \n'),), 
@@ -375,13 +376,10 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
 # Sandbox
 #==============================================================================#
 
-import time
-start=time.time()
 run_mcmc(nsteps=310, nwalkers=8, run_name='run2-priors', to_vary = [
     ('m_disk', -8, 2),
     ('sb_law', 2.3, 4), 
     ('scale_factor', 0.1, 0.05)])
-print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # first_model.mcmc(130)
 # first_model.pairplot(['disk mass', 'radial power law', 'scale height'])
