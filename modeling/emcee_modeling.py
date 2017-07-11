@@ -1,6 +1,7 @@
 import emcee
 import numpy as np
 import subprocess as sp
+import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -296,7 +297,7 @@ for i in range(1):
         ('scale_factor',      0.1),
         ('pa',                128.41)])
         
-def run_mcmc(nsteps, nwalkers, to_vary, observations=band6_observations):
+def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observations):
     
     # define likelehood functions
     def lnlike(theta):
@@ -334,11 +335,14 @@ def run_mcmc(nsteps, nwalkers, to_vary, observations=band6_observations):
         # return chi^2
         return sum(model.chis)
     def lnprior(theta):
-        disk_mass, pow_law, scale_factor = theta
+        m_disk, sb_law, scale_factor = theta
         
-        if scale_factor > 0:
+        if -11. < m_disk and \
+        0. < scale_factor < 2. and  \
+        -4. < sb_law < 25.: 
             return 0.0
-        return -np.inf
+        else:
+            return -np.inf
     def lnprob(theta):
         lp = lnprior(theta)
         if not np.isfinite(lp):
@@ -348,52 +352,36 @@ def run_mcmc(nsteps, nwalkers, to_vary, observations=band6_observations):
     
     # run sampler chain
     ndim = len(to_vary)
-    pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
-        for i in range(nwalkers)] 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
     
-    sample_df = pd.DataFrame(columns=[param[0] for param in to_vary])
+    try:
+        df = pd.read_csv(run_name + '.csv')
+        pos = np.array(df[-8:].ix[:, :-1])
+    except IOError:
+        with open(run_name + '.csv', 'w') as f:
+            np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob \n'),), 
+                delimiter=', ', fmt='%s')
+        pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
+            for i in range(nwalkers)] 
+            
     for result in sampler.sample(pos, iterations=nsteps, storechain=False):
-        return result
+        pos, chisum, blob = result
+        with open(run_name + '.csv', 'a') as f: 
+            np.savetxt(f, [np.append(pos[i], chisum[i]) for i in range(nwalkers)], delimiter=',')
 
-        # sampler.run_mcmc(pos, nsteps)
-
-    # # save to dataframe
-    # if columns is None:
-    #     columns = list(range(sampler.chain.shape[-1]))
-    #     
-    # self.df = pd.DataFrame(data=sampler.flatchain, columns=columns)
-    # self.df['lnprob'] = sampler.flatlnprobability
-    # self.df['chain'] = np.concatenate([i * np.ones(nsteps, dtype=int) for i in range(nwalkers)])
-    
-def pairplot(self, param_names):
-    """ Plot 'corner plot' of fit"""
-    posterior = pd.DataFrame(self.sampler.flatchain, columns=param_names)
-
-    # cmap = sns.cubehelix_palette(as_cmap=True, start=2.3, dark=0, light=1, reverse=True)
-    cmap = "Blues"
-    corner = sns.PairGrid(posterior, diag_sharey=False, despine=False)
-    corner.map_diag(sns.kdeplot)
-    corner.map_lower(sns.kdeplot, cmap=cmap, n_levels=5, shade=True)
-    corner.map_upper(plt.scatter, s=0.3)
-    
-    plt.subplots_adjust(top=0.9)
-    corner.fig.suptitle("Corner Plot")
-    plt.show(False)
-    plt.savefig('pairgrid.png')
     
 
 #==============================================================================#
 # Sandbox
 #==============================================================================#
 
-blah = run_mcmc(1, 8, to_vary = [
+import time
+start=time.time()
+run_mcmc(nsteps=310, nwalkers=8, run_name='run2-priors', to_vary = [
     ('m_disk', -8, 2),
     ('sb_law', 2.3, 4), 
     ('scale_factor', 0.1, 0.05)])
-
-
-            
+print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # first_model.mcmc(130)
 # first_model.pairplot(['disk mass', 'radial power law', 'scale height'])
