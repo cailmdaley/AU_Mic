@@ -353,15 +353,12 @@ def run_mcmc(nsteps, nwalkers, to_vary, observations=band6_observations):
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
     
     sample_df = pd.DataFrame(columns=[param[0] for param in to_vary])
-    for result in sampler.sample(pos, iterations=nsteps, storechain=False):
-        return result
+    for i, result in enumerate(sampler.sample(pos, iterations=nsteps, storechain=False)):
+        
+        
+        
 
-        # sampler.run_mcmc(pos, nsteps)
 
-    # # save to dataframe
-    # if columns is None:
-    #     columns = list(range(sampler.chain.shape[-1]))
-    #     
     # self.df = pd.DataFrame(data=sampler.flatchain, columns=columns)
     # self.df['lnprob'] = sampler.flatlnprobability
     # self.df['chain'] = np.concatenate([i * np.ones(nsteps, dtype=int) for i in range(nwalkers)])
