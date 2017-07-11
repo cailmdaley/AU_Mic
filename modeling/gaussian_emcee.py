@@ -75,8 +75,13 @@ def pairplot(sampler, param_names):
     corner.fig.suptitle("Corner Plot")
     plt.show(False)
     plt.savefig('pairgrid.png')
+<<<<<<< HEAD
+    
+    
+=======
 
 
+>>>>>>> 36cb2332035db16ebd80b7627c39a65c6f82aae5
 ndim, nwalkers = 5, 10
 pos = [[14.80363748,  30.51691964, 31.97330834, 0.04468592, 2.03675352] + 1e-4*np.random.randn(ndim) for i in range(nwalkers)]
 
