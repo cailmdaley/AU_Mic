@@ -2,6 +2,7 @@ import emcee
 import numpy as np
 import subprocess as sp
 import os
+import pathos.multiprocessing
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -107,11 +108,6 @@ class Model:
         ALMA observation uv coverage to to create model .vis and .uvf files.
         """
         
-        print('')
-        print('================================================================================')
-        print('                                 obs_sample({})                               ').format(obs.name)
-        print('================================================================================')
-        
         # make observation-specific model name
         filename = self.name + '_' + obs.name
 
@@ -126,18 +122,18 @@ class Model:
         # Convert model into MIRIAD .im image file
         sp.call(['fits', 'op=xyin', 
             'in=model_data/{}.fits'.format(filename),
-            'out=model_data/{}.im'.format(filename)])
+            'out=model_data/{}.im'.format(filename)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
 
         # Sample the model image using the observation uv coverage
         sp.call(['uvmodel', 'options=replace',
             'vis=obs_data/{}.vis'.format(obs.name), 
             'model=model_data/{}.im'.format(filename),
-            'out=model_data/{}.vis'.format(filename)])
+            'out=model_data/{}.vis'.format(filename)], stdout=open(os.devnull, 'wb'))
             
         #Convert to UVfits
         sp.call(['fits', 'op=uvout', 
             'in=model_data/{}.vis'.format(filename),
-            'out=model_data/{}.uvf'.format(filename)])
+            'out=model_data/{}.uvf'.format(filename)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
     def get_chi(self, obs):
         """
         Return chi^2 statistics of model.
@@ -194,7 +190,7 @@ class Model:
             'map=model_data/{}.mp'.format(filename), 
             'beam=model_data/{}.bm'.format(filename), 
             'out=model_data/{}.cl'.format(filename), 
-            'niters=10000', 'cutoff={}'.format(obs.rms/2)])
+            'niters=100000', 'cutoff={}'.format(obs.rms/2)])
         sp.call(['restor',
             'map=model_data/{}.mp'.format(filename),
             'beam=model_data/{}.bm'.format(filename),
@@ -224,7 +220,7 @@ class Model:
                 'type=p,c', 'device=/xs', 
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
-                'labtyp=arcsec', 'options=full', 'beamtyp=b,l,3',])
+                'labtyp=arcsec', 'beamtyp=b,l,3',])
     def residuals(self, obs, show=True):
 
         """
@@ -297,10 +293,9 @@ for i in range(1):
         ('scale_factor',      0.1),
         ('pa',                128.41)])
         
+# define likelehood functions
 def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observations):
-    
-    # define likelehood functions
-    def lnlike(theta):
+    def lnlike(theta, to_vary, observations):
         # default parameter values
         params = OrderedDict([
             ('temp_index',        -0.5),
@@ -333,8 +328,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
         model = Model(params.values(), observations=observations)
         
         # return chi^2
-        return sum(model.chis)
-        
+        return -0.5 * sum(model.chis)
     def lnprior(theta):
         m_disk, sb_law, scale_factor = theta
         
@@ -344,20 +338,20 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
             return 0.0
         else:
             return -np.inf
-    def lnprob(theta):
-        lp = lnprior(theta)
-        if not np.isfinite(lp):
-            return -np.inf
-        return lp + lnlike(theta)
+    def lnprob(theta, to_vary, observations):
+            lp = lnprior(theta)
+            if not np.isfinite(lp):
+                return -np.inf
+            return lp + lnlike(theta, to_vary, observations)
     
     
     # run sampler chain
     ndim = len(to_vary)
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, threads=24)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(to_vary, observations), threads=2)
     
     try:
         df = pd.read_csv(run_name + '.csv')
-        pos = np.array(df[-nwalkers:].ix[:, :-1])
+        pos = np.array(df[-8:].ix[:, :-1])
     except IOError:
         with open(run_name + '.csv', 'w') as f:
             np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob \n'),), 
@@ -365,24 +359,24 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
         pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
             for i in range(nwalkers)] 
             
-    for result in sampler.sample(pos, iterations=nsteps, storechain=False):
+    for i, result in enumerate(sampler.sample(pos, iterations=nsteps, storechain=False)):
+        print("Step {}".format(i))
         pos, chisum, blob = result
         with open(run_name + '.csv', 'a') as f: 
             np.savetxt(f, [np.append(pos[i], chisum[i]) for i in range(nwalkers)], delimiter=',')
 
     
-
 #==============================================================================#
 # Sandbox
 #==============================================================================#
 
-run_mcmc(nsteps=310, nwalkers=8, run_name='run2-priors', to_vary = [
+import time
+start=time.time()
+run_mcmc(nsteps=1000, nwalkers=8, run_name='test1', to_vary = [
     ('m_disk', -8, 2),
     ('sb_law', 2.3, 4), 
     ('scale_factor', 0.1, 0.05)])
-
-# first_model.mcmc(130)
-# first_model.pairplot(['disk mass', 'radial power law', 'scale height'])
+print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # Display clean images and residuals for each observation
 # standard_model = Model(params.values(), band6_observations)
