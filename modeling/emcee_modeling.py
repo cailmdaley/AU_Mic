@@ -294,64 +294,66 @@ for i in range(1):
         ('pa',                128.41)])
         
 # define likelehood functions
-def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observations):
-    def lnlike(theta, to_vary, observations):
-        # default parameter values
-        params = OrderedDict([
-            ('temp_index',        -0.5),
-            ('m_disk',            3.67e-08),
-            ('sb_law',            2.3),
-            ('r_in',              8.8),
-            ('r_out',             40.3),
-            ('r_crit',            150.0),
-            ('inc',               89.5),
-            ('m_star',            0.31),
-            ('co_frac',           0.0001),
-            ('v_turb',            0.081),
-            ('Zq',                70.0),
-            ('column_densities', [0.79, 1000]),
-            ('abundance_bounds', [50, 500]),
-            ('hand',              -1),
-            ('rgrid_size',        500),
-            ('zgrid_size',        500),
-            ('l_star',            0.09),
-            ('scale_factor',      0.1),
-            ('pa',                128.41)])
-        
-        # reassign parameters to vary to those input by emcee
-        for i in range(len(to_vary)):
-            params[to_vary[i][0]] = theta[i]
-            
-        params['m_disk'] = 10**params['m_disk']
-        
-        # create model
-        model = Model(params.values(), observations=observations)
-        
-        # return chi^2
-        return -0.5 * sum(model.chis)
-    def lnprior(theta):
-        m_disk, sb_law, scale_factor = theta
-        
-        if -11. < m_disk and \
-        0. < scale_factor < 2. and  \
-        -4. < sb_law < 25.: 
-            return 0.0
-        else:
-            return -np.inf
-    def lnprob(theta, to_vary, observations):
-            lp = lnprior(theta)
-            if not np.isfinite(lp):
-                return -np.inf
-            return lp + lnlike(theta, to_vary, observations)
+def lnlike(theta, to_vary, observations):
+    # default parameter values
+    params = OrderedDict([
+        ('temp_index',        -0.5),
+        ('m_disk',            3.67e-08),
+        ('sb_law',            2.3),
+        ('r_in',              8.8),
+        ('r_out',             40.3),
+        ('r_crit',            150.0),
+        ('inc',               89.5),
+        ('m_star',            0.31),
+        ('co_frac',           0.0001),
+        ('v_turb',            0.081),
+        ('Zq',                70.0),
+        ('column_densities', [0.79, 1000]),
+        ('abundance_bounds', [50, 500]),
+        ('hand',              -1),
+        ('rgrid_size',        500),
+        ('zgrid_size',        500),
+        ('l_star',            0.09),
+        ('scale_factor',      0.1),
+        ('pa',                128.41)])
     
+    # reassign parameters to vary to those input by emcee
+    for i in range(len(to_vary)):
+        params[to_vary[i][0]] = theta[i]
+        
+    params['m_disk'] = 10**params['m_disk']
+    
+    # create model
+    model = Model(params.values(), observations=observations)
+    
+    # return chi^2
+    return -0.5 * sum(model.chis)
+def lnprior(theta):
+    m_disk, sb_law, scale_factor, r_in, r_out, inc, pa = theta
+    
+    if -11. < m_disk and \
+    -4. < sb_law < 10. and \
+    0. < scale_factor < 2. and  \
+    0. < r_in < r_out and \
+    inc <= 90: 
+        return 0.0
+    else:
+        return -np.inf
+def lnprob(theta, to_vary, observations):
+        lp = lnprior(theta)
+        if not np.isfinite(lp):
+            return -np.inf
+        return lp + lnlike(theta, to_vary, observations)
+    
+def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observations):
     
     # run sampler chain
     ndim = len(to_vary)
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(to_vary, observations), threads=2)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(to_vary, observations), threads=1)
     
     try:
         df = pd.read_csv(run_name + '.csv')
-        pos = np.array(df[-8:].ix[:, :-1])
+        pos = np.array(df[-nwalkers:].ix[:, :-1])
     except IOError:
         with open(run_name + '.csv', 'w') as f:
             np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob \n'),), 
@@ -372,10 +374,14 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
 
 import time
 start=time.time()
-run_mcmc(nsteps=1000, nwalkers=8, run_name='test1', to_vary = [
-    ('m_disk', -8, 2),
-    ('sb_law', 2.3, 4), 
-    ('scale_factor', 0.1, 0.05)])
+run_mcmc(nsteps=1000, nwalkers=16, run_name='run4-16walkers_7params', to_vary = [
+    ('m_disk', -7.55, 0.5),
+    ('sb_law', 3.4, 1), 
+    ('scale_factor', 0.04, 0.01),
+    ('r_in', 8.8, 5),
+    ('r_out', 40.3, 20),
+    ('inc', 89.5, 0.3),
+    ('pa', 128.41, 2)])
 print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # Display clean images and residuals for each observation
