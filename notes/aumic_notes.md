@@ -21,8 +21,11 @@
 
 ------------------------------------------------------------
 #### 6/30/17:
+1000 step run with 16 walkers takes ~57 hours
 
-We have to treat each spectral window seperately, as `uvmodel` can't handle spectral windows.
+------------------------------------------------------------
+#### 6/30/17:
+We have to treat each spectral window seperately, as `uvmodel` can't handle spectral windows. Thus, splitting out each spw and weighting seperately.
 
 ------------------------------------------------------------
 #### 6/16/17: Reweighting
