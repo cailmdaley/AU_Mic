@@ -84,4 +84,4 @@ def corner(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
 #     text_specs = (0.45,0.7, 15), burn_in=50, bad_walkers=[7])
 
 walker_evolution('run4-16walkers_7params', nwalkers=16)
-corner('run4-16walkers_7params', nwalkers=16, text_specs = (0.19,0.8, 20))
+corner('run4-16walkers_7params', nwalkers=16, text_specs = (0.19,0.8, 20), burn_in=600)
