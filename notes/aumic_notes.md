@@ -109,6 +109,7 @@ The resulting visibilities appear very slighltly oversubtracted, but it's good e
 #### 6/14/17: Final corrections on visibility files, and exclusion of flare 
 Now that we a more reliable result for the June star position, Meredith and I have decided that it would be a good idea to re-subtract the stellar componenet from the actual star position, rather than the flare position. I apply `uvmodelfit` to the I used the following code to fit a point source to several different baseline ranges; the point source flux should converge to the stellar flux as the shorter baselines are excluded.
 ``` python
+I = []
 for i in range(0, 701, 50):
     uvmodelfit(junvis, uvrange='{}~1400'.format(i))
     flux = input("Flux? ")
