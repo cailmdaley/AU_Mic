@@ -23,6 +23,9 @@
 #### 6/30/17:
 1000 step run with 16 walkers takes ~57 hours
 
+In `run4_16walkers_7params`, `r_in` seems to prefer a very high value--about 25.
+Meredith pointed out this may be because we are oversubtracting the stellar flux, so we've decided to use the unsubtracted visibilities and make the stellar flux a free parameter for each observation (so, three more free paramters).
+
 ------------------------------------------------------------
 #### 6/30/17:
 We have to treat each spectral window seperately, as `uvmodel` can't handle spectral windows. Thus, splitting out each spw and weighting seperately.
