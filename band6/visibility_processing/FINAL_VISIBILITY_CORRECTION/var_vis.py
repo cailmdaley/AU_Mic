@@ -139,8 +139,8 @@ def create_vis(filename):
         filename, filename), shell=True)
 
         
-uvfs = glob('unweighted_spws/*.uvf')
+uvfs = glob('unsubtracted_unweighted_spws/*.uvf')
 for uvf in uvfs:
-    final_name = 'weighted_spws/' + uvf[16:30] + '_FINAL'
+    final_name = 'unsubtracted_weighted_spws/' + uvf[29:-4] + '_FINAL'
     var_vis(uvf[:-4], final_name)
     create_vis(final_name)

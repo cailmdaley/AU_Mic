@@ -353,7 +353,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
     
     try:
         df = pd.read_csv(run_name + '.csv')
-        pos = np.array(df[-nwalkers:].ix[:, :-1])
+        pos = np.array(df.iloc[-nwalkers:, :-1])
     except IOError:
         with open(run_name + '.csv', 'w') as f:
             np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob\n'),), 
@@ -374,7 +374,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
 
 import time
 start=time.time()
-run_mcmc(nsteps=1000, nwalkers=16, run_name='test', to_vary = [
+run_mcmc(nsteps=10000, nwalkers=16, run_name='run4-16walkers_7params', to_vary = [
     ('m_disk', -7.55, 0.5),
     ('sb_law', 3.4, 1), 
     ('scale_factor', 0.04, 0.01),
