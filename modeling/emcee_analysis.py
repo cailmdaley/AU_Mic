@@ -6,42 +6,53 @@ import numpy as np
 sns.set_style("ticks")
 sns.set_context("talk")
 
-run_name = 'run4-16walkers_7params'
+run_name = 'run5_26walkers_10params'
 posterior = pd.read_csv(run_name + '.csv')
     
 def walker_evolution(run_name, nwalkers):
     plt.close()
     
-    posterior = pd.read_csv(run_name + '.csv')
-    posterior.index //= nwalkers
+    samples = pd.read_csv(run_name + '.csv')
+    bad_walkers = samples.iloc[-nwalkers:][samples['lnprob'] == -np.inf].index % nwalkers
+    samples.index //= nwalkers
     
-    axes = posterior.iloc[0::nwalkers].plot(figsize=(7, 2*(len(posterior.columns)-1)), 
+    axes = samples.iloc[0::nwalkers].plot(figsize=(7, 2*(len(samples.columns)-1)), 
         subplots=True, title=run_name + ' evolution',
         color='black', alpha=0.5) 
     for i in range(nwalkers-1):
-        posterior.iloc[i+1::nwalkers].plot(subplots=True, ax=axes, legend=False, 
+        samples.iloc[i+1::nwalkers].plot(subplots=True, ax=axes, legend=False, 
             color='black', alpha=0.5)
         
     #quickly find misbehaving walkers
-    # posterior.iloc[0::nwalkers].plot(subplots=True, ax=axes, color='red', alpha=0.5, legend=False)
+    for walker in bad_walkers:
+        samples.iloc[walker::nwalkers].plot(subplots=True, ax=axes, color='red', alpha=0.5, legend=False)
     
-    plt.savefig('{}.evolution.png'.format(run_name))
+    plt.savefig('{}.evolution.png'.format(run_name), dpi=700)
     plt.show()
     
-def corner(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
+def corner_plot(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
     """ Plot 'corner plot' of fit"""
     plt.close()
     
     # read in samples
     samples = pd.read_csv(run_name + '.csv')
+    samples[['mar_starflux', 'jun_starflux', 'aug_starflux']] *= 1e6
+    samples.rename(columns={
+        'm_disk'       : '$\log$ m_disk',
+        'd_r'          : '$\Delta$r',
+        'mar_starflux' : 'mar_starflux ($\mu$Jy)',
+        'aug_starflux' : 'aug_starflux ($\mu$Jy)',
+        'jun_starflux' : 'jun_starflux ($\mu$Jy)'}, inplace=True)
     
-    # cut out burn-in and lnprob column
+    # cut out burn in and bad walkers
     posterior = samples.iloc[burn_in*nwalkers:, :-1]
+    blah=np.where(posterior.duplicated(keep=False)==True)[0]
+    blah = np.where(posterior.duplicated()==True)[0] % nwalkers
+    blah[:20]
     
-    #exclude bad walkers
+    bad_walkers = samples.iloc[-nwalkers:][samples['lnprob'] == -np.inf].index % nwalkers
     posterior = posterior.drop([row for row in posterior.index if row%nwalkers in bad_walkers])
-    posterior.rename(columns={'m_disk' : '$\log$ m_disk'}, inplace=True)
-
+        
     # make corner plot
     corner = sns.PairGrid(posterior, diag_sharey=False, despine=False)
     corner.map_diag(sns.kdeplot, cut=0)
@@ -49,13 +60,20 @@ def corner(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
     corner.map_lower(plt.scatter, s=1, color='#708090', alpha=0.2)
     corner.map_lower(sns.kdeplot, cut=0, cmap='Blues', n_levels=3, shade=False)
     
-    stats = posterior.describe().drop(['count', 'min', 'max', 'std'])
-    stats_string = stats.to_string(col_space=15, float_format=lambda x: "{:10.3f}".format(x), justify='right')
+    # get best_fit and posterior statistics
+    posterior_describe = posterior.describe().drop(['count', 'min', 'max'])
+    best_fit = samples.iloc[samples['lnprob'].idxmax()].to_frame().transpose()
+    best_fit.index = ['best_fit']
+    stats = best_fit.append(posterior_describe)[best_fit.columns].fillna('')
     
-    corner.fig.text(*text_specs[:-1],  fontsize = text_specs[-1]  ,
-        s='Posterior statistics: {} steps, {} walkers, {} samples \n\n{}'
-        .format(len(posterior)//nwalkers, nwalkers, len(posterior), stats_string))
-    # corner.fig.text(*text_specs[:-1], s=posterior.mean(), fontsize = text_specs[-1])
+    table_ax = corner.fig.add_axes([0,0,1,1], frameon=False)
+    table_ax.axis('off')
+    pd.plotting.table(table_ax, stats.round(2), bbox=[.24,.79,.76,.15], edges='open', 
+        colLoc='right')
+
+    # corner.fig.text(*text_specs[:-1],  fontsize = text_specs[-1]  ,
+    #     s='Posterior statistics: {} steps, {} walkers, {} samples \n{}'
+    #     .format(len(posterior)//nwalkers, nwalkers, len(posterior), stats_string), ha='left', multialignment='left')
     
     # hide upper triangle, so that it's a conventional corner plot
     for i, j in zip(*np.triu_indices_from(corner.axes, 1)):
@@ -71,12 +89,9 @@ def corner(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
         title = run_name + '.corner_groomed'
         
     plt.subplots_adjust(top=0.9)
-    corner.fig.suptitle(title, fontsize=25)
+    corner.fig.suptitle(r'{} Parameters, {} Walkers, {} Steps $\to$ {} Samples'
+        .format(posterior.shape[1], nwalkers, posterior.shape[0]//nwalkers, posterior.shape[0], fontsize=25))
     corner.savefig(title + '.png')
-    plt.show(False)
-    
-    # posterior.hist(bins=20)
-    # plt.savefig('{}.hist.png'.format(run_name)); plt.show()
     
     
 # walker_evolution('run3_8walkers_3params', nwalkers=8)
@@ -84,4 +99,8 @@ def corner(run_name, nwalkers, text_specs, burn_in=0, bad_walkers=[]):
 #     text_specs = (0.45,0.7, 15), burn_in=50, bad_walkers=[7])
 
 walker_evolution('run4-16walkers_7params', nwalkers=16)
-corner('run4-16walkers_7params', nwalkers=16, text_specs = (0.19,0.8, 20), burn_in=600)
+corner_plot('run4-16walkers_7params', nwalkers=16, burn_in=600, text_specs=(0.19,0.8, 16))
+
+
+walker_evolution('run5_26walkers_10params', nwalkers=26)
+corner_plot('run5_26walkers_10params', nwalkers=26, text_specs=(0.19,0.8, 16))
