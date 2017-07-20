@@ -3,10 +3,10 @@
 ------------------------------------------------------------
 
 ### To Do
--   clean down to data rms, not model
--   for band9:
-    -   split out by date to check for flares
-    -   split out by pointing for uvmodel $\chi^2$
+- figure out model vs data pixel offset
+- fix the way the observation frequency is defined once band9 is up and running
+- call young's poster 
+- make contours 1,2,3 sigma
 
 ##### Papers:
 -   Thebault 2009
@@ -15,9 +15,6 @@
 -   hughes 2017
 ------------------------------------------------------------
 ##### For Meredith:
--   Evan's model has ctrpix 256.5, while I have 257?
--   What's up with March spw1?
--   Could we get around uvmodel by quadrupling the number of visibilities?
 
 ------------------------------------------------------------
 #### 6/30/17:
@@ -25,6 +22,7 @@
 
 In `run4_16walkers_7params`, `r_in` seems to prefer a very high value--about 25.
 Meredith pointed out this may be because we are oversubtracting the stellar flux, so we've decided to use the unsubtracted visibilities and make the stellar flux a free parameter for each observation (so, three more free paramters).
+
 
 ------------------------------------------------------------
 #### 6/30/17:

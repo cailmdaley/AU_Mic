@@ -22,3 +22,4 @@ band6/visibility_processing/*
 
 modeling/obs_data
 modeling/model_data
+modeling/unsubtracted_obs_data

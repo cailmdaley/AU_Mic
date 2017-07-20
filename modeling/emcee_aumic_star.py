@@ -13,7 +13,7 @@ from astropy.io import fits
 class Observation:
     def __init__(self, name, rms):
         self.name = name
-        self.uvf  = fits.open('obs_data/{}.uvf'.format(name))
+        self.uvf  = fits.open('unsubtracted_obs_data/{}.uvf'.format(name))
         
         self.rms = rms
         
@@ -31,16 +31,16 @@ class Observation:
         print('================================================================================')
         
         # Set observation-specific clean filename; clear filenames
-        sp.call('rm -rf obs_data/{}.{{mp,bm,cl,cm}}'.format(self.name), shell=True)
+        sp.call('rm -rf unsubtracted_obs_data/{}.{{mp,bm,cl,cm}}'.format(self.name), shell=True)
         
         #Dirty clean; save rms for clean cutoff
         sp.call(['invert', 
-            'vis=obs_data/{}.vis'.format(self.name), 
-            'map=obs_data/{}.mp'.format(self.name), 
-            'beam=obs_data/{}.bm'.format(self.name), 
+            'vis=unsubtracted_obs_data/{}.vis'.format(self.name), 
+            'map=unsubtracted_obs_data/{}.mp'.format(self.name), 
+            'beam=unsubtracted_obs_data/{}.bm'.format(self.name), 
             'cell=0.03arcsec', 'imsize=512', 'options=systemp,mfs', 'robust=2'])
         imstat_out=sp.check_output(['imstat', 
-            'in=obs_data/{}.mp'.format(self.name), 
+            'in=unsubtracted_obs_data/{}.mp'.format(self.name), 
             "region='boxes(256,0,512,200)'"])
         dirty_rms = float(imstat_out[-38:-29])
         print("Dirty rms is {}".format(dirty_rms))
@@ -48,15 +48,15 @@ class Observation:
         
         # Clean down to half the rms
         sp.call(['clean', 
-            'map=obs_data/{}.mp'.format(self.name), 
-            'beam=obs_data/{}.bm'.format(self.name), 
-            'out=obs_data/{}.cl'.format(self.name), 
+            'map=unsubtracted_obs_data/{}.mp'.format(self.name), 
+            'beam=unsubtracted_obs_data/{}.bm'.format(self.name), 
+            'out=unsubtracted_obs_data/{}.cl'.format(self.name), 
             'niters=100000', 'cutoff={}'.format(dirty_rms/2)])
         sp.call(['restor',
-            'map=obs_data/{}.mp'.format(self.name),
-            'beam=obs_data/{}.bm'.format(self.name),
-            'model=obs_data/{}.cl'.format(self.name),
-            'out=obs_data/{}.cm'.format(self.name)])
+            'map=unsubtracted_obs_data/{}.mp'.format(self.name),
+            'beam=unsubtracted_obs_data/{}.bm'.format(self.name),
+            'model=unsubtracted_obs_data/{}.cl'.format(self.name),
+            'out=unsubtracted_obs_data/{}.cm'.format(self.name)])
         
         # Display clean image with 2,4,6 sigma contours, if desired
         if show == True:
@@ -70,14 +70,14 @@ class Observation:
             
             #Get rms for countours
             imstat_out = sp.check_output(['imstat', 
-                'in=obs_data/{}.cm'.format(self.name), 
+                'in=unsubtracted_obs_data/{}.cm'.format(self.name), 
                 "region='boxes(256,0,512,200)'"])
             clean_rms = float(imstat_out[-38:-29])
             print("Clean rms is {}".format(clean_rms))
             
             # Display
             sp.call(['cgdisp', 
-                'in=obs_data/{}.cm,obs_data/{}.cm'.format(self.name, self.name), 
+                'in=unsubtracted_obs_data/{}.cm,unsubtracted_obs_data/{}.cm'.format(self.name, self.name), 
                 'type=p,c', 'device=/xs', 
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
@@ -92,7 +92,7 @@ class Model:
             distance=9.91, # pc
             imres=0.03, # arcsec/pix
             xnpix=512, #image size in pixels
-            freq0=self.observations[0].uvf[0].header['CRVAL4']*1e-9, # obs frequeency
+            freq0=self.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequeency
             PA=PA,
             offs=[0.0,0.0], # offset from image center
             nchans=1, # continum
@@ -101,23 +101,28 @@ class Model:
             extra=0.0, # ?
             modfile = 'model_data/{}'.format(self.name))
         
-        self.im = fits.open('model_data/{}.fits'.format(self.name))
-    def obs_sample(self, obs):
+    def obs_sample(self, obs, starflux):
         """
         Create model fits file with correct header information and sample using 
         ALMA observation uv coverage to to create model .vis and .uvf files.
         """
         
-        # make observation-specific model name
+        # define observation-specific model name and delete any preexisting conditions
         filename = self.name + '_' + obs.name
-
-        # First, delete all model files with same name
         sp.call('rm -rf model_data/{}*'.format(filename), shell=True)
         
-        # Align with observation and save observation-specific fits file
-        self.im[0].header['CRVAL1'] = obs.ra
-        self.im[0].header['CRVAL2'] = obs.dec
-        self.im.writeto('model_data/{}.fits'.format(filename))
+        self.fits = fits.open('model_data/{}.fits'.format(self.name))
+        
+        # add starflux to central pixel
+        crpix = int(self.fits[0].header['CRPIX1'])
+        self.im = self.fits[0].data[0]
+        self.im[crpix, crpix] += starflux
+        
+        # align with observation
+        self.fits[0].header['CRVAL1'] = obs.ra
+        self.fits[0].header['CRVAL2'] = obs.dec
+        
+        self.fits.writeto('model_data/{}.fits'.format(filename))
 
         # Convert model into MIRIAD .im image file
         sp.call(['fits', 'op=xyin', 
@@ -126,7 +131,7 @@ class Model:
 
         # Sample the model image using the observation uv coverage
         sp.call(['uvmodel', 'options=replace',
-            'vis=obs_data/{}.vis'.format(obs.name), 
+            'vis=unsubtracted_obs_data/{}.vis'.format(obs.name), 
             'model=model_data/{}.im'.format(filename),
             'out=model_data/{}.vis'.format(filename)], stdout=open(os.devnull, 'wb'))
             
@@ -134,6 +139,7 @@ class Model:
         sp.call(['fits', 'op=uvout', 
             'in=model_data/{}.vis'.format(filename),
             'out=model_data/{}.uvf'.format(filename)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
+            
     def get_chi(self, obs):
         """
         Return chi^2 statistics of model.
@@ -221,6 +227,7 @@ class Model:
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
+                
     def residuals(self, obs, show=True):
 
         """
@@ -233,23 +240,34 @@ class Model:
         # Subtract model visibilities from data; outfile is residual visibilities
         sp.call(['uvmodel', 'options=subtract',
             'model=model_data/{}.im'.format(filename),
-            'vis=obs_data/{}.vis'.format(obs.name),
+            'vis=unsubtracted_obs_data/{}.vis'.format(obs.name),
             'out=model_data/{}.residual.vis'.format(filename)])
     
         if show == True:
             self.clean(obs, residual=True)
 
-    def __init__(self, params, observations, name='model'):
-        self.params = params
+    def __init__(self, params, observations, name=''):
+        
+        # assign name and set of observations
+        self.name = name + 'model'
         self.observations = observations
-        self.name = name
         
-        self.make_fits(params)
         
+        #split parameters into disk params and star params
+        self.disk_params = params[:-len(observations)]
+        self.starfluxes  = params[-len(observations):]
+        
+        self.make_fits(self.disk_params)
+        
+        # add in each date's star flux, and sample the model using 
+        # each observation's uv coverage
         self.chis = []
-        for obs in self.observations:
-            self.obs_sample(obs)
-            self.get_chi(obs)
+        for date, starflux in zip(self.observations, self.starfluxes):
+            for obs in date:
+                self.obs_sample(obs, starflux)
+                self.get_chi(obs)
+            
+            
 for i in range(1):
     #==============================================================================#
     # Create observations, default parameter dict, and let code know to display
@@ -268,9 +286,9 @@ for i in range(1):
     jun1 = Observation('aumic_band6_jun_spw1_FINAL', rms=4.658e-05)
     jun2 = Observation('aumic_band6_jun_spw2_FINAL', rms=5.083e-05)
     jun3 = Observation('aumic_band6_jun_spw3_FINAL', rms=5.559e-05)
-    band6_observations=[mar0, mar1, mar2, mar3,
-                        aug0, aug1, aug2, aug3,
-                        jun0, jun1, jun2, jun3]
+    band6_observations=[[mar0, mar1, mar2, mar3],
+                        [aug0, aug1, aug2, aug3],
+                        [jun0, jun1, jun2, jun3]]
                   
     params = OrderedDict([
         ('temp_index',        -0.5),
@@ -295,16 +313,15 @@ for i in range(1):
         ('mar_starflux',      0.000367),
         ('aug_starflux',      0.00012281),
         ('jun_starflux',      0.000262055)])
-        
 # define likelehood functions
-def lnlike(theta, to_vary, observations):
+def lnlike(theta, modelname, observations, to_vary):
     # default parameter values
     params = OrderedDict([
         ('temp_index',        -0.5),
         ('m_disk',            3.67e-08),
         ('sb_law',            2.3),
         ('r_in',              8.8),
-        ('r_out',             40.3),
+        ('d_r',                31.5),
         ('r_crit',            150.0),
         ('inc',               89.5),
         ('m_star',            0.31),
@@ -319,43 +336,47 @@ def lnlike(theta, to_vary, observations):
         ('l_star',            0.09),
         ('scale_factor',      0.1),
         ('pa',                128.41),
-        ('mar_starflux',      0.000367),
-        ('aug_starflux',      0.00012281),
-        ('jun_starflux',      0.000262055)])
+        ('mar_starflux',      3.67e-4),
+        ('aug_starflux',      1.23e-4),
+        ('jun_starflux',      2.62e-4)])
     
     # reassign parameters to vary to those input by emcee
-    for i in range(len(to_vary)):
-        params[to_vary[i][0]] = theta[i]
+    for i, param in enumerate(to_vary):
+        params[param[0]] = theta[i]
         
-    params['m_disk'] = 10**params['m_disk']
+    #logarithmic sampling
+    params['m_disk'] = 10**params['m_disk'] 
+    # since (k)evan's code takes r_out rather than d_r, add r_in to d_r to get r_out
+    params['d_r'] += params['r_in']
     
     # create model
-    model = Model(params.values(), observations=observations)
+    model = Model(params.values(), observations=observations, name=modelname)
     
     # return chi^2
     return -0.5 * sum(model.chis)
-def lnprior(theta):
-    m_disk, sb_law, scale_factor, r_in, r_out, inc, pa = theta
     
-    if -11. < m_disk and \
-    -4. < sb_law < 10. and \
-    0. < scale_factor < 2. and  \
-    0. < r_in < r_out and \
-    inc <= 90: 
-        return 0.0
-    else:
-        return -np.inf
-def lnprob(theta, to_vary, observations):
-        lp = lnprior(theta)
+def lnprior(theta, to_vary):
+    """
+    For each parameter to be varied, return -infinity if the proposed value lies
+    outside the bounds for the parameter; if all parameters are ok, return 0.
+    """
+    for i, param in enumerate(to_vary):
+        lower_bound, upper_bound = param[-1]
+        if not lower_bound < theta[i] < upper_bound:
+            return -np.inf
+    return 0.0
+    
+def lnprob(theta, modelname, observations, to_vary):
+        lp = lnprior(theta, to_vary)
         if not np.isfinite(lp):
             return -np.inf
-        return lp + lnlike(theta, to_vary, observations)
+        return lp + lnlike(theta, modelname, observations, to_vary)
     
 def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observations):
     
     # run sampler chain
     ndim = len(to_vary)
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(to_vary, observations), threads=1)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(run_name[:4], observations, to_vary))
     
     try:
         df = pd.read_csv(run_name + '.csv')
@@ -380,14 +401,17 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
 
 import time
 start=time.time()
-run_mcmc(nsteps=10000, nwalkers=16, run_name='run4-16walkers_7params', to_vary = [
-    ('m_disk', -7.55, 0.5),
-    ('sb_law', 3.4, 1), 
-    ('scale_factor', 0.04, 0.01),
-    ('r_in', 8.8, 5),
-    ('r_out', 40.3, 20),
-    ('inc', 89.5, 0.3),
-    ('pa', 128.41, 2)])
+run_mcmc(nsteps=10000, nwalkers=26, run_name='run5_26walkers_10params', to_vary = [
+    ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
+    ('sb_law',             2.3,           2,          (-5.,     10.)), 
+    ('scale_factor',       0.05,          0.05,       (0,       np.inf)),
+    ('r_in',               8.8,           5,          (0,       np.inf)),
+    ('d_r',                31.5,          10,         (0,       np.inf)),
+    ('inc',                90,            1,          (0,       np.inf)),
+    ('pa',                 128.48,        0.1,        (0,       360)),
+    ('mar_starflux',       3.67e-4,       1e-4,       (0,       np.inf)),
+    ('aug_starflux',       1.23e-4,       1e-4,       (0,       np.inf)),
+    ('jun_starflux',       2.62e-4,       1e-4,       (0,       np.inf))])
 print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # Display clean images and residuals for each observation
