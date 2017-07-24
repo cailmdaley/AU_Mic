@@ -3,7 +3,6 @@
 ------------------------------------------------------------
 
 ### To Do
-- figure out model vs data pixel offset
 - fix the way the observation frequency is defined once band9 is up and running
 - call young's poster 
 - make contours 1,2,3 sigma
