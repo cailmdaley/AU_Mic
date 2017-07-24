@@ -3,7 +3,6 @@ from emcee.utils import MPIPool
 import numpy as np
 import subprocess as sp
 import os
-import pathos.multiprocessing
 import pandas as pd
 from collections import OrderedDict
 from disk_model import debris_disk, raytrace
@@ -350,7 +349,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
     pool = MPIPool()
     if not pool.is_master():
         pool.wait()
-        sys.exit()
+        sys.exit(0)
     
     # initializ sampler with multicore pool
     ndim = len(to_vary)
@@ -381,7 +380,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary, observations=band6_observation
 
 import time
 start=time.time()
-run_mcmc(nsteps=1000, nwalkers=16, run_name='test', to_vary = [
+run_mcmc(nsteps=1000, nwalkers=200, run_name='test', to_vary = [
     ('m_disk', -7.55, 0.5),
     ('sb_law', 3.4, 1), 
     ('scale_factor', 0.04, 0.01),
