@@ -12,29 +12,22 @@ import numpy as np
 dates = ['../../final_visibilities/aumic_mar_allspws_FINAL.ms',
          '../../final_visibilities/aumic_aug_allspws_FINAL.ms',
          '../../final_visibilities/aumic_jun_allspws_FINAL.ms']
-dates2 = [
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_mar_allspws.fixvis.uvsub.ms',
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_aug_allspws.fixvis.uvsub.ms',
-    '../../visibility_processing/FINAL_VISIBILITY_CORRECTION/aumic_jun_noflare_allspws.fixvis.uvsub.ms']
+         
 imsize = 512
 pixsize ='0.03arcsec',
 
 
 
 visibilities = dates
-filename = 'aumic_all_unweighted'
+filename = 'aumic_band6_all'
 
 natural = True
 taper = True
-uniform = False
-briggs = False
 
 natural_mask = 'aumic_mask_all_natural.region'
 taper_mask = 'aumic_mask_all_taper.region'
-uniform_mask = 'aumic_mask_all_uniform.region'
-briggs_mask = 'aumic_mask_all_briggs.region'
 
-view=True
+view=False
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
@@ -56,8 +49,8 @@ else:
 
 #==========================================================
 #rms values for centered cleans
-all_natural_rms = 1.57988852152e-05
-all_taper_rms = 1.97743011086e-05
+all_natural_rms = 1.47167711475e-05
+all_taper_rms = 1.91217695829e-05
 #==========================================================
 
 

@@ -291,7 +291,7 @@ params = OrderedDict([
     ('m_disk',            3.67e-08),
     ('sb_law',            2.3),
     ('r_in',              8.8),
-    ('r_out',             40.3),
+    ('d_r',                31.5),
     ('r_crit',            150.0),
     ('inc',               89.5),
     ('m_star',            0.31),
@@ -306,6 +306,6 @@ params = OrderedDict([
     ('l_star',            0.09),
     ('scale_factor',      0.1),
     ('pa',                128.41),
-    ('mar_starflux',      0.000367),
-    ('aug_starflux',      0.00012281),
-    ('jun_starflux',      0.000262055)])
+    ('mar_starflux',      3.67e-4),
+    ('aug_starflux',      1.23e-4),
+    ('jun_starflux',      2.62e-4)])

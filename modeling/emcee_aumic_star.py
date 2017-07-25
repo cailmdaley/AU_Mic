@@ -1,65 +1,21 @@
 from aumic_obs_and_model import *
 from emcee.utils import MPIPool
+from aumic_obs_and_model import *
 
 # define likelehood functions
-# def lnprob(theta, modelname, to_vary):
-#     """
-#     For each parameter to be varied, return -infinity if the proposed value lies
-#     outside the bounds for the parameter; if all parameters are ok, return 0.
-#     """
-#     
-#     # reassign parameters to vary to those input by emcee
-#     for i, free_param in enumerate(to_vary):
-#         lower_bound, upper_bound = free_param[-1]
-#         print(free_param)
-#         print(theta[i])
-#         
-#         if lower_bound < theta[i] < upper_bound:
-#             params[free_param[0]] = theta[i]
-#         else: return -np.inf
-#         
-#     #logarithmic sampling
-#     params['m_disk'] = 10**params['m_disk'] 
-#     # since (k)evan's code takes r_out rather than d_r, add r_in to d_r to get r_out
-#     params['d_r'] += params['r_in']
-#     
-#     # create model
-#     model = Model(params.values(), observations=band6_observations, name=modelname)
-#     
-#     # return chi^2
-#     print(-0.5 * sum(model.chis))
-#     return -0.5 * sum(model.chis)
-
-# define likelehood functions
-def lnlike(theta, to_vary, observations):
-    # default parameter values
-    params = OrderedDict([
-        ('temp_index',        -0.5),
-        ('m_disk',            3.67e-08),
-        ('sb_law',            2.3),
-        ('r_in',              8.8),
-        ('r_out',             40.3),
-        ('r_crit',            150.0),
-        ('inc',               89.5),
-        ('m_star',            0.31),
-        ('co_frac',           0.0001),
-        ('v_turb',            0.081),
-        ('Zq',                70.0),
-        ('column_densities', [0.79, 1000]),
-        ('abundance_bounds', [50, 500]),
-        ('hand',              -1),
-        ('rgrid_size',        500),
-        ('zgrid_size',        500),
-        ('l_star',            0.09),
-        ('scale_factor',      0.1),
-        ('pa',                128.41),
-        ('mar_starflux',      0.000367),
-        ('mar_starflux',      0.000367),
-        ])
+def lnprob(theta, modelname, to_vary):
+    """
+    For each parameter to be varied, return -infinity if the proposed value lies
+    outside the bounds for the parameter; if all parameters are ok, return 0.
+    """
     
     # reassign parameters to vary to those input by emcee
-    for i in range(len(to_vary)):
-        params[to_vary[i][0]] = theta[i]
+    for i, free_param in enumerate(to_vary):
+        lower_bound, upper_bound = free_param[-1]
+        
+        if lower_bound < theta[i] < upper_bound:
+            params[free_param[0]] = theta[i]
+        else: return -np.inf
         
     params['m_disk'] = 10**params['m_disk']
     
@@ -70,21 +26,6 @@ def lnlike(theta, to_vary, observations):
     return -0.5 * sum(model.chis)
 def lnprior(theta):
     m_disk, sb_law, scale_factor, r_in, r_out, inc, pa = theta
-    
-    if -11. < m_disk and \
-    -4. < sb_law < 10. and \
-    0. < scale_factor < 2. and  \
-    0. < r_in < r_out and \
-    inc <= 90: 
-        return 0.0
-    else:
-        return -np.inf
-def lnprob(theta, to_vary, observations):
-        lp = lnprior(theta)
-        if not np.isfinite(lp):
-            return -np.inf
-        return lp + lnlike(theta, to_vary, observations)
-    
     
 def run_mcmc(nsteps, nwalkers, run_name, to_vary):
     
