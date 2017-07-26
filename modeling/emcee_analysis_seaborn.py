@@ -1,3 +1,5 @@
+from model_plotting import ModelFits
+from aumic_obs_and_model import *
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 import pandas as pd
@@ -49,6 +51,7 @@ def corner_plot(run_name, nwalkers, stat_specs, burn_in=0, bad_walkers=[]):
         'jun_starflux' : 'Jun starflux ($\mu$Jy)'}, inplace=True)
     
     # cut out burn in and bad walkers
+    # posterior = samples.iloc[-100:, :-1]
     posterior = samples.iloc[burn_in*nwalkers:, :-1]
     
     last_step = samples.iloc[-nwalkers:]
@@ -69,11 +72,11 @@ def corner_plot(run_name, nwalkers, stat_specs, burn_in=0, bad_walkers=[]):
     stats = stats.iloc[[-1]].append(stats.iloc[:-1])
     print(stats.round(2).to_latex())
     
-    table_ax = corner.fig.add_axes([0,0,1,1], frameon=False)
-    table_ax.axis('off')
-    left, bottom = stat_specs
-    pd.plotting.table(table_ax, stats.round(2), bbox=[left, bottom, 1-left, .12], edges='open', 
-        colLoc='right')
+    # table_ax = corner.fig.add_axes([0,0,1,1], frameon=False)
+    # table_ax.axis('off')
+    # left, bottom = stat_specs
+    # pd.plotting.table(table_ax, stats.round(2), bbox=[left, bottom, 1-left, .12], edges='open', 
+    #     colLoc='right')
 
     # hide upper triangle, so that it's a conventional corner plot
     for i, j in zip(*np.triu_indices_from(corner.axes, 1)):
@@ -88,11 +91,32 @@ def corner_plot(run_name, nwalkers, stat_specs, burn_in=0, bad_walkers=[]):
     else:
         title = run_name + '.corner_groomed'
         
-    plt.subplots_adjust(top=0.9)
-    corner.fig.suptitle(r'{} Parameters, {} Walkers, {} Steps $\to$ {} Samples'
-        .format(posterior.shape[1], nwalkers, posterior.shape[0]//nwalkers, posterior.shape[0], fontsize=25))
-    corner.savefig(title + '.png')
+    # plt.subplots_adjust(top=0.9)
+    # corner.fig.suptitle(r'{} Parameters, {} Walkers, {} Steps $\to$ {} Samples'
+    #     .format(posterior.shape[1], nwalkers, posterior.shape[0]//nwalkers, posterior.shape[0], fontsize=25))
+    corner.savefig(title + '.png', dpi=700)
     
+def view_best_model(run_name):
+    
+    run_name='run5_26walkers_10params'
+    samples = pd.read_csv(run_name + '.csv')
+    best_fit_params = samples.drop('lnprob', 1).loc[samples['lnprob'].idxmax()]
+    # for param in best_fit_params.index:
+    #     params[param] = best_fit_params[param]
+    
+    
+    best_fit_model = Model(params=params.values(), observations=band6_observations, 
+        name='best_fit')
+    
+    test = ModelFits('model_data/' + best_fit_model.name + '.fits', rms=1.5e-05, text=[[4.6,4.0, 'Best Fit Model']])
+    np.where(test.im != 0)
+    
+# all_natural = Observation('../../cleans/current/aumic_band6_all_natural.fits',
+#     1.4494822607957758e-05, fig=fig, pos=(0, num),
+#     text=[[4.6, 4.0, 'ALMA 1.4 mm']])
+#         #   [4.6, 3.0, 'natural weighting']])
+view_best_model('run5_26walkers_10params')
+plt.show()
     
 # walker_evolution('run3_8walkers_3params', nwalkers=8)
 # corner('run3_8walkers_3params', nwalkers=8
@@ -103,4 +127,4 @@ def corner_plot(run_name, nwalkers, stat_specs, burn_in=0, bad_walkers=[]):
 
 
 # walker_evolution('run5_26walkers_10params', nwalkers=26)
-corner_plot('run5_26walkers_10params', nwalkers=26, burn_in=400, stat_specs=(.18, .82))
+# corner_plot('run5_26walkers_10params', nwalkers=26, burn_in=400, stat_specs=(.18, .82))

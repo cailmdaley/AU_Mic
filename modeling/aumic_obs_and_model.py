@@ -79,6 +79,9 @@ class Observation:
                 'slev=a,{}'.format(clean_rms), 'levs1=-6,-4,-2,2,4,6',
                 'region=arcsec,box(-5,-5,5,5)',
                 'labtyp=arcsec', 'beamtyp=b,l,3',])
+                
+                
+
 class Model:
     def make_fits(self, params):
         disk_params = params[:-1]
@@ -255,15 +258,6 @@ class Model:
         self.starfluxes  = params[-len(observations):]
         
         self.make_fits(self.disk_params)
-        
-        # add in each date's star flux, and sample the model using 
-        # each observation's uv coverage
-        self.chis = []
-        for date, starflux in zip(self.observations, self.starfluxes):
-            for obs in date:
-                self.obs_sample(obs, starflux)
-                self.get_chi(obs)
-                
 
 #==============================================================================#
 # Create observations, default parameter dict, and let code know to display
