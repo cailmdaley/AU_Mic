@@ -19,16 +19,6 @@ cpal = jesse_reds
 
 
 class Observation:
-    def __init__(self, filename, rms, fig=None, pos=(0,1), cbspace=(20,100), **kwds):
-        
-        self.file = filename
-        self.rms = rms
-        self.fig = fig
-        self.pos = pos
-        self.cbspace = (20,100)
-        self.__dict__.update(kwds)
-        
-
     def get_fits(self):
         self.head = fits.getheader(self.file)
         self.im = fits.getdata(self.file).squeeze()
@@ -164,8 +154,8 @@ class Observation:
                                       top='on')
                                       
 
-        minorLocator = AutoMinorLocator(self.cbspace[0] / self.cbspace[1])
-        cbar.ax.xaxis.set_minor_locator(minorLocator)
+        # minorLocator = AutoMinorLocator(self.cbspace[0] / self.cbspace[1])
+        # cbar.ax.xaxis.set_minor_locator(minorLocator)
         cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(),
                                 rotation=45, fontsize=18)
         cbar.set_ticks(np.arange(-10000, 10000, self.cbspace[1]))
@@ -215,21 +205,35 @@ class Observation:
         except AttributeError:
             pass
 
+    def __init__(self, filename, rms, fig=None, pos=(0,1), cbspace=(20,100), **kwds):
+        
+        self.file = filename
+        self.rms = rms
+        self.fig = fig
+        self.pos = pos
+        self.cbspace = (20,100)
+        self.__dict__.update(kwds)
+        
+        self.get_fits()
+        self.make_axis() 
+        self.fill_axis()
+        
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-num = 2
+num = 4
 plot_width=11.6/2
-fig = plt.subplots(1, num, sharex=False, sharey=False, 
-    figsize=(plot_width * num, 6.5))[0]
+fig = plt.subplots(num/2, num/2, sharex=False, sharey=False, 
+    figsize=(plot_width * num/2, 6.5*num/2))[0]
 plt.subplots_adjust(wspace=-0.0)
 
 band6_natural = Observation('../band6/cleans/current/aumic_all_natural.fits',
-    1.47167711475e-05, fig=fig, pos=(0, num),
+    1.47167711475e-05, fig=fig, pos=(2, num),
     text=[[4.6, 4.0, 'AU Mic ALMA 1.4mm'],
           [4.6, 3.0, 'natural weighting']])
           
 band6_taper = Observation('../band6/cleans/current/aumic_all_taper.fits',
-    1.91217695829e-05, fig=fig, pos=(1, num),
+    1.91217695829e-05, fig=fig, pos=(3, num),
     text=[
         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
         [4.6, 3.0, r'$200 k\lambda$ taper']])
@@ -245,10 +249,5 @@ band9_taper = Observation('../band9/cleans/aumic_band9_taper.fits',
         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
         [4.6, 3.0, r'$200 k\lambda$ taper']])
 
-for obs in [all_natural, all_taper]:
-    obs.get_fits()
-    obs.make_axis() 
-    obs.fill_axis()
-
-plt.savefig('aumic_diptych_all.png', dpi=700)
+# plt.savefig('aumic_everything.png')
 plt.show(block=False)

@@ -1,8 +1,6 @@
 from emcee.utils import MPIPool
 from aumic_obs_and_model import *
 
-            
-            
 # define likelehood functions
 def lnprob(theta, modelname, to_vary):
     """
@@ -18,15 +16,15 @@ def lnprob(theta, modelname, to_vary):
             params[free_param[0]] = theta[i]
         else: return -np.inf
         
-    #logarithmic sampling
-    params['m_disk'] = 10**params['m_disk'] 
-    # since (k)evan's code takes r_out rather than d_r, add r_in to d_r to get r_out
-    params['d_r'] += params['r_in']
+    params['m_disk'] = 10**params['m_disk']
     
-    # create model
-    model = Model(params.values(), observations=band6_observations, name=modelname)
-    
-    # return chi^2
+    # create model and get chi^2
+    model = Model(params.values(), observations=band6_observations)
+    model.chis=[]
+    for date, starflux in zip(model.observations, model.starfluxes):
+        for obs in date:
+            model.obs_sample(obs, starflux)
+            model.get_chi(obs)
     return -0.5 * sum(model.chis)
     
 def run_mcmc(nsteps, nwalkers, run_name, to_vary):
