@@ -16,7 +16,11 @@
 ##### For Meredith:
 
 ------------------------------------------------------------
-#### 6/30/17:
+#### 7/27/17:
+'run5_26walkers_10params' went a little wrong--the first june spw was actually a duplicate of an august spw, so I'm starting run 6 to better describe things.
+
+------------------------------------------------------------
+#### 7/16/17:
 1000 step run with 16 walkers takes ~57 hours
 
 In `run4_16walkers_7params`, `r_in` seems to prefer a very high value--about 25.
