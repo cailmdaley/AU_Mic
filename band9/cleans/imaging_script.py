@@ -18,12 +18,12 @@ visibilities = ['../calibrated_final.ms']
 filename = 'aumic_band9'
 
 natural = True
-taper = True
+taper = False
 
 natural_mask = 'aumic_band9_mask_natural.region'
 taper_mask = 'aumic_band9_mask_taper.region'
 
-view=True
+view=False
 
 # Concat before clean to fix proper motion offset;
 #pointing center of first chronological date is used
@@ -45,8 +45,8 @@ else:
 
 #==========================================================
 #rms values for centered cleans
-natural_rms = 1.31670721e-4
-taper_rms =   1.8785533e-4
+natural_rms = 1.2078784e-04
+taper_rms =   1.8785533e-04
 #==========================================================
 
 
@@ -56,13 +56,13 @@ if natural:
 
     #Dirty clean to get rms and check if mask is good
     image = filename+"_dirty_natural"
-    # subprocess.call("rm -rf {}.*".format(image), shell=True)
-    # tclean(vis=visibilities,
-    #        imagename=image,
-    #        imsize=imsize,
-    #        cell=pixsize,
-    #        weighting='natural',
-    #        niter=0)
+    subprocess.call("rm -rf {}.*".format(image), shell=True)
+    tclean(vis=visibilities,
+           imagename=image,
+           imsize=imsize,
+           cell=pixsize,
+           weighting='natural',
+           niter=0)
     dirty_natural_rms = imstat(imagename='{}.image'.format(image),
         region='aumic_band9_rms.region', listit=False)['rms'][0]
 
