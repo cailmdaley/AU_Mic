@@ -108,7 +108,7 @@ class Model:
         """
         
         # define observation-specific model name and delete any preexisting conditions
-        filename = self.name + '_' + obs.name
+        filename = self.name + obs.name
         sp.call('rm -rf model_data/{}*'.format(filename), shell=True)
         
         self.fits = fits.open('model_data/{}.fits'.format(self.name))
@@ -154,7 +154,7 @@ class Model:
         datrl_stokes = np.array((datrl_xx + datrl_yy) / 2.)
         datim_stokes = np.array((datim_xx + datim_yy) / 2.)
 
-        self.uvf  = fits.open('model_data/{}_{}.uvf'.format(self.name, obs.name))
+        self.uvf  = fits.open('model_data/{}.uvf'.format(self.name+obs.name))
         modrlimwt = self.uvf[0].data['data']
         modrl_stokes = modrlimwt[::2, 0, 0, 0, 0, 0]
         modim_stokes = modrlimwt[::2, 0, 0, 0, 0, 1]
@@ -272,7 +272,7 @@ aug0 = Observation('aumic_band6_aug_spw0_FINAL', rms=5.879e-05)
 aug1 = Observation('aumic_band6_aug_spw1_FINAL', rms=5.336e-05)
 aug2 = Observation('aumic_band6_aug_spw2_FINAL', rms=6.092e-05)
 aug3 = Observation('aumic_band6_aug_spw3_FINAL', rms=5.558e-05)
-jun0 = Observation('aumic_band6_aug_spw0_FINAL', rms=5.369e-05)
+jun0 = Observation('aumic_band6_jun_spw0_FINAL', rms=5.369e-05)
 jun1 = Observation('aumic_band6_jun_spw1_FINAL', rms=4.658e-05)
 jun2 = Observation('aumic_band6_jun_spw2_FINAL', rms=5.083e-05)
 jun3 = Observation('aumic_band6_jun_spw3_FINAL', rms=5.559e-05)
