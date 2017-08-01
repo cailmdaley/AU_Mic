@@ -18,7 +18,7 @@ sns.set_context("talk")
 cpal = jesse_reds
 
 
-class ModelFits:
+class FitsImage:
 
     def get_fits(self):
         self.head = fits.getheader(self.file)
@@ -156,14 +156,15 @@ class ModelFits:
                                       top='on')
                                       
 
-        minorLocator = AutoMinorLocator(self.cbspace[0] / self.cbspace[1])
+        tickmaj, tickmin = self.cbspace
+        minorLocator = AutoMinorLocator(tickmaj / tickmin)
         cbar.ax.xaxis.set_minor_locator(minorLocator)
         cbar.ax.set_xticklabels(cbar.ax.get_xticklabels(),
                                 rotation=45, fontsize=18)
-        cbar.set_ticks(np.arange(-2000, 2000, self.cbspace[0]))
+        cbar.set_ticks(np.arange(-10*tickmaj, 10*tickmaj, tickmaj))
 
         # Colorbar label
-        cbar.ax.text(0.425, 0.340, r'$\mu Jy / bm$', fontsize=15,
+        cbar.ax.text(0.425, 0.320, r'$Jy / pix$', fontsize=12,
                      path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Overplot the beam ellipse
@@ -187,16 +188,16 @@ class ModelFits:
             pass
 
         # Plot the scale bar
-        x = -3.015
-        y = -4.7
-        self.ax.plot(
-            [x, x - 1],
-            [y, y],
-            '-', linewidth=2, color='k')
-        self.ax.text(
-            x + 0.32, y + 0.15, "10 au",
-            fontsize=18,
-            path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
+        # x = -3.015
+        # y = -4.7
+        # self.ax.plot(
+        #     [x, x - 1],
+        #     [y, y],
+        #     '-', linewidth=2, color='k')
+        # self.ax.text(
+        #     x + 0.32, y + 0.15, "10 au",
+        #     fontsize=18,
+        #     path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
         self.ax.plot([0.0], [0.0], '*', markersize=6, markeredgewidth=1, color='k')

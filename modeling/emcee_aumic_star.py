@@ -17,9 +17,10 @@ def lnprob(theta, modelname, to_vary):
         else: return -np.inf
         
     params['m_disk'] = 10**params['m_disk']
+    params['d_r'] += params['r_in']
     
     # create model and get chi^2
-    model = Model(params.values(), observations=band6_observations)
+    model = Model(params.values(), observations=band6_observations, name=modelname)
     model.chis=[]
     for date, starflux in zip(model.observations, model.starfluxes):
         for obs in date:
@@ -37,10 +38,27 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary):
     ndim = len(to_vary)
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(run_name[:4], to_vary), pool=pool)
     
+    # try:
+    #     posterior = pd.read_csv(run_name + '.csv')
+    #     print('Resuming {} at step {}'.format(run_name, posterior.index[-1]//nwalkers))
+    #     pos = np.array(posterior.iloc[-nwalkers:, :-1])
+    #     with open(run_name + '.csv', 'a') as f:
+    #         f.write('\n')
+    # except IOError, IndexError:
+    #     print('Starting {}'.format(run_name))
+    #     with open(run_name + '.csv', 'w') as f:
+    #         np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob\n'),), 
+    #             delimiter=',', fmt='%s')
+    #     pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
+    #         for i in range(nwalkers)]
     try:
-        df = pd.read_csv(run_name + '.csv')
-        pos = np.array(df.iloc[-nwalkers:, :-1])
+        samples = pd.read_csv(run_name + '.csv')
+        print('Resuming {} at step {}'.format(run_name, samples.index[-1]//nwalkers))
+        pos = np.array(samples.iloc[-nwalkers:, :-1])
+        with open(run_name + '.csv', 'a') as f:
+            f.write('\n')
     except IOError:
+        print('Starting {}'.format(run_name))
         with open(run_name + '.csv', 'w') as f:
             np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob\n'),), 
                 delimiter=',', fmt='%s')
@@ -60,9 +78,7 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary):
 # Sandbox
 #==============================================================================#
 
-import time
-start=time.time()
-run_mcmc(nsteps=10000, nwalkers=26, run_name='run5_26walkers_10params', to_vary = [
+run_mcmc(nsteps=10000, nwalkers=50, run_name='run6_50walkers_10params', to_vary = [
     ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
     ('sb_law',             2.3,           2,          (-5.,     10.)), 
     ('scale_factor',       0.05,          0.05,       (0,       np.inf)),
@@ -73,7 +89,6 @@ run_mcmc(nsteps=10000, nwalkers=26, run_name='run5_26walkers_10params', to_vary 
     ('mar_starflux',       3.67e-4,       1e-4,       (0,       np.inf)),
     ('aug_starflux',       1.23e-4,       1e-4,       (0,       np.inf)),
     ('jun_starflux',       2.62e-4,       1e-4,       (0,       np.inf))])
-print('Run completed in {} hours'.format((time.time()-start) / 3600.))
 
 # Display clean images and residuals for each observation
 # standard_model = Model(params.values(), band6_observations)
