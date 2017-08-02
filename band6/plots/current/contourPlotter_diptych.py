@@ -229,12 +229,12 @@ plt.subplots_adjust(wspace=-0.0)
 
 all_natural = Observation('../../cleans/current/aumic_band6_all_natural.fits',
     1.4494822607957758e-05, fig=fig, pos=(0, num),
-    text=[[4.6, 4.0, 'ALMA 1.4 mm']])
+    text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm']])
         #   [4.6, 3.0, 'natural weighting']])
           
 band9_natural = Observation('../../../band9/cleans/aumic_band9_natural.fits',
     1.2078784e-04, fig=fig, pos=(1, num), cbspace=[400., 100.],
-    text=[[4.6, 4.0, 'ALMA 0.4 mm']])
+    text=[[4.6, 4.0, 'AU Mic ALMA 0.4 mm']])
         #   [4.6, 3.0, 'natural weighting']])
           
 # all_taper = Observation('../../cleans/current/aumic_band6_all_taper.fits',
