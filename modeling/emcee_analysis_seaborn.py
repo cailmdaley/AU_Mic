@@ -81,8 +81,7 @@ def corner_plot(run_name, nwalkers, stat_specs, burn_in=0, bad_walkers=[]):
     table_ax = corner.fig.add_axes([0,0,1,1], frameon=False)
     table_ax.axis('off')
     left, bottom = stat_specs
-    pd.plotting.table(table_ax, stats.round(2), bbox=[left, bottom, 1-left, .12], edges='open',
-        colLoc='right')
+    pd.plotting.table(table_ax, stats.round(2), bbox=[left, bottom, 1-left, .12], edges='open', colLoc='right')
 
     # hide upper triangle, so that it's a conventional corner plot
     for i, j in zip(*np.triu_indices_from(corner.axes, 1)):
