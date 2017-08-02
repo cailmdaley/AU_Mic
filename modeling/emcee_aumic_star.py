@@ -1,7 +1,7 @@
 from astrocail.fitting import *
 from disk_model import debris_disk, raytrace
-from emcee.utils import MPIPool
 from collections import OrderedDict
+from emcee.utils import MPIPool
 import pandas as pd
 import emcee
 
@@ -66,32 +66,50 @@ def make_fits(disk_params, model):
         extra=0.0, # ?
         modfile = model.root + model.name)
 
+def make_fits(params, model):
+    disk_params = params[:-1]
+    PA = params[-1]
+
+    model_disk = debris_disk.Disk(disk_params, obs=[300, 131, 300, 20])
+    raytrace.total_model(model_disk,
+        distance=9.91, # pc
+        imres=0.03, # arcsec/pix
+        xnpix=512, #image size in pixels
+        freq0=model.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequeency
+        PA=PA,
+        offs=[0.0,0.0], # offset from image center
+        nchans=1, # continum
+        isgas=False, # continuum!
+        includeDust=True, #continuuum!!
+        extra=0.0, # ?
+        modfile = model.root + model.name)
+
 # define likelehood functions
 def lnprob(theta, run_number, to_vary):
     """
     For each parameter to be varied, return -infinity if the proposed value lies
     outside the bounds for the parameter; if all parameters are ok, return 0.
     """
-    
+
     # reassign parameters to vary to those input by emcee
     for i, free_param in enumerate(to_vary):
         lower_bound, upper_bound = free_param[-1]
-        
+
         if lower_bound < theta[i] < upper_bound:
             params[free_param[0]] = theta[i]
         else: return -np.inf
-        
+
     params['m_disk'] = 10**params['m_disk']
     params['d_r'] += params['r_in']
-    
+
     # create model and get chi^2
     disk_params = params.values()[:-3]
     star_fluxes = params.values()[-3:]
-    
-    model = Model(observations=band6_observations, 
+
+    model = Model(observations=band6_observations,
         root=run_number + '_model_files/', name=str(np.random.randint(1e10)))
     make_fits(disk_params, model)
-    
+
     for date, star_flux in zip(model.observations, star_fluxes):
         for obs in date:
             model_fits = fits.open(model.root + model.name + '.fits')
@@ -110,20 +128,22 @@ def lnprob(theta, run_number, to_vary):
 
             model.obs_sample(obs)
             model.get_chi(obs)
-            
+
     return -0.5 * sum(model.chis)
-    
+def lnprior(theta):
+    m_disk, sb_law, scale_factor, r_in, r_out, inc, pa = theta
+
 def run_mcmc(nsteps, nwalkers, run_name, to_vary):
     pool = MPIPool()
     if not pool.is_master():
         pool.wait()
         sys.exit(0)
-        
+
     # initiate sampler chain
     run_number = run_name[:4]
     ndim = len(to_vary)
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=(run_number, to_vary), pool=pool)
-    
+
     try:
         samples = pd.read_csv(run_name + '.csv')
         print('Resuming {} at step {}'.format(run_name, samples.index[-1]//nwalkers))
@@ -133,29 +153,29 @@ def run_mcmc(nsteps, nwalkers, run_name, to_vary):
     except IOError:
         sp.call(['mkdir', run_name + '_model_files'])
         print('Starting {}'.format(run_name))
-        
+
         with open(run_name + '.csv', 'w') as f:
-            np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob\n'),), 
+            np.savetxt(f, (np.append([param[0] for param in to_vary], 'lnprob\n'),),
                 delimiter=',', fmt='%s')
-        pos = [[param[1] + param[2]*np.random.randn() for param in to_vary] 
-            for i in range(nwalkers)] 
-            
+        pos = [[param[1] + param[2]*np.random.randn() for param in to_vary]
+            for i in range(nwalkers)]
+
     for i, result in enumerate(sampler.sample(pos, iterations=nsteps, storechain=False)):
         print("Step {}".format(i))
         pos, chisum, blob = result
-        with open(run_name + '.csv', 'a') as f: 
+        with open(run_name + '.csv', 'a') as f:
             np.savetxt(f, [np.append(pos[i], chisum[i]) for i in range(nwalkers)], delimiter=',')
         sp.call('rm -rf model_data/*', shell=True)
 
     pool.close()
-    
+
 #==============================================================================#
 # Sandbox
 #==============================================================================#
 
 run_mcmc(nsteps=10000, nwalkers=50, run_name='run6_50walkers_10params', to_vary = [
     ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
-    ('sb_law',             2.3,           2,          (-5.,     10.)), 
+    ('sb_law',             2.3,           2,          (-5.,     10.)),
     ('scale_factor',       0.05,          0.05,       (0,       np.inf)),
     ('r_in',               8.8,           5,          (0,       np.inf)),
     ('d_r',                31.5,          10,         (0,       np.inf)),
