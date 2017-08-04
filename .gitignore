@@ -21,4 +21,4 @@ band6/visibility_processing/*
 
 
 modeling/*data_files
-modeling/*model_files
+*model_files
