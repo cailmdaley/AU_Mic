@@ -132,36 +132,15 @@ def make_best_fit(run):
         res_files = ','.join([run.name+'/model_files/'+model.name+i+'.residuals.vis' for i in ids])
         sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}/model_files/best_fit_{}.residuals.vis'.format(run.name, obs.name[12:15])])
         
-    # fig = plt.subplots(1, 2, sharex=False, sharey=False,
-    #     figsize=(11.6, 6.5))[0]
-    # plt.subplots_adjust(wspace=-0.0)
-
-    # for pointing in model.observations:
-    #     for i, obs in enumerate(pointing):
-    #         model.obs_sample(obs)
-    #         sp.call(['mv', model.path + '.vis', model.path + str(i) + '.vis'])
-    #         
-    #         
-    # 
-    # # cat_files = ','.join([run_name+ 'model_files/' + model.name'.vis' for obs in band6_observations[2]])
-    # sp.call(['uvcat', 'vis={}'.format(cat_files), 'out=model_data/best_fit.vis'])
-    # 
-    # # Clean down to half the observation rms
-    # sp.call(['invert',
-    #     'vis=model_data/{}.vis'.format('best_fit'),
-    #     'map=model_data/{}.mp'.format('best_fit'),
-    #     'beam=model_data/{}.bm'.format('best_fit'),
-    #     'cell=0.03arcsec', 'imsize=512', 'options=systemp,mfs', 'robust=2'])
-    # sp.call(['clean',
-    #     'map=model_data/{}.mp'.format('best_fit'),
-    #     'beam=model_data/{}.bm'.format('best_fit'),
-    #     'out=model_data/{}.cl'.format('best_fit'),
-    #     'niters=100000', 'cutoff={}'.format(obs.rms/2)])
-    # sp.call(['restor',
-    #     'map=model_data/{}.mp'.format('best_fit'),
-    #     'beam=model_data/{}.bm'.format('best_fit'),
-    #     'model=model_data/{}.cl'.format('best_fit'),
-    #     'out=model_data/{}.cm'.format('best_fit')])
-    # sp.call(['fits', 'op=xyout',
-    #     'in=model_data/{}.fits'.format('best_fit'),
-    #     'out=model_data/{}.im'.format('best_fit')], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))
+    
+if __name__ == '__main__':
+    fitting.run_emcee(run_name='run7', nsteps=10000, nwalkers=18, 
+        lnprob = lnprob, to_vary = [
+        ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
+        ('sb_law',             2.3,           2,          (-5.,     10.)), 
+        ('scale_factor',       0.05,          0.03,       (0,       np.inf)),
+        ('r_in',               8.8,           5,          (0,       np.inf)),
+        ('d_r',                31.5,          10,         (0,       np.inf)),
+        ('inc',                90,            1,          (0,       np.inf)),
+        ('pa',                 128.48,        0.1,        (0,       360)),
+        ('starflux',           2.50e-4,       1e-4,      (0,       np.inf))])

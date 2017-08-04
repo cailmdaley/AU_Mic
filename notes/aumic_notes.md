@@ -4,8 +4,6 @@
 
 ### To Do
 - fix the way the observation frequency is defined once band9 is up and running
-- call young's poster 
-- make contours 1,2,3 sigma
 
 ##### Papers:
 -   Thebault 2009
@@ -18,9 +16,18 @@
 ------------------------------------------------------------
 #### 7/27/17:
 **Pomodoros:**
-1. Make best fit function output visibilities ready for uvcat
-2. Get uvcat up and running
-3. Make residuals as well as convolved images, and start on casa script
+1.   Get CASA script going
+
+Need to figure out a way to easily access observation rms for cleaning model images..
+-   Hard code them into file?
+-   Supply pathname to image for rms?
+
+------------------------------------------------------------
+#### 7/27/17:
+**Pomodoros:**
+1.   Make best fit function output visibilities ready for uvcat
+2.   Get uvcat up and running
+3.   Make residuals as well as convolved images, and start on casa script
 
 ------------------------------------------------------------
 #### 7/27/17:
