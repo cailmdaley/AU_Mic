@@ -17,6 +17,13 @@
 
 ------------------------------------------------------------
 #### 7/27/17:
+**Pomodoros:**
+1. Make best fit function output visibilities ready for uvcat
+2. Get uvcat up and running
+3. Make residuals as well as convolved images, and start on casa script
+
+------------------------------------------------------------
+#### 7/27/17:
 'run5_26walkers_10params' went a little wrong--the first june spw was actually a duplicate of an august spw, so I'm starting run 6 to better describe things.
 
 ------------------------------------------------------------
