@@ -3,7 +3,7 @@ import subprocess as sp
 from astropy.io import fits
 from collections import OrderedDict
 
-from astrocail import fitting
+from astrocail import fitting, casa
 from disk_model import debris_disk, raytrace
 from aumic_observations import band6_observations, band6_rms
 
@@ -126,7 +126,9 @@ def make_best_fit(run):
             model.make_residuals(obs, ids[-1])
         # make model visibilities
         vis_files = ','.join([run.name+'/model_files/'+model.name+i+'.vis' for i in ids])
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}/model_files/best_fit_{}.vis'.format(run.name, obs.name[12:15])])
+        catpath = '{}/model_files/best_fit_{}.vis'.format(run.name, obs.name[12:15])
+        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(run.name, catpath)])
+        casa.to_ms(catpath)
         
         # make residuals
         res_files = ','.join([run.name+'/model_files/'+model.name+i+'.residuals.vis' for i in ids])
