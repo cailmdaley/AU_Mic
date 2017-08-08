@@ -5,7 +5,7 @@ from collections import OrderedDict
 
 from astrocail import fitting, casa
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms
+from aumic_observations import band6_observations, band6_rms_values
 
 
 # default parameter dict:
@@ -52,10 +52,10 @@ def make_fits(model, disk_params):
     
 def fix_fits(model, obs, starflux):
     # open fits and add starflux,
-    model_fits = fits.open(model.root + model.name + '.fits')
+    model_fits = fits.open(model.path + '.fits')
     crpix = int(model_fits[0].header['CRPIX1'])
     model_im = model_fits[0].data[0]
-    model_im[crpix, crpix] = starflux
+    model_im[crpix, crpix] += starflux
     
     model_fits[0].header['CRVAL1'] = obs.ra
     model_fits[0].header['CRVAL2'] = obs.dec
@@ -97,7 +97,7 @@ def lnprob(theta, run_name, to_vary):
     return -0.5 * sum(model.chis)
 
 
-def make_best_fit(run):
+def make_best_fits(run):
     best_fit = run.chain[run.chain['lnprob'] == run.chain['lnprob'].max()]
         
     for param in best_fit.index[:-1]:
@@ -110,13 +110,18 @@ def make_best_fit(run):
     starflux = param_dict.values()[-1]
     
     # intialize model and make fits image 
+    print('Making model...')
     model = fitting.Model(observations=band6_observations,
         root=run.name + '/model_files/', 
         name='best_fit')
     model.delete()
     make_fits(model, disk_params)
     
-    for pointing in band6_observations:
+    print('Sampling...')
+    visibilities = []
+    residuals = []
+    for pointing, rms in zip(band6_observations, band6_rms_values):
+        print(rms)
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)
@@ -124,15 +129,22 @@ def make_best_fit(run):
             ids.append('_' + obs.name[12:20])
             model.obs_sample(obs, ids[-1])
             model.make_residuals(obs, ids[-1])
+            model.clean(run.name+'/model_files/'+ model.name + ids[-1], rms)
+            
         # make model visibilities
-        vis_files = ','.join([run.name+'/model_files/'+model.name+i+'.vis' for i in ids])
-        catpath = '{}/model_files/best_fit_{}.vis'.format(run.name, obs.name[12:15])
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(run.name, catpath)])
-        casa.to_ms(catpath)
+        # vis_files = ','.join([run.name+'/model_files/'+model.name+ident+'.vis' for ident in ids])
+        # visibilities.append('{}/model_files/best_fit_{}'.format(run.name, obs.name[12:15]))
+        # sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])])
         
         # make residuals
-        res_files = ','.join([run.name+'/model_files/'+model.name+i+'.residuals.vis' for i in ids])
-        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}/model_files/best_fit_{}.residuals.vis'.format(run.name, obs.name[12:15])])
+        # res_files = ','.join([run.name+'/model_files/'+model.name+ident+'.residuals.vis' for ident in ids])
+        # residuals.append('{}/model_files/best_fit_{}.residuals'.format(run.name, obs.name[12:15]))
+        # sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])])
+        # model.clean(residuals[-1], rms)
+        
+        
+        
+    
         
     
 if __name__ == '__main__':

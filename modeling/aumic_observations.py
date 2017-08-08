@@ -17,9 +17,5 @@ jun3 = Observation(root='unsubtracted_obs_files/', name='aumic_band6_jun_spw3_FI
 band6_observations=np.array([[mar0, mar1, mar2, mar3],
                             [aug0, aug1, aug2, aug3],
                             [jun0, jun1, jun2, jun3]])
-
-band6_rms = np.array
-band6_star_mar_allspws_rms = 4.79727064596e-05
-band6_star_aug_allspws_rms = 2.70553631515e-05
-band6_star_jun_allspws_rms = 2.09217450873e-05
+band6_rms_values = np.array([4.79727064596e-05, 2.70553631515e-05, 2.09217450873e-05])
 band6_star_all_rms = 1.47444691066e-05
