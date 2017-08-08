@@ -99,6 +99,7 @@ def lnprob(theta, run_name, to_vary):
 
 def make_best_fit(run):
     best_fit = run.chain[run.chain['lnprob'] == run.chain['lnprob'].max()]
+    print(best_fit)
         
     for param in best_fit.index[:-1]:
         param_dict[param] = best_fit[param]

@@ -22,7 +22,7 @@ def rename(Chain):
 run7 = fitting.MCMCrun('run7', nwalkers=18)
 reload(fitting)
 reload(fs)
-fs.make_best_fit(run7)
+fs.make_best_fits(run7)
         
 
 
