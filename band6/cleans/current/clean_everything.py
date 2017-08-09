@@ -21,9 +21,10 @@ to_clean = [('band6_star_aug_allspws', 'aumic_mask_aug_natural.region'),
             
 rms_strings = []
 for obs in to_clean:
-    casa.obs_clean(obs[0], 'aumic_rms.region', obs[1])
-    rms_strings.append(obs[0] + '_rms = ' + raw_input('please enter clean rms: '))
-print(np.array(rms_strings))
+    # casa.obs_clean(obs[0], 'aumic_rms.region', obs[1])
+    # rms_strings.append(obs[0] + '_rms = ' + raw_input('please enter clean rms: '))
+    casa.to_fits(obs[0])
+# print(np.array(rms_strings))
     
 band6_star_aug_allspws_rms = 2.70553631515e-05
 band6_star_jun_allspws_rms = 2.09217450873e-05
