@@ -3,9 +3,9 @@ import subprocess as sp
 from astropy.io import fits
 from collections import OrderedDict
 
-from astrocail import fitting, casa
+from astrocail import fitting, plotting
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms_values
+from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
 
 
 # default parameter dict:
@@ -123,8 +123,8 @@ def make_best_fits(run):
     model = fitting.Model(observations=band6_observations,
         root=run.name + '/model_files/', 
         name=run.name + '_bestfit')
-    model.delete()
-    make_fits(model, disk_params)
+    # model.delete()
+    # make_fits(model, disk_params)
     
     print('Sampling...')
     visibilities = []
@@ -132,23 +132,28 @@ def make_best_fits(run):
     for pointing, rms in zip(band6_observations, band6_rms_values):
         ids = []
         for obs in pointing:
-            fix_fits(model, obs, starflux)
-            
-            ids.append('_' + obs.name[12:20])
-            model.obs_sample(obs, ids[-1])
-            model.make_residuals(obs, ids[-1])
+            pass
+            # fix_fits(model, obs, starflux)
+            # 
+            # ids.append('_' + obs.name[12:20])
+            # model.obs_sample(obs, ids[-1])
+            # model.make_residuals(obs, ids[-1])
             
         # make model visibilities
-        vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
+        # vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
         visibilities.append('{}_{}'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])])
-        model.clean(visibilities[-1], rms, show=False)
+        # sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])])
+        # model.clean(visibilities[-1], rms, show=False)
         
         # make residuals
-        res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
+        # res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
         residuals.append('{}_{}.residuals'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])])
-        model.clean(residuals[-1], rms, show=False)
+        # sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])])
+        # model.clean(residuals[-1], rms, show=False)
+        
+    fig = plotting.Figure(
+        [[band6_fits_images[i], visibilities[i]+'.fits', residuals[i]+'.fits'] for i in range(len(visibilities))],
+        [3*[rms] for rms in band6_rms_values])
         
         
         
