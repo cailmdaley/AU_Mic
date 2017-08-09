@@ -11,7 +11,7 @@ from aumic_observations import band6_observations, band6_rms_values
 # default parameter dict:
 param_dict = OrderedDict([
     ('temp_index',        -0.5),
-    ('m_disk',            3.67e-08),
+    ('m_disk',            -8.),
     ('sb_law',            2.3),
     ('r_in',              8.8),
     ('d_r',                31.5),
@@ -55,7 +55,12 @@ def fix_fits(model, obs, starflux):
     model_fits = fits.open(model.path + '.fits')
     crpix = int(model_fits[0].header['CRPIX1'])
     model_im = model_fits[0].data[0]
-    model_im[crpix, crpix] += starflux
+    try:
+        model_im[crpix, crpix] = model.crpix_diskflux + starflux
+    except AttributeError:
+        model.crpix_diskflux = model_im[crpix, crpix]
+        model_im[crpix, crpix] += starflux
+    
     
     model_fits[0].header['CRVAL1'] = obs.ra
     model_fits[0].header['CRVAL2'] = obs.dec
@@ -99,10 +104,13 @@ def lnprob(theta, run_name, to_vary):
 
 def make_best_fits(run):
     best_fit = run.chain[run.chain['lnprob'] == run.chain['lnprob'].max()]
-    print(best_fit)
+    print('Best-fit model parameters:')
+    print(best_fit.to_string())
+    print('')
         
-    for param in best_fit.index[:-1]:
-        param_dict[param] = best_fit[param]
+    for param in best_fit.columns[:-1]:
+        param_dict[param] = best_fit[param].values
+        
         
     param_dict['m_disk'] = 10**param_dict['m_disk']
     param_dict['d_r'] += param_dict['r_in']
@@ -114,7 +122,7 @@ def make_best_fits(run):
     print('Making model...')
     model = fitting.Model(observations=band6_observations,
         root=run.name + '/model_files/', 
-        name='best_fit')
+        name=run.name + '_bestfit')
     model.delete()
     make_fits(model, disk_params)
     
@@ -122,7 +130,6 @@ def make_best_fits(run):
     visibilities = []
     residuals = []
     for pointing, rms in zip(band6_observations, band6_rms_values):
-        print(rms)
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)
@@ -130,18 +137,18 @@ def make_best_fits(run):
             ids.append('_' + obs.name[12:20])
             model.obs_sample(obs, ids[-1])
             model.make_residuals(obs, ids[-1])
-            model.clean(run.name+'/model_files/'+ model.name + ids[-1], rms)
             
         # make model visibilities
-        # vis_files = ','.join([run.name+'/model_files/'+model.name+ident+'.vis' for ident in ids])
-        # visibilities.append('{}/model_files/best_fit_{}'.format(run.name, obs.name[12:15]))
-        # sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])])
+        vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
+        visibilities.append('{}_{}'.format(model.path, obs.name[12:15]))
+        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])])
+        model.clean(visibilities[-1], rms, show=False)
         
         # make residuals
-        # res_files = ','.join([run.name+'/model_files/'+model.name+ident+'.residuals.vis' for ident in ids])
-        # residuals.append('{}/model_files/best_fit_{}.residuals'.format(run.name, obs.name[12:15]))
-        # sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])])
-        # model.clean(residuals[-1], rms)
+        res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
+        residuals.append('{}_{}.residuals'.format(model.path, obs.name[12:15]))
+        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])])
+        model.clean(residuals[-1], rms, show=False)
         
         
         
