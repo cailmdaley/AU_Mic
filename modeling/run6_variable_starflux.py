@@ -8,6 +8,64 @@ from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
 
+def main():
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run6, which has 50 walkers and varies the following parameters:
+    1)  disk mass
+    2)  surface brightness power law exponent
+    3)  scale factor, multiplied by radius to get scale height
+    4)  inner radius
+    5)  outer radius (really inner radius + dr)
+    6)  inclination
+    7)  position angle
+    8)  march starflux
+    9)  august starflux
+    10) june starflux''')
+    
+    parser.add_argument('-r', '--run', action='store_true', 
+        help='begin or resume eemcee run.')
+        
+    parser.add_argument('-a', '--analyze', action='store_true', 
+        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
+    parser.add_argument('-b', '--burn_in', default=0,
+        help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-c', '--corner', action='store_true', 
+        help='generate corner plot')
+    parser.add_argument('-e', '--evolution', action='store_true', 
+        help='generate walker evolution plot.')
+    parser.add_argument('-kde', '--density', action='store_true', 
+        help='generate kernel density estimate (kde) of posterior distribution')
+    args=parser.parse_args()
+    
+    
+    if args.run:
+        mcmc.run_emcee(run_name='run6', nsteps=10000, nwalkers=50, 
+            lnprob = lnprob, to_vary = [
+            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
+            ('sb_law',            2.3,          2,         (-5.,     10.)), 
+            ('scale_factor',      0.05,         0.03,      (0,       np.inf)),
+            ('r_in',              8.8,          5,         (0,       np.inf)),
+            ('d_r',               31.5,         10,        (0,       np.inf)),
+            ('inc',               90,           1,         (0,       np.inf)),
+            ('pa',                128.48,       0.1,       (1,       360)),
+            ('mar_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
+            ('aug_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
+            ('jun_starflux',      2.50e-4,      1e-4,      (0,       np.inf))])
+    else:
+        run = mcmc.MCMCrun('run6', nwalkers=50, burn_in=args.burn_in)
+        
+    if args.analyze:
+        make_best_fits(run)
+        run.evolution()
+        run.kde()
+        run.corner()
+        
+    if args.evolution:
+        run.evolution()
+    if args.density:
+        run.kde()
+    if args.corner:
+        run.corner()
+    
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -101,13 +159,15 @@ def lnprob(theta, run_name, to_vary):
             fix_fits(model, obs, starflux)
             model.obs_sample(obs)
             model.get_chi(obs)
+    model.delete()    
         
     return -0.5 * sum(model.chis)
 
 
 def make_best_fits(run):
-    # subset_df = run.chain[run.chain['r_in'] < 15]
-    subset_df = run.chain
+    print('Starting to make model image and residuals...')
+    # subset_df = run.main[run.main['r_in'] < 15]
+    subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -166,47 +226,5 @@ def make_best_fits(run):
         
         
         
-    
-        
-    
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run6, which has 50 walkers and varies the following parameters:
-    1)  disk mass
-    2)  surface brightness power law exponent
-    3)  scale factor, multiplied by radius to get scale height
-    4)  inner radius
-    5)  outer radius (really inner radius + dr)
-    6)  inclination
-    7)  position angle
-    8)  march starflux
-    9)  august starflux
-    10) june starflux''')
-    
-    parser.add_argument('-r', '--run', action='store_true', 
-        help='begin or resume eemcee run.')
-    parser.add_argument('-a', '--analyze', action='store_true', 
-        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-e', '--evolution', action='store_true', 
-        help='generate walker evolution plot.')
-    args=parser.parse_args()
-    
-    if args.run:
-        mcmc.run_emcee(run_name='run6', nsteps=10000, nwalkers=50, 
-            lnprob = lnprob, to_vary = [
-            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            2.3,          2,         (-5.,     10.)), 
-            ('scale_factor',      0.05,         0.03,      (0,       np.inf)),
-            ('r_in',              8.8,          5,         (0,       np.inf)),
-            ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               90,           1,         (0,       np.inf)),
-            ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
-            ('aug_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
-            ('jun_starflux',      2.50e-4,      1e-4,      (0,       np.inf))])
-    else:
-        run = mcmc.MCMCrun('run6', nwalkers=50)
-        
-    if args.analyze:
-        make_best_fits(run)
-    if args.evolution:
-        run.evolution()
+    main()
