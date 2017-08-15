@@ -165,13 +165,8 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run):
-<<<<<<< HEAD
-    # subset_df = run.main[run.main['r_in'] < 15]
-    subset_df = run.main
-=======
     subset_df = run.main[run.main['r_in'] < 15]
     # subset_df = run.main
->>>>>>> 54909d30a650cdf10296fdd8dc4748c028066764
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -225,13 +220,8 @@ def make_best_fits(run):
         rmses=[3*[rms] for rms in band6_rms_values],
         texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None]
             for date, rms in zip(['March', 'August', 'June'], band6_rms_values)],
-<<<<<<< HEAD
-        # savefile=run.name+'/run8_bestfit_small_r_in.pdf', title=r'Run 8 Best Fit Model & Residuals for $r_{in} < 15$')
-        savefile=run.name+'/run8_bestfit_global.pdf', title=r'Run 8 Global Best Fit Model & Residuals')
-=======
         savefile=run.name+'/run9_bestfit_small_r_in.pdf', title=r'Run 9 Best Fit Model & Residuals for $r_{in} < 15$')
         # savefile=run.name+'/run9_bestfit_global.pdf', title=r'Run 9 Global Best Fit Model & Residuals')
->>>>>>> 54909d30a650cdf10296fdd8dc4748c028066764
 
 
     
