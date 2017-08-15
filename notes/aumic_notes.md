@@ -3,7 +3,10 @@
 ------------------------------------------------------------
 
 ### To Do
-- fix the way the observation frequency is defined once band9 is up and running
+- fix the way the observation frequency is defined once band9 is up and running?
+- Get run 8 working
+- Read paper Meredith sent
+- Make combined residuals
 
 ##### Papers:
 -   Thebault 2009
@@ -12,6 +15,8 @@
 -   hughes 2017
 ------------------------------------------------------------
 ##### For Meredith:
+-   Which four schools should I send my scores to?
+-   What if surface brightness has a turnover/critical radius?
 
 ------------------------------------------------------------
 #### 7/27/17:
