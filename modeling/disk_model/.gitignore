@@ -1,0 +1,9 @@
+*txt~
+*~
+*.py~
+*.pyc
+*.cm/*
+*.vis/*
+*.im/*
+*.fits
+*.log
