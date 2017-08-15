@@ -1,0 +1,22 @@
+\documentclass[12pt,modern]{article}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{AU Mic Research Overview}
+\rhead{Cail Daley}
+
+\begin{document}
+
+This summer we've been investigating the vertical and radial structure of AU Mic using MCMC methods. 
+Most parameters are well behaved, but a few questions remain.
+\begin{enumerate}
+  \item The posterior for inner radius exhibits significant bimodality, with one solution at $\sim 8$ au and another at $\sim 20$ au. 
+  A larger inner radius is slightly preferred.
+  We will be implementing a gap in hopes that it will resolve this bimodality.
+  \item When a model with a scale height that increases linearly with radius is used to fit the data, a scale factor of 0.025 is preferred. This value does not seem to be a lower limit, as indicated by the posterior distribution in Figure 1. We are hoping to confirm/deny this by starting a run with scale factor fixed at a low value ($\sim 0.01$)|if the best-fit model with this scale factor provides a comparably good fit to the data as when scale factor is allowed to take its preferred value of 0.025, this indicates that our data are only sensitive enough to report an upper limit rather than a measurement. However, fixing the scale height produces significant residuals and/or a worse overall fit, this indicates that we have the spatial resolution to directly measure the scale height.
+\end{enumerate}
+
+
+
+\end{document}
