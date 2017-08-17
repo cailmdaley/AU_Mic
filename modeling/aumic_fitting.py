@@ -22,10 +22,37 @@ band6_observations=np.array(
 band6_rms_values = np.array([
     4.79727064596e-05, 
     2.70553631515e-05, 
-    2.09217450873e-05])
-band6_fits_images = np.array([
+    2.09217450873e-05,
+    1.47444691066e-05])
+band6_fits_images = [
     '../band6/cleans/current/band6_star_mar_allspws.fits', 
     '../band6/cleans/current/band6_star_aug_allspws.fits', 
-    '../band6/cleans/current/band6_star_jun_allspws.fits'])
+    '../band6/cleans/current/band6_star_jun_allspws.fits',
+    '../band6/cleans/current/band6_star_all.fits']
     
-band6_star_all_rms = 1.47444691066e-05
+
+def label_fix(run):
+    df = run.groomed
+    
+    df['d_r'] += df['r_in']
+    try:
+        df['starflux'] *= 1e6
+    except:
+        df['mar_starflux'] *= 1e6
+        df['jun_starflux'] *= 1e6
+        df['aug_starflux'] *= 1e6
+        
+    df.where(df['inc'] < 90, 180-df['inc'], inplace=True, axis=1)
+        
+    df.rename(inplace=True, columns={
+        'm_disk' : r'Disk Mass ($M_{\odot}$)', 
+        'sb_law' : r'SB Law',
+        'scale_factor' : r'Scale Factor', 
+        'r_in' : r'$r_{in}$ (au)',
+        'd_r' : r'$r_{out}$ (au)',
+        'inc' : r'$i$ ($\degree$)',
+        'pa'  : r'PA  ($\degree$)',
+        'mar_starflux' : r'March $F_{*}$ ($\mu$Jy)',
+        'aug_starflux' : r'August $F_{*}$ ($\mu$Jy)',
+        'jun_starflux' : r'June $F_{*}$ ($\mu$Jy)'})
+    
