@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1502924709 "writeup.tex" "./.latex/writeup.pdf" "writeup" 1502924710
-  "./.latex/writeup.aux" 1502924710 346 1f8d25e7394d4f838dc101a63a61a62e ""
-  ".latex/writeup.aux" 1502924710 346 1f8d25e7394d4f838dc101a63a61a62e ""
+["pdflatex"] 1503162385 "writeup.tex" "./.latex/writeup.pdf" "writeup" 1503162386
+  "./.latex/writeup.aux" 1503162386 666 23eff70ea2e657f9861efd4b88956ffa ""
+  ".latex/writeup.aux" 1503162386 666 23eff70ea2e657f9861efd4b88956ffa ""
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1136768653 1524 4414a8315f39513458b80dfc63bff03a ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm" 1136768653 1512 f21f83efb36853c0b70002322c1ab3ad ""
@@ -45,11 +45,11 @@
   "/usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt" 1489093265 3873788 a572d3103bb67e82d38085f80256a706 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
   "run6_bestfit_global_concise.pdf" 1502922959 691777 37d97f8a44c43b84850def2ec44e9984 ""
-  "run6_kde.pdf" 1502894421 40290 107f3431493c0b83272013f87fe1b092 ""
-  "writeup.tex" 1502924707 1814 2cc9a5da0b4510878f30087cc6215495 ""
+  "run6_kde.pdf" 1503161523 41388 59a4214987a141dcc6840d234cbb3eac ""
+  "writeup.tex" 1503162385 1852 e49665c3dc46bea8ffb15c1e0fbd2a21 ""
   (generated)
-  "./.latex/writeup.pdf"
+  ".latex/writeup.aux"
   "./.latex/writeup.log"
   ".latex/writeup.log"
-  ".latex/writeup.aux"
+  "./.latex/writeup.pdf"
   ".latex/writeup.pdf"
