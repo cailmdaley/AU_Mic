@@ -7,9 +7,9 @@ from collections import OrderedDict
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
-
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, 
+    description= '''Python commands associated with emcee run10, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  inner radius
@@ -19,7 +19,8 @@ def main():
     7)  march starflux
     8)  august starflux
     9)  june starflux
-This run fixes the scale factor at 0.003, in order to investigate how sensitive our modeling is to the puffiness of the disk. If such a low scale factor yields significantly worse chi squareds and residuals, we can conclude that we are able to detect differences and scale factor and can thus measure it. However, if the chi squareds and residuals do not worsen very much, this indicates we do not have the sensitivity to measure the scale factor, and can only report an upper limit.''')
+This run is identical to run 8 except that the scale factor is fixed at 0.003 
+instead of 0.001; run8 ran into optical depth issues.'''
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
