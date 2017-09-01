@@ -57,10 +57,10 @@ def main():
         aumic_fitting.label_fix(run)
         
     if args.analyze:
-        make_best_fits(run)
         run.evolution()
         run.kde()
         run.corner()
+        make_best_fits(run)
         
     if args.best_fit:
         make_best_fits(run)
