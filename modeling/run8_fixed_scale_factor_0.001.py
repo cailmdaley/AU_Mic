@@ -9,7 +9,8 @@ from disk_model import debris_disk, raytrace
 from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
 
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, 
+    description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  inner radius
@@ -19,20 +20,23 @@ def main():
     7)  march starflux
     8)  august starflux
     9)  june starflux
-This run fixes the scale factor at 0.03, in order to investigate how sensitive our modeling is to the puffiness of the disk. If such a low scale factor yields significantly worse chi squareds and residuals, we can conclude that we are able to detect differences and scale factor and can thus measure it. However, if the chi squareds and residuals do not worsen very much, this indicates we do not have the sensitivity to measure the scale factor, and can only report an upper limit.''')
+This run fixes the scale factor at 0.001, in order to investigate how sensitive 
+our modeling is to a scale height well below our resolution.''')
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
         
     parser.add_argument('-a', '--analyze', action='store_true', 
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-b', '--burn_in', default=0,
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
         help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
+        help='generate best fit model images and residuals')
     parser.add_argument('-c', '--corner', action='store_true', 
         help='generate corner plot')
     parser.add_argument('-e', '--evolution', action='store_true', 
         help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--density', action='store_true', 
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
     
@@ -51,16 +55,19 @@ This run fixes the scale factor at 0.03, in order to investigate how sensitive o
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run8', nwalkers=50, burn_in=args.burn_in)
+        aumic_fitting.label_fix(run)
         
     if args.analyze:
-        make_best_fits(run)
         run.evolution()
         run.kde()
         run.corner()
+        make_best_fits(run)
         
+    if args.best_fit:
+        make_best_fits(run)
     if args.evolution:
         run.evolution()
-    if args.density:
+    if args.kernel_density:
         run.kde()
     if args.corner:
         run.corner()
