@@ -32,6 +32,66 @@ param_dict = OrderedDict([
     ('pa',                128.41),
     ('starflux',      2.50e-4)])
 
+def main():
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run7, which has 18 walkers and varies the following parameters:
+    1) disk mass
+    2) surface brightness power law exponent
+    3) scale factor, multiplied by radius to get scale height
+    4) inner radius
+    5) outer radius (really inner radius + dr)
+    6) inclination
+    7) position angle
+    8) star flux (a single value is used for all three observations)
+    This run implements a single starflux across all three dates.''')
+    
+    parser.add_argument('-r', '--run', action='store_true', 
+        help='begin or resume eemcee run.')
+        
+    parser.add_argument('-a', '--analyze', action='store_true', 
+        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
+        help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
+        help='generate best fit model images and residuals')
+    parser.add_argument('-c', '--corner', action='store_true', 
+        help='generate corner plot')
+    parser.add_argument('-e', '--evolution', action='store_true', 
+        help='generate walker evolution plot.')
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
+        help='generate kernel density estimate (kde) of posterior distribution')
+    args=parser.parse_args()
+    
+    
+    if args.run:
+        mcmc.run_emcee(run_name='run7', nsteps=10000, nwalkers=18, 
+            lnprob = lnprob, to_vary = [
+            ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
+            ('sb_law',             2.3,           2,          (-5.,     10.)), 
+            ('scale_factor',       0.05,          0.03,       (0,       np.inf)),
+            ('r_in',               8.8,           5,          (0,       np.inf)),
+            ('d_r',                31.5,          10,         (0,       np.inf)),
+            ('inc',                90,            1,          (0,       np.inf)),
+            ('pa',                 128.48,        0.1,        (0,       360)),
+            ('starflux',           2.50e-4,       1e-4,      (0,       np.inf))])
+    else:
+        run = mcmc.MCMCrun('run7', nwalkers=18, burn_in = args.burn_in)
+        aumic_fitting.label_fix(run)
+        
+    if args.analyze:
+        run.evolution()
+        run.kde()
+        run.corner()
+        make_best_fits(run)
+        
+    if args.best_fit:
+        make_best_fits(run)
+    if args.evolution:
+        run.evolution()
+    if args.kernel_density:
+        run.kde()
+    if args.corner:
+        run.corner()
+    
 def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
     PA = disk_params[-1]
@@ -162,45 +222,5 @@ def make_best_fits(run):
         # savefile=run.name+'/run7_bestfit_small_r_in.pdf', title=r'Run 7 Best Fit Model & Residuals for $r_{in} < 15$')
         savefile=run.name+'/run7_bestfit_global.pdf', title=r'Run 7 Global Best Fit Model & Residuals')
         
-        
-        
-    
-        
-    
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run7, which has 18 walkers and varies the following parameters:
-    1) disk mass
-    2) surface brightness power law exponent
-    3) scale factor, multiplied by radius to get scale height
-    4) inner radius
-    5) outer radius (really inner radius + dr)
-    6) inclination
-    7) position angle
-    8) star flux (a single value is used for all three observations)''')
-    
-    parser.add_argument('-r', '--run', action='store_true', 
-        help='begin or resume eemcee run.')
-    parser.add_argument('-a', '--analyze', action='store_true', 
-        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-e', '--evolution', action='store_true', 
-        help='generate walker evolution plot.')
-    args=parser.parse_args()
-    
-    if args.run:
-        mcmc.run_emcee(run_name='run7', nsteps=10000, nwalkers=18, 
-            lnprob = lnprob, to_vary = [
-            ('m_disk',             -7.55,         0.05,       (-np.inf, np.inf)),
-            ('sb_law',             2.3,           2,          (-5.,     10.)), 
-            ('scale_factor',       0.05,          0.03,       (0,       np.inf)),
-            ('r_in',               8.8,           5,          (0,       np.inf)),
-            ('d_r',                31.5,          10,         (0,       np.inf)),
-            ('inc',                90,            1,          (0,       np.inf)),
-            ('pa',                 128.48,        0.1,        (0,       360)),
-            ('starflux',           2.50e-4,       1e-4,      (0,       np.inf))])
-    else:
-        run = mcmc.MCMCrun('run7', nwalkers=18)
-        
-    if args.analyze:
-        make_best_fits(run)
-    if args.evolution:
-        run.evolution()
+    main()

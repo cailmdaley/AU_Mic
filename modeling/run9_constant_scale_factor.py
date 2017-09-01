@@ -19,7 +19,7 @@ def main():
     7)  march starflux
     8)  august starflux
     9)  june starflux
-This run fixes the scale factor at 0.03, in order to investigate how sensitive our modeling is to the puffiness of the disk. If such a low scale factor yields significantly worse chi squareds and residuals, we can conclude that we are able to detect differences and scale factor and can thus measure it. However, if the chi squareds and residuals do not worsen very much, this indicates we do not have the sensitivity to measure the scale factor, and can only report an upper limit.''')
+This run implements a constant-with-radius scale factor in order to explore which scale height prescription (linear or constant) better fits the data.''')
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
