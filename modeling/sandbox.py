@@ -9,5 +9,7 @@ run = mcmc.MCMCrun('run6', path='~/Documents/Research/AU_Mic/modeling/run6/run6_
 
 aumic_fitting.label_fix(run)
 
+run.converged
 
-run.kde()
+
+# run.kde()
