@@ -8,6 +8,8 @@ radmc3dPy
 *.region
 *.uvsub
 *.fixvis
+*.csv
+*.pdf
 uid*
 .DS*
 
