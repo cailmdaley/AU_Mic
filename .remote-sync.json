@@ -1,0 +1,17 @@
+{
+  "uploadOnSave": true,
+  "useAtomicWrites": false,
+  "deleteLocal": false,
+  "hostname": "iorek.astro.wesleyan.edu",
+  "port": "22",
+  "target": "/Volumes/disks/CAIL/AU_Mic/",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**",
+    "run8/model_files/*"
+  ],
+  "username": "cdaley",
+  "keyfile": "/Users/cdaley/.ssh/id_rsa",
+  "watch": [],
+  "transport": "scp"
+}
