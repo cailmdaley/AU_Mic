@@ -6,7 +6,8 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
+import aumic_fitting
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, 
     description= '''Python commands associated with emcee run10, which has 50 walkers and varies the following parameters:
@@ -20,7 +21,7 @@ def main():
     8)  august starflux
     9)  june starflux
 This run is identical to run 8 except that the scale factor is fixed at 0.003 
-instead of 0.001; run8 ran into optical depth issues.'''
+instead of 0.001; run8 ran into optical depth issues.''')
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
@@ -52,6 +53,7 @@ instead of 0.001; run8 ran into optical depth issues.'''
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run10', nwalkers=50, burn_in=args.burn_in)
+        aumic_fitting.label_fix(run)
         
     if args.analyze:
         make_best_fits(run)
@@ -214,16 +216,19 @@ def make_best_fits(run):
         model.clean(residuals[-1], rms, show=False)
 
     print('Making figure...')
-    fig = plotting.Figure(
-        paths=[[band6_fits_images[i], visibilities[i]+'.fits', residuals[i]+'.fits']
-            for i in range(len(visibilities))],
-        rmses=[3*[rms] for rms in band6_rms_values],
-        texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None]
-            for date, rms in zip(['March', 'August', 'June'], band6_rms_values)],
-        # savefile=run.name+'/run8_bestfit_small_r_in.pdf', title=r'Run 8 Best Fit Model & Residuals for $r_{in} < 15$')
-        savefile=run.name+'/run8_bestfit_global.pdf', title=r'Run 8 Global Best Fit Model & Residuals')
+    fig = plotting.Figure(layout=(4,3),
+        paths=[[obs, path + '.fits', path + '.residuals.fits'] 
+            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+        texts=[
+            [[[4.6, 4.0, date]], 
+            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], 
+            None] 
+            for date, rms in zip(['March', 'August', 'June', 'All'], 
+            aumic_fitting.band6_rms_values)
+            ],
+        title= run.name + r'Global Best Fit Model & Residuals',
+        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
 
-
-    
 if __name__ == '__main__':
     main()

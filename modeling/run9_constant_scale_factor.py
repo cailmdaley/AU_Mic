@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
+import aumic_fitting
 
 def main():
     parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
@@ -52,6 +52,7 @@ This run implements a constant-with-radius scale factor in order to explore whic
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run9', nwalkers=50, burn_in=args.burn_in)
+        aumic_fitting.label_fix(run)
         
     if args.analyze:
         make_best_fits(run)
