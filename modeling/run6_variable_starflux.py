@@ -229,23 +229,29 @@ def make_best_fits(run):
     paths.append('{}_all'.format(model.path))
         
     print('Making figure...')
-    # fig = plotting.Figure(layout=(4,3),
-    #     paths=[[obs, path + '.fits', path + '.residuals.fits'] 
-    #         for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
-    #     rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
-    #     texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None],
-    #     title=r'Run 6 Global Best Fit Model & Residuals',
-    #     # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
-    #     savefile=run.name+'/run6_bestfit_global.pdf')
-        
-    rms = aumic_fitting.band6_rms_values[-1]
-    fig = plotting.Figure(layout=(1,3),
-        paths=[aumic_fitting.band6_fits_images[-1], paths[-1] + '.fits', paths[-1] + '.residuals.fits'],
-        rmses=3*[rms],
-        texts=[[[4.6, 4.0, 'Natural weighting']], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None],
-        # title=r'Run 6 Global Best Fit Model & Residuals',
+    fig = plotting.Figure(layout=(4,3),
+        paths=[[obs, path + '.fits', path + '.residuals.fits'] 
+            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+        texts=[
+            [[[4.6, 4.0, date]], 
+            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], 
+            None] 
+            for date, rms in zip(['March', 'August', 'June', 'All'], 
+            aumic_fitting.band6_rms_values)
+            ],
+        title= run.name + r'Global Best Fit Model & Residuals',
+        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
         # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
-        savefile=run.name+'/run6_bestfit_global_concise.pdf')
+        
+    # rms = aumic_fitting.band6_rms_values[-1]
+    # fig = plotting.Figure(layout=(1,3),
+    #     paths=[aumic_fitting.band6_fits_images[-1], paths[-1] + '.fits', paths[-1] + '.residuals.fits'],
+    #     rmses=3*[rms],
+    #     texts=[[[4.6, 4.0, 'Natural weighting']], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None],
+    #     # title=r'Run 6 Global Best Fit Model & Residuals',
+    #     # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
+    #     savefile=run.name+'/run6_bestfit_global_concise.pdf')
         
         
         
