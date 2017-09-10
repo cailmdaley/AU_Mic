@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
+import aumic_fitting
 
 
 # default parameter dict:
@@ -164,8 +164,9 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run):
-    # subset_df = run.chain[run.chain['r_in'] < 15]
-    subset_df = run.chain
+    print('Starting to make model image and residuals...')
+    # subset_df = run.main[run.main['r_in'] < 15]
+    subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -189,8 +190,7 @@ def make_best_fits(run):
     make_fits(model, disk_params)
     
     print('Sampling and cleaning...')
-    visibilities = []
-    residuals = []
+    paths = []
     for pointing, rms in zip(band6_observations, band6_rms_values):
         ids = []
         for obs in pointing:
@@ -200,27 +200,43 @@ def make_best_fits(run):
             model.obs_sample(obs, ids[-1])
             model.make_residuals(obs, ids[-1])
             
-        # make model visibilities
-        vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
-        visibilities.append('{}_{}'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(visibilities[-1], rms, show=False)
+        cat_string1 = ','.join([model.path+ident+'.vis' for ident in ids])
+        cat_string2 = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
+        paths.append('{}_{}'.format(model.path, obs.name[12:15]))
         
-        # make residuals
-        res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
-        residuals.append('{}_{}.residuals'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(residuals[-1], rms, show=False)
+        sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}.residuals.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        
+        model.clean(paths[-1] + '.residuals', rms, show=False)
+        model.clean(paths[-1], rms, show=False)
+        
+    
+    cat_string1 = ','.join([path + '.vis' for path in paths])
+    cat_string2 = ','.join([path + '.residuals.vis' for path in paths])
+    
+    sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}_all.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}_all.residuals.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    
+    model.clean(model.path+'_all', aumic_fitting.band6_rms_values[-1], show=False)
+    model.clean(model.path+'_all.residuals', aumic_fitting.band6_rms_values[-1], show=False)
+    
+    paths.append('{}_all'.format(model.path))
         
     print('Making figure...')
-    fig = plotting.Figure(
-        paths=[[band6_fits_images[i], visibilities[i]+'.fits', residuals[i]+'.fits'] 
-            for i in range(len(visibilities))],
-        rmses=[3*[rms] for rms in band6_rms_values],
-        texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None] 
-            for date, rms in zip(['March', 'August', 'June'], band6_rms_values)],
-        # savefile=run.name+'/run7_bestfit_small_r_in.pdf', title=r'Run 7 Best Fit Model & Residuals for $r_{in} < 15$')
-        savefile=run.name+'/run7_bestfit_global.pdf', title=r'Run 7 Global Best Fit Model & Residuals')
+    fig = plotting.Figure(layout=(4,3),
+        paths=[[obs, path + '.fits', path + '.residuals.fits'] 
+            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+        texts=[
+            [[[4.6, 4.0, date]], 
+            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], 
+            None] 
+            for date, rms in zip(['March', 'August', 'June', 'All'], 
+            aumic_fitting.band6_rms_values)
+            ],
+        title= run.name + r'Global Best Fit Model & Residuals',
+        savefile=run.name + '/' + run.name + '_bestfit_global.pdf')
+        # savefile=run.name + '/' + run.name + '_bestfit_small_r_in.pdf', title= run.name + r'Best Fit Model & Residuals for $r_{in} < 15$')
         
 if __name__ == '__main__':
     main()
