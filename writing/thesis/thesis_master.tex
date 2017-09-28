@@ -1,0 +1,142 @@
+\documentclass[12pt,oneside]{book}
+\usepackage{thesis} % use thesis style file
+\begin{document}
+%===============================================================================
+% TITLE PAGE / ABSTRACT / ACKNOWLEDGEMENTS
+%===============================================================================
+% \frontmatter % this is the stuff that comes before the real text:
+% \include{0_TitlePage}
+% \pagestyle{empty}
+% \include{0_Epigraph}
+% \include{0_Thanks}
+%===============================================================================
+% TABLE OF CONTENTS
+%===============================================================================
+% \tableofcontents % \pagestyle{empty}
+%\listoffigures
+%\listoftables \pagestyle{empty}
+%===============================================================================
+% CHAPTERS
+%===============================================================================
+\mainmatter 
+% \include{2_Observations}
+
+\chapter{Observations}
+AU Mic was observed  with ALMA on three dates: 26 March 2014, 18 August 2014, and 24 June 2015. 
+All observations were configured with four spectral windows, and employed ALMA's 12m antennas and Band 7 receivers. 
+Within each observation AU Mic was observed in seven-minute segments.\footnote{Extraneous?}
+One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 GHz, with a total bandwidth of 1.875 GHz and a channel spacing of 488 kHz.
+The remaining three spectral windows were configured to detect continuum emission with central frequencies of 228.5, 213.5, and 216.0 GHz, total bandwidths of 2 GHz, and channel spacings of 15.6 MHz. 
+
+\begin{table}	
+  \centering
+	\caption{Observation Information}
+  \label{tab:observations}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & 26 March 2014 & 18 August 2014 & 24 June 2015 \\
+    \cmidrule(lr){2-4}
+    Antennas: & 32 & 35 & 37 \\
+    Baselines (m): & 14--437 & 20--1268 & 30--1431 \\
+    On-source time (min): & 35 & 35 & 33 \\
+    Flux calibrator: & Titan & J2056-472 & Titan \\
+    Bandpass calibrator: & J1924-2914 & J2056-4714 & J1924-2914 \\
+    Phase calibrator: & J2101-2933 & J2101-2933 & J2056-3208  \\
+    pwv (mm): & 0.6 & 1.6 & 0.7 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Information regarding the three observation dates can be found in Table \ref{tab:observations}. 
+The short-baseline March observation provides information about AU Mic's disk on large spatial scales; in contrast, the subsequent long-baseline August observation was intended to trace the small-scale structure of the disk. 
+The quality of the gain transfer for the August observation was tested using observations of the quasar J2057-3734.
+Due to subpar\footnote{too informal?} quality, the August data were supplemented with a second night of long-baseline observations in June 2015. 
+The quasar J2101-2933 was used to assess the gain transfer quality.
+During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared. While we initially fit and subtracted off the flare fluxes (see Table \ref{tab:flare fluxes}), it was ultimately decided that the data taken during the flare was too problematic to be included in our analysis.
+
+\begin{table}	
+  \centering
+	\caption{Subtracted point-source fluxes}
+  \label{tab:flare fluxes}
+  \begin{tabular}{lr}
+    \toprule
+    Time (UTC) & Point-source Flux ($\mu$Jy) \\
+    \midrule
+    03:45:0--04:20:0 (no flare) & ($4.1 \pm 0.2)  \times 10^2$\\
+  	4:23:38--4:24:00 & $(9.2 \pm 1.7) \times 10^2$ \\
+  	4:24:00--4:25:00 & $(1.146 \pm 0.010) \times 10^4$ \\
+  	4:25:00--4:26:00 & $(3.59 \pm 0.10) \times 10^3$ \\
+  	4:26:00--4:27:00 & $(1.58 \pm 0.10) \times 10^3$ \\
+  	4:27:00--4:28:00 & $(4.50 \pm 1.0) \times 10^2$ \\
+  	4:28:00--4:29:00 & $(4.60 \pm 1.0) \times 10^2$ \\
+  	4:29:00--4:29:58 & $(5.20 \pm 1.0) \times 10^2$\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Calibration, reduction, and imaging were carried out using the \texttt{CASA} and
+\texttt{MIRIAD} software packages. Standard ALMA reduction scripts were applied
+to the datasets: phase calibration was accomplished via water vapor radiometry
+tables, and system temperature calibrations were performed to account for
+variations in instrument and weather conditions. Flux and bandpass calibrations
+were subsequently applied.
+
+
+The authors travelled to the NRAO facility in Charlottesville, VA in October
+2015 to further process the data in \texttt{CASA}. 
+For each observation, an elliptical gaussian was fit with the task \texttt{imfit} to a small region around the star in the sky plane (for the June date, the flare data were excluded).
+The equatorial coordinates of the the model gaussian centroid were then used to define the star position, which was uncertain due to AU Mic's high proper motion: each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
+
+Imaging was performed via standard Fourier inversion using the \texttt{CASA} task \texttt{tclean}. 
+Two weighting schemes were used: (i) natural weighting with no taper, to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines, to bring out the disk emission on larger spatial scales. 
+Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file before cleaning in order to account for the offset in phase center between datasets. 
+This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol} (set to a value of \SI{2}{''}).
+
+\begin{table}
+  \centering
+  \caption{Imaging Parameters for AU Mic}
+  \label{tab: imaging}
+  \begin{tabular}{lrrr}
+    \toprule
+    Weighting Scheme & Beam Size (\si{''}) & Beam PA ($^\circ$) & RMS Noise (\si{\mu Jy}) \\
+    \midrule
+    Natural (no taper) & blank & blank & blank \\
+    Natural (\SI{200}{k\lambda}) & blank & blank & blank \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+
+\chapter{Results}
+AU Mic's disk is resolved in both the radial and vertical directions by the ALMA observations. The disk extends a distance of $\sim \SI{40}{au}$ on either side of the host star, although the NW side appears to reach slightly further radial extents than the SE side (\ref{fig: boccaletti}). However, we are not able to detect the PA offset described by \cite{boccaletti2015}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.75\linewidth]{figures/3_boccaletti_plots}
+  \caption{
+  Image-domain analysis of AU Mic's radial structure. 
+  At each radial location along the disk midplane, a 1-D Gaussian was fit to the vertical surface brightness profile at that location.
+  From top to bottom, the three plots show the amplitude, centroid and width of the Gaussian fit as a function of angular separation from the star. 
+  The Gaussian traced by the dotted line in the upper pane shows the width of the  synthesized beam in the radial direction.
+  In the bottom pane, the broadening effects of the synthesized beam in the vertical direction have been removed; the fact that the image-domain vertical height of the disk is in excess of the beam contribution implies that our data spatially resolve the vertical structure of the disk.} 
+  \label{fig: boccaletti}
+\end{figure}
+
+
+\chapter{Analysis}
+\begin{enumerate}
+  \item Describe model \& model pipeline
+  \item weighting goes here?
+\end{enumerate}
+Testing!
+
+
+%===============================================================================
+% APPENDIX
+% \appendix 
+%===============================================================================
+% BIBLIOGRAPHY:
+\bibliography{thesis_bib}
+%===============================================================================
+\end{document} 
