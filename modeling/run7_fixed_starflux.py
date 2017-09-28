@@ -75,22 +75,30 @@ def main():
             ('starflux',           2.50e-4,       1e-4,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run7', nwalkers=18, burn_in = args.burn_in)
-        aumic_fitting.label_fix(run)
         
     if args.analyze:
+        make_best_fits(run)
+        
+        aumic_fitting.label_fix(run)
         run.evolution()
         run.kde()
         run.corner()
-        make_best_fits(run)
+        
+        return 
+        
         
     if args.best_fit:
         make_best_fits(run)
+        
+    aumic_fitting.label_fix(run)
     if args.evolution:
         run.evolution()
     if args.kernel_density:
         run.kde()
     if args.corner:
         run.corner()
+    
+    return
     
 def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
@@ -150,11 +158,11 @@ def lnprob(theta, run_name, to_vary):
     starflux = param_dict.values()[-1]
     
     # intialize model and make fits image 
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run_name + '/model_files/', 
         name='model' + str(np.random.randint(1e10)))
     make_fits(model, disk_params)
-    for obs in band6_observations.flatten():
+    for obs in aumic_fitting.band6_observations.flatten():
         fix_fits(model, obs, starflux)
         model.obs_sample(obs)
         model.get_chi(obs)
@@ -184,14 +192,14 @@ def make_best_fits(run):
     
     # intialize model and make fits image 
     print('Making model...')
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run.name + '/model_files/', 
         name=run.name + '_bestfit')
     make_fits(model, disk_params)
     
     print('Sampling and cleaning...')
     paths = []
-    for pointing, rms in zip(band6_observations, band6_rms_values):
+    for pointing, rms in zip(aumic_fitting.band6_observations, aumic_fitting.band6_rms_values):
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)

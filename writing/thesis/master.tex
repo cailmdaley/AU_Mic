@@ -1,8 +1,6 @@
 %Document Class starts every LaTeX document.  In this case, we're declaring the document class to be a book.  Changing "oneside" to "twoside" changes where the page numbers and headers and such get placed.
 \documentclass[12pt,oneside]{book}
 \usepackage{thesis} % use thesis style file
-=======
-\usepackage{thesis} % use thesis style file
 \begin{document}
 
 
@@ -39,7 +37,7 @@
 
 AU Mic was observed  with ALMA on three dates: 26 March 2014, 18 August 2014, and 24 June 2015. 
 All observations were configured with four spectral windows, and employed ALMA's 12m antennas and Band 7 receivers. 
-Within each observation, AU Mic was observed in seven-minute segments.\footnote{Extraneous?}
+Within each observation AU Mic was observed in seven-minute segments.\footnote{Extraneous?}
 One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 GHz, with a total bandwidth of 1.875 GHz and a channel spacing of 488 kHz.
 The remaining three spectral windows were configured to detect continuum emission with central frequencies of 228.5, 213.5, and 216.0 GHz, total bandwidths of 2 GHz, and channel spacings of 15.6 MHz. 
 
@@ -62,12 +60,12 @@ The remaining three spectral windows were configured to detect continuum emissio
   \end{tabular}
 \end{table}
 
-Information regarding each of the three observations can be found in Table \ref{tab:observations}. 
-The short-baseline March observation was intended to provide information about AU Mic's disk on large spatial scales; in contrast, the subsequent long-baseline August observation was intended to trace the small scale structure of the disk. 
-During the August observation, the quasar J2057-3734 was observed to test the quality of the gain transfer.
-Due to subpar quality, the August data were supplemented with a second night of long-baseline observations in June of 2015. 
-The quality of the gain transfer was determined with observations of the quasar J2101-2933.
-During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared|flare fluxes can be found in Table \ref{tab:flare fluxes}.
+Information regarding the three observation dates can be found in Table \ref{tab:observations}. 
+The short-baseline March observation provides information about AU Mic's disk on large spatial scales; in contrast, the subsequent long-baseline August observation was intended to trace the small-scale structure of the disk. 
+The quality of the gain transfer for the August observation was tested using observations of the quasar J2057-3734.
+Due to subpar\footnote{too informal?} quality, the August data were supplemented with a second night of long-baseline observations in June 2015. 
+The quasar J2101-2933 was used to assess the gain transfer quality.
+During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared. While we initially fit and subtracted off the flare fluxes (see Table \ref{tab:flare fluxes}), it was ultimately decided that the data taken during the flare was too problematic to be included in our analysis.
 
 \begin{table}	
   \centering
@@ -77,14 +75,14 @@ During the last segment of the June observation (04:23:38-04:29:58 UT), the host
     \toprule
     Time (UTC) & Point-source Flux ($\mu$Jy) \\
     \midrule
-    03:45:0-04:20:0 (no flare) & ($4.1 \pm 0.2)  \times 10^2$\\
-  	4:23:38-4:24:00 & $(9.2 \pm 1.7) \times 10^2$ \\
-  	4:23:38-4:24:00 & $(1.146 \pm 0.010) \times 10^4$ \\
-  	4:25:00-4:26:00 & $(3.59 \pm 0.10) \times 10^3$ \\
-  	4:26:00-4:27:00 & $(1.58 \pm 0.10) \times 10^3$ \\
-  	4:27:00-4:28:00 & $(4.50 \pm 1.0) \times 10^2$ \\
-  	4:28:00-4:29:00 & $(4.60 \pm 1.0) \times 10^2$ \\
-  	4:29:00-4:29:58 & $(5.20 \pm 1.0) \times 10^2$\\
+    03:45:0--04:20:0 (no flare) & ($4.1 \pm 0.2)  \times 10^2$\\
+  	4:23:38--4:24:00 & $(9.2 \pm 1.7) \times 10^2$ \\
+  	4:24:00--4:25:00 & $(1.146 \pm 0.010) \times 10^4$ \\
+  	4:25:00--4:26:00 & $(3.59 \pm 0.10) \times 10^3$ \\
+  	4:26:00--4:27:00 & $(1.58 \pm 0.10) \times 10^3$ \\
+  	4:27:00--4:28:00 & $(4.50 \pm 1.0) \times 10^2$ \\
+  	4:28:00--4:29:00 & $(4.60 \pm 1.0) \times 10^2$ \\
+  	4:29:00--4:29:58 & $(5.20 \pm 1.0) \times 10^2$\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -96,57 +94,57 @@ tables, and system temperature calibrations were performed to account for
 variations in instrument and weather conditions. Flux and bandpass calibrations
 were subsequently applied.
 
+
 The authors travelled to the NRAO facility in Charlottesville, VA in October
-2015 to further process the data; in particular the trip was intended to allow
-on-site correction of the 24 June flare. Tasks used to reduce the data at the
-NRAO facility were all part of the CASA package. An elliptical gaussian was fit
-to a small region around the star in the image plane of each dataset using the
-task \texttt{imfit}; the equatorial coordinates of the the model gaussian
-centroid were used to define the star position. Each observation was then phase
-shifted using the task \texttt{fixvis} so that the the pointing center was the
-same as the star position fit. The peak flux of the model gaussian
-was also subtracted from the location of the star in the visibility domain so
-that only the disk remained.
+2015 to further process the data in \texttt{CASA}. 
+% in particular the trip was intended to allow on-site correction of the 24 June flare. 
+% tasks used to reduce the data at the NRAO facility were all part of the CASA package. 
+For each observation, an elliptical gaussian was fit with the task \texttt{imfit} to a small region around the star in the sky plane (for the June date, the flare data were excluded).
+The equatorial coordinates of the the model gaussian centroid were then used to define the star position, which was uncertain due to AU Mic's high proper motion: each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
 
-The 24 June dataset required additional reduction due to the flare. While for
-the other dates we were able to fit a single point source to account for the stellar
-component over the entire observation, the flare required that the dataset be
-split into one minute bins between 04:23:38 and 04:29:58 in order to account for
-the variable flux of the host star. For each of these bins, we used the task
-\texttt{uvmodelfit} to fit a point source to the long baseline visibilities,
-which we subsequently subtracted from each bin in the visibility domain.
-Subtracted point fluxes can be found in Table \ref{tab:flare fluxes}.
+Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it is necessary to combine the data into a single file before cleaning. 
+This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol} (set to a value of \SI{2}{''}).
+% The peak flux of the model gaussian was also subtracted from the location of the star in the visibility domain so that only the disk remained.
 
-The June date pointing center, defined by the centroid of the elliptical
-gaussian fit to the star, was visibly offset from the surrounding disk; this
-could be explained if the flare referenced above were not symmetric with respect
-to the star. The offset was remedied by redefining the pointing center as
-follows. Because the star is known to be located at the center of the disk, we
-can use information provided by the brightness distribution of the disk to infer
-the star position. We do so by selecting the brightest pixel on each side of the
-disk from the clean component map (the \texttt{.model} file produced by
-\texttt{tclean}), and redefining the star/pointing center as the mean of the two
-pixel positions. This yields offsets of $(0.01'', -0.05'')$ for the March
-observation, $(0.01'', 0.00'')$ for the August observation, and $(0.00'',
-0.09'')$ for the June observation. Given the good agreement between the
-calculated star position and the image center for the two non-flare dates (March
-and August), we conclude that the `pixel' method represents a viable way to
-accurately determine star position. We apply this correction and redefine the
-image center via \texttt{fixvis}. For consistency, we apply the phase shift to
-all three dates.
+% The 24 June dataset required additional reduction due to the flare. While for
+% the other dates we were able to fit a single point source to account for the stellar
+% component over the entire observation, the flare required that the dataset be
+% split into one minute bins between 04:23:38 and 04:29:58 in order to account for
+% the variable flux of the host star. For each of these bins, we used the task
+% \texttt{uvmodelfit} to fit a point source to the long baseline visibilities,
+% which we subsequently subtracted from each bin in the visibility domain.
+% Subtracted point fluxes can be found in Table \ref{tab:flare fluxes}.
 
-Due to the high proper motion of AU Mic, the pointing centers of the three dates
-differ by a not-insignificant amount. When datasets with different pointing
-centers are cleaned together with \texttt{tclean}, the pointing center of the
-first dataset is taken as the new pointing center, and the data are combined in
-in the $uv$ plane with each subsequent dataset offset from the first as given by
-their relative pointing centers. In the case of AU Mic, this leads to an  image
-of the disk composed of three observations offset with respect to each other. To
-remedy this, we use the task \texttt{concat}, which combines datasets with their
-pointing centers aligned so long as the pointing centers do not differ by more
-than the value of \texttt{dirtol}. We set \texttt{dirtol} to $ 2''$, a value
-larger than  AU Mic's proper motion over ALMA's $\sim 1$ year observation
-baselines.
+% The June date pointing center, defined by the centroid of the elliptical
+% gaussian fit to the star, remained visibly offset from the disk; this
+% could be explained if the flare referenced above were not symmetric with respect
+% to the star. The offset was remedied by redefining the pointing center as
+% follows. Because the star is known to be located at the center of the disk, we
+% can use information provided by the brightness distribution of the disk to infer
+% the star position. We do so by selecting the brightest pixel on each side of the
+% disk from the clean component map (the \texttt{.model} file produced by
+% \texttt{tclean}), and redefining the star/pointing center as the mean of the two
+% pixel positions. This yields offsets of $(0.01'', -0.05'')$ for the March
+% observation, $(0.01'', 0.00'')$ for the August observation, and $(0.00'',
+% 0.09'')$ for the June observation. Given the good agreement between the
+% calculated star position and the image center for the two non-flare dates (March
+% and August), we conclude that the `pixel' method represents a viable way to
+% accurately determine star position. We apply this correction and redefine the
+% image center via \texttt{fixvis}. For consistency, we apply the phase shift to
+% all three dates.
+
+% Due to the high proper motion of AU Mic, the pointing centers of the three dates
+% differ by a not-insignificant amount. When datasets with different pointing
+% centers are cleaned together with \texttt{tclean}, the pointing center of the
+% first dataset is taken as the new pointing center, and the data are combined in
+% in the $uv$ plane with each subsequent dataset offset from the first as given by
+% their relative pointing centers. In the case of AU Mic, this leads to an  image
+% of the disk composed of three observations offset with respect to each other. To
+% remedy this, we use the task \texttt{concat}, which combines datasets with their
+% pointing centers aligned so long as the pointing centers do not differ by more
+% than the value of \texttt{dirtol}. We set \texttt{dirtol} to $ 2''$, a value
+% larger than  AU Mic's proper motion over ALMA's $\sim 1$ year observation
+% baselines.
 
 %===============================================================================
 % APPENDIX

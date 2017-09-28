@@ -54,22 +54,28 @@ def main():
             ('jun_starflux',      2.50e-4,      1e-4,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run6', nwalkers=50, burn_in=args.burn_in)
-        aumic_fitting.label_fix(run)
         
     if args.analyze:
+        make_best_fits(run)
+        
+        aumic_fitting.label_fix(run)
         run.evolution()
         run.kde()
         run.corner()
-        make_best_fits(run)
+        return 
         
     if args.best_fit:
         make_best_fits(run)
+        
+    aumic_fitting.label_fix(run)
     if args.evolution:
         run.evolution()
     if args.kernel_density:
         run.kde()
     if args.corner:
         run.corner()
+    
+    return
     
 
 # default parameter dict:
@@ -186,7 +192,7 @@ def make_best_fits(run):
     param_dict['d_r'] += param_dict['r_in']
 
     disk_params = param_dict.values()[:-3]
-    starfluxes = param_dict.values()[-3:]
+    starfluxes = np.array(param_dict.values()[-3:])
     
     # intialize model and make fits image 
     print('Making model...')
