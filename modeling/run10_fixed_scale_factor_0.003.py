@@ -28,13 +28,15 @@ instead of 0.001; run8 ran into optical depth issues.''')
         
     parser.add_argument('-a', '--analyze', action='store_true', 
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-b', '--burn_in', default=0,
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
         help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
+        help='generate best fit model images and residuals')
     parser.add_argument('-c', '--corner', action='store_true', 
         help='generate corner plot')
     parser.add_argument('-e', '--evolution', action='store_true', 
         help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--density', action='store_true', 
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
     
@@ -55,18 +57,12 @@ instead of 0.001; run8 ran into optical depth issues.''')
         run = mcmc.MCMCrun('run10', nwalkers=50, burn_in=args.burn_in)
         aumic_fitting.label_fix(run)
         
-    if args.analyze:
-        make_best_fits(run)
-        run.evolution()
-        run.kde()
-        run.corner()
-        
-    if args.evolution:
-        run.evolution()
-    if args.density:
-        run.kde()
-    if args.corner:
-        run.corner()
+        if args.analyze or args.best_fit: make_best_fits(run)
+        aumic_fitting.label_fix(run)
+        if args.analyze or args.evolution: run.evolution()
+        if args.analyze or args.kernel_density: run.kde()
+        if args.analyze or args.corner: run.corner()
+    
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -151,7 +147,7 @@ def lnprob(theta, run_name, to_vary):
     starfluxes = param_dict.values()[-3:]
 
     # intialize model and make fits image
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run_name + '/model_files/',
         name='model' + str(np.random.randint(1e10)))
     make_fits(model, disk_params)
@@ -186,35 +182,44 @@ def make_best_fits(run):
 
     # intialize model and make fits image
     print('Making model...')
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run.name + '/model_files/',
         name=run.name + '_bestfit')
     make_fits(model, disk_params)
 
     print('Sampling and cleaning...')
-    visibilities = []
-    residuals = []
-    for pointing, rms, starflux in zip(model.observations, band6_rms_values, starfluxes):
+    paths = []
+    for pointing, rms, starflux in zip(model.observations, aumic_fitting.band6_rms_values[:-1], starfluxes):
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)
-
+            
             ids.append('_' + obs.name[12:20])
             model.obs_sample(obs, ids[-1])
             model.make_residuals(obs, ids[-1])
-
-        # make model visibilities
-        vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
-        visibilities.append('{}_{}'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(visibilities[-1], rms, show=False)
-
-        # make residuals
-        res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
-        residuals.append('{}_{}.residuals'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(residuals[-1], rms, show=False)
-
+            
+        cat_string1 = ','.join([model.path+ident+'.vis' for ident in ids])
+        cat_string2 = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
+        paths.append('{}_{}'.format(model.path, obs.name[12:15]))
+        
+        sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}.residuals.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        
+        model.clean(paths[-1] + '.residuals', rms, show=False)
+        model.clean(paths[-1], rms, show=False)
+        
+    
+    cat_string1 = ','.join([path + '.vis' for path in paths])
+    cat_string2 = ','.join([path + '.residuals.vis' for path in paths])
+    
+    sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}_all.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}_all.residuals.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    
+    model.clean(model.path+'_all', aumic_fitting.band6_rms_values[-1], show=False)
+    model.clean(model.path+'_all.residuals', aumic_fitting.band6_rms_values[-1], show=False)
+    
+    paths.append('{}_all'.format(model.path))
+        
     print('Making figure...')
     fig = plotting.Figure(layout=(4,3),
         paths=[[obs, path + '.fits', path + '.residuals.fits'] 

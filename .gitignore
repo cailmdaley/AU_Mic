@@ -8,6 +8,8 @@ radmc3dPy
 *.region
 *.uvsub
 *.fixvis
+*.csv
+*.pdf
 uid*
 .DS*
 
@@ -22,3 +24,6 @@ band6/visibility_processing/*
 
 modeling/*data_files
 *model_files
+
+writing/jesse_thesis
+**.latex

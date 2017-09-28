@@ -55,23 +55,15 @@ This run is identical to run 6, except that that r_gridsize has been doubled to 
             ('jun_starflux',      2.30e-4,      1e-4,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run11', nwalkers=50, burn_in=args.burn_in)
+        old_nsamples = run.groomed.shape[0]
+        run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
+        print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
+        
+        if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
-        
-    if args.analyze:
-        run.evolution()
-        run.kde()
-        run.corner()
-        make_best_fits(run)
-        
-    if args.best_fit:
-        make_best_fits(run)
-    if args.evolution:
-        run.evolution()
-    if args.kernel_density:
-        run.kde()
-    if args.corner:
-        run.corner()
-    
+        if args.analyze or args.evolution: run.evolution()
+        if args.analyze or args.kernel_density: run.kde()
+        if args.analyze or args.corner: run.corner()
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -242,7 +234,7 @@ def make_best_fits(run):
             aumic_fitting.band6_rms_values)
             ],
         title= run.name + r'Global Best Fit Model & Residuals',
-        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+        savefile=run.name+'/' + run.name + '_bestfit_global.png')
         # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
         
     # rms = aumic_fitting.band6_rms_values[-1]

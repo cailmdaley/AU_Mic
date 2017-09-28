@@ -6,8 +6,77 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
-from aumic_observations import band6_observations, band6_rms_values, band6_fits_images
+import aumic_fitting
 
+def main():
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run6, which has 50 walkers and varies the following parameters:
+    1)  disk mass
+    2)  surface brightness power law exponent
+    3)  scale factor, multiplied by radius to get scale height
+    4)  inner radius
+    5)  outer radius (really inner radius + dr)
+    6)  inclination
+    7)  position angle
+    8)  march starflux
+    9)  august starflux
+    10) june starflux''')
+    
+    parser.add_argument('-r', '--run', action='store_true', 
+        help='begin or resume eemcee run.')
+        
+    parser.add_argument('-a', '--analyze', action='store_true', 
+        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
+        help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
+        help='generate best fit model images and residuals')
+    parser.add_argument('-c', '--corner', action='store_true', 
+        help='generate corner plot')
+    parser.add_argument('-e', '--evolution', action='store_true', 
+        help='generate walker evolution plot.')
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
+        help='generate kernel density estimate (kde) of posterior distribution')
+    args=parser.parse_args()
+    
+    
+    if args.run:
+        mcmc.run_emcee(run_name='run6', nsteps=10000, nwalkers=50, 
+            lnprob = lnprob, to_vary = [
+            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
+            ('sb_law',            2.3,          2,         (-5.,     10.)), 
+            ('scale_factor',      0.05,         0.03,      (0,       np.inf)),
+            ('r_in',              8.8,          5,         (0,       np.inf)),
+            ('d_r',               31.5,         10,        (0,       np.inf)),
+            ('inc',               90,           1,         (0,       np.inf)),
+            ('pa',                128.48,       0.1,       (1,       360)),
+            ('mar_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
+            ('aug_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
+            ('jun_starflux',      2.50e-4,      1e-4,      (0,       np.inf))])
+    else:
+        run = mcmc.MCMCrun('run6', nwalkers=50, burn_in=args.burn_in)
+        
+    if args.analyze:
+        make_best_fits(run)
+        
+        aumic_fitting.label_fix(run)
+        run.evolution()
+        run.kde()
+        run.corner()
+        return 
+        
+    if args.best_fit:
+        make_best_fits(run)
+        
+    aumic_fitting.label_fix(run)
+    if args.evolution:
+        run.evolution()
+    if args.kernel_density:
+        run.kde()
+    if args.corner:
+        run.corner()
+    
+    return
+    
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -92,7 +161,7 @@ def lnprob(theta, run_name, to_vary):
     starfluxes = param_dict.values()[-3:]
     
     # intialize model and make fits image 
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run_name + '/model_files/', 
         name='model' + str(np.random.randint(1e10)))
     make_fits(model, disk_params)
@@ -107,8 +176,9 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run):
-    # subset_df = run.chain[run.chain['r_in'] < 15]
-    subset_df = run.chain
+    print('Starting to make model image and residuals...')
+    # subset_df = run.main[run.main['r_in'] < 15]
+    subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -122,19 +192,18 @@ def make_best_fits(run):
     param_dict['d_r'] += param_dict['r_in']
 
     disk_params = param_dict.values()[:-3]
-    starfluxes = param_dict.values()[-3:]
+    starfluxes = np.array(param_dict.values()[-3:])
     
     # intialize model and make fits image 
     print('Making model...')
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run.name + '/model_files/', 
         name=run.name + '_bestfit')
     make_fits(model, disk_params)
     
     print('Sampling and cleaning...')
-    visibilities = []
-    residuals = []
-    for pointing, rms, starflux in zip(model.observations, band6_rms_values, starfluxes):
+    paths = []
+    for pointing, rms, starflux in zip(model.observations, aumic_fitting.band6_rms_values[:-1], starfluxes):
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)
@@ -143,75 +212,54 @@ def make_best_fits(run):
             model.obs_sample(obs, ids[-1])
             model.make_residuals(obs, ids[-1])
             
-        # make model visibilities
-        vis_files = ','.join([model.path+ident+'.vis' for ident in ids])
-        visibilities.append('{}_{}'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(vis_files), 'out={}.vis'.format(visibilities[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(visibilities[-1], rms, show=False)
+        cat_string1 = ','.join([model.path+ident+'.vis' for ident in ids])
+        cat_string2 = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
+        paths.append('{}_{}'.format(model.path, obs.name[12:15]))
         
-        # make residuals
-        res_files = ','.join([model.path+ident+'.residuals.vis' for ident in ids])
-        residuals.append('{}_{}.residuals'.format(model.path, obs.name[12:15]))
-        sp.call(['uvcat', 'vis={}'.format(res_files), 'out={}.vis'.format(residuals[-1])], stdout=open(os.devnull, 'wb'))
-        model.clean(residuals[-1], rms, show=False)
+        sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}.residuals.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}.vis'.format(paths[-1])], stdout=open(os.devnull, 'wb'))
+        
+        model.clean(paths[-1] + '.residuals', rms, show=False)
+        model.clean(paths[-1], rms, show=False)
+        
+    
+    cat_string1 = ','.join([path + '.vis' for path in paths])
+    cat_string2 = ','.join([path + '.residuals.vis' for path in paths])
+    
+    sp.call(['uvcat', 'vis={}'.format(cat_string1), 'out={}_all.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    sp.call(['uvcat', 'vis={}'.format(cat_string2), 'out={}_all.residuals.vis'.format(model.path)], stdout=open(os.devnull, 'wb'))
+    
+    model.clean(model.path+'_all', aumic_fitting.band6_rms_values[-1], show=False)
+    model.clean(model.path+'_all.residuals', aumic_fitting.band6_rms_values[-1], show=False)
+    
+    paths.append('{}_all'.format(model.path))
         
     print('Making figure...')
-    fig = plotting.Figure(
-        paths=[[band6_fits_images[i], visibilities[i]+'.fits', residuals[i]+'.fits'] 
-            for i in range(len(visibilities))],
-        rmses=[3*[rms] for rms in band6_rms_values],
-        texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None] 
-            for date, rms in zip(['March', 'August', 'June'], band6_rms_values)],
+    fig = plotting.Figure(layout=(4,3),
+        paths=[[obs, path + '.fits', path + '.residuals.fits'] 
+            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+        texts=[
+            [[[4.6, 4.0, date]], 
+            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], 
+            None] 
+            for date, rms in zip(['March', 'August', 'June', 'All'], 
+            aumic_fitting.band6_rms_values)
+            ],
+        title= run.name + r'Global Best Fit Model & Residuals',
+        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
         # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
-        savefile=run.name+'/run6_bestfit_global.pdf', title=r'Run 6 Global Best Fit Model & Residuals')
+        
+    # rms = aumic_fitting.band6_rms_values[-1]
+    # fig = plotting.Figure(layout=(1,3),
+    #     paths=[aumic_fitting.band6_fits_images[-1], paths[-1] + '.fits', paths[-1] + '.residuals.fits'],
+    #     rmses=3*[rms],
+    #     texts=[[[4.6, 4.0, 'Natural weighting']], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None],
+    #     # title=r'Run 6 Global Best Fit Model & Residuals',
+    #     # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
+    #     savefile=run.name+'/run6_bestfit_global_concise.pdf')
         
         
         
-    
-        
-    
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run6, which has 50 walkers and varies the following parameters:
-    1)  disk mass
-    2)  surface brightness power law exponent
-    3)  scale factor, multiplied by radius to get scale height
-    4)  inner radius
-    5)  outer radius (really inner radius + dr)
-    6)  inclination
-    7)  position angle
-    8)  march starflux
-    9)  august starflux
-    10) june starflux''')
-    
-    parser.add_argument('-r', '--run', action='store_true', 
-        help='begin or resume eemcee run.')
-    parser.add_argument('-a', '--analyze', action='store_true', 
-        help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-e', '--evolution', action='store_true', 
-        help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--density', action='store_true', 
-        help='generate kernel density estimate (kde) of posterior distribution')
-    args=parser.parse_args()
-    
-    if args.run:
-        mcmc.run_emcee(run_name='run6', nsteps=10000, nwalkers=50, 
-            lnprob = lnprob, to_vary = [
-            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            2.3,          2,         (-5.,     10.)), 
-            ('scale_factor',      0.05,         0.03,      (0,       np.inf)),
-            ('r_in',              8.8,          5,         (0,       np.inf)),
-            ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               90,           1,         (0,       np.inf)),
-            ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
-            ('aug_starflux',      2.50e-4,      1e-4,      (0,       np.inf)),
-            ('jun_starflux',      2.50e-4,      1e-4,      (0,       np.inf))])
-    else:
-        run = mcmc.MCMCrun('run6', nwalkers=50)
-        
-    if args.analyze:
-        make_best_fits(run)
-    if args.evolution:
-        run.evolution()
-    if args.density:
-        run.kde()
+    main()
