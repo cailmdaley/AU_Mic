@@ -55,7 +55,6 @@ instead of 0.001; run8 ran into optical depth issues.''')
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run10', nwalkers=50, burn_in=args.burn_in)
-        aumic_fitting.label_fix(run)
         
         if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
