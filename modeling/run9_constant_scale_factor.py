@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
+from aumic_fitting import band6_rms_values, band6_fits_images, band6_rms_values, band6_observations
 import aumic_fitting
 
 def main():
@@ -26,13 +27,15 @@ This run implements a constant-with-radius scale factor in order to explore whic
         
     parser.add_argument('-a', '--analyze', action='store_true', 
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-b', '--burn_in', default=0,
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
         help='number of steps \'burn in\' steps to exclude')
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
+        help='generate best fit model images and residuals')
     parser.add_argument('-c', '--corner', action='store_true', 
         help='generate corner plot')
     parser.add_argument('-e', '--evolution', action='store_true', 
         help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--density', action='store_true', 
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
     
@@ -52,20 +55,13 @@ This run implements a constant-with-radius scale factor in order to explore whic
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun('run9', nwalkers=50, burn_in=args.burn_in)
+        
+        if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
-        
-    if args.analyze:
-        make_best_fits(run)
-        run.evolution()
-        run.kde()
-        run.corner()
-        
-    if args.evolution:
-        run.evolution()
-    if args.density:
-        run.kde()
-    if args.corner:
-        run.corner()
+        if args.analyze or args.evolution: run.evolution()
+        if args.analyze or args.kernel_density: run.kde()
+        if args.analyze or args.corner: run.corner()
+    
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -166,8 +162,8 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run):
-    subset_df = run.main[run.main['r_in'] < 15]
-    # subset_df = run.main
+    # subset_df = run.main[run.main['r_in'] < 15]
+    subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -221,8 +217,8 @@ def make_best_fits(run):
         rmses=[3*[rms] for rms in band6_rms_values],
         texts=[[[[4.6, 4.0, date]], [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]], None]
             for date, rms in zip(['March', 'August', 'June'], band6_rms_values)],
-        savefile=run.name+'/run9_bestfit_small_r_in.pdf', title=r'Run 9 Best Fit Model & Residuals for $r_{in} < 15$')
-        # savefile=run.name+'/run9_bestfit_global.pdf', title=r'Run 9 Global Best Fit Model & Residuals')
+        # savefile=run.name+'/run9_bestfit_small_r_in.png', title=r'Run 9 Best Fit Model & Residuals for $r_{in} < 15$')
+        savefile=run.name+'/run9_bestfit_global.png', title=r'Run 9 Global Best Fit Model & Residuals')
 
 
     
