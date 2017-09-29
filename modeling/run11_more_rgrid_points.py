@@ -237,6 +237,8 @@ def make_best_fits(run):
         savefile=run.name+'/' + run.name + '_bestfit_global.png')
         # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
         
+        
+    # Combined row only
     # rms = aumic_fitting.band6_rms_values[-1]
     # fig = plotting.Figure(layout=(1,3),
     #     paths=[aumic_fitting.band6_fits_images[-1], paths[-1] + '.fits', paths[-1] + '.residuals.fits'],
