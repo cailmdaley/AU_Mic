@@ -86,7 +86,7 @@ param_dict = OrderedDict([
     ('l_star',            0.09),
     ('scale_factor',      0.1),
     ('gap_r_in',          0.9),
-    ('gap_d_r',           0.3),
+    ('gap_d_r',           0.0),
     ('pa',                128.41),
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
