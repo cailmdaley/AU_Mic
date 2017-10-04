@@ -87,7 +87,7 @@ The authors travelled to the NRAO facility in Charlottesville, VA in October
 For each observation, an elliptical gaussian was fit with the task \texttt{imfit} to a small region around the star in the sky plane (for the June date, the flare data were excluded).
 The equatorial coordinates of the the model gaussian centroid were then used to define the star position, which was uncertain due to AU Mic's high proper motion: each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
 
-Imaging was performed via standard Fourier inversion using the \texttt{CASA} task \texttt{tclean}. 
+Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper, to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines, to bring out the disk emission on larger spatial scales. 
 RMS noise levels for the resulting images as well as restoring beam sizes and position angles can be found in Table \ref{tab: imaging}.
 Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file before cleaning in order to account for the offset in phase center between datasets. 
@@ -151,6 +151,30 @@ We assume the disk to be optically thing and devoid of significant levels of dus
 
 \section{MCMC Fitting}
 We explore the parameter space of the model using a Markov Chain Monte Carlo (MCMC) routine. Specifically, we use the affine-invariant formulation described by \cite{goodmanweare10} and implemented in Python as \texttt{emcee} \citep{foreman-mackey13}.  MCMC methods sample the full breadth of the parameter space associated with a specific model, allowing the posterior probability function of each parameter to be estimated. As such, the process not only identifies regions of high probability in parameter space, but uncertainties and degeneracies between parameters can be determined by examining the correlations the posteriors of each parameter.
+
+\begin{table}
+  \caption{MCMC}
+  \label{tab: params}
+  \begin{tabular}{lcccc}
+  \toprule
+    \multirow{2}{*}{Parameter} & \multicolumn{2}{c}{A Run} & \multicolumn{2}{c}{Another Run} \\ 
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5} 
+    & Median & Best Fit & Median & Best Fit \\
+  \midrule
+    $\log$ Disk Mass (\si{\Msun}) & \\
+    SB Law &  \\
+    Scale Factor &  \\
+    $r_{in}$ (\si{au}) &  \\
+    $r_{out}$ (\si{au}) &  \\
+    $i$ (\si{\degree}) &  \\
+    PA  (\si{\degree}) &  \\
+    March $F_*$ (\si{\micro Jy}) &  \\
+    August $F_*$ (\si{\micro Jy}) &  \\
+    June $F_*$ (\si{\micro Jy}) &   \\
+    lnprob \\
+  \bottomrule
+  \end{tabular}
+\end{table}
 
 \begin{enumerate}
   \item Describe model \& model pipeline
