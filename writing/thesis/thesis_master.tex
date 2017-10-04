@@ -87,7 +87,7 @@ The authors travelled to the NRAO facility in Charlottesville, VA in October
 For each observation, an elliptical gaussian was fit with the task \texttt{imfit} to a small region around the star in the sky plane (for the June date, the flare data were excluded).
 The equatorial coordinates of the the model gaussian centroid were then used to define the star position, which was uncertain due to AU Mic's high proper motion: each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
 
-Imaging was performed via standard Fourier inversion using the \texttt{CASA} task \texttt{tclean}. 
+Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper, to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines, to bring out the disk emission on larger spatial scales. 
 RMS noise levels for the resulting images as well as restoring beam sizes and position angles can be found in Table \ref{tab: imaging}.
 Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file before cleaning in order to account for the offset in phase center between datasets. 
@@ -117,7 +117,7 @@ The peak signal to noise ratio is \textit{not here yet}. \footnote{How should I 
 AU Mic's disk is resolved in both the radial and vertical directions by the ALMA observations, although the vertical height is of the same order as the beam size. 
 The disk extends to a distance of $\sim \SI{40}{au}$ on either side of the host star, although the NW side appears to reach slightly larger radial extents than the SE side (Figure \ref{fig: boccaletti}). 
 The SE side appears marginally brighter than the NW side; this contradicts \cite{macgregor13}'s observations, which indicate that the NW is slightly brighter.
-However, because neither detection is significant, it is likely that the discrepancies are caused by fluctuations caused by the RMS noise and that the disk's surface profile is in fact symmetric. 
+However, because neither detection is significant, it is likely that the discrepancies result from fluctuations due to the RMS noise and that the disk's surface brightness profile is in fact symmetric. 
 Image-domain analysis indicates a position angle (PA) of \ang{128} and an inclination that is not visually differentiable from edge-on.
 However, we are not able to detect the PA offset described by \cite{boccaletti15}. 
 The disk exhibits a surface brightness that increases with radius, peaking at $\sim \SI{30}{au}$.
@@ -136,11 +136,49 @@ The disk exhibits a surface brightness that increases with radius, peaking at $\
 
 
 \chapter{Analysis}
+To more rigorously analyze geometric structure of the disk and the emissive properties of the constituent dust, we model the ALMA observations directly in the visibility domain.
+First, a model sky image is created by a ray-tracing code from a 2-D density and temperature grid. 
+The spatial resolution of the model image is \SI{0.3}{au} per pixel, i.e. \SI{10}{\percent} of the spatial scale sampled by the longest baseline in the data.
+The model image is then sampled at the same spatial frequencies as the ALMA data and Fourier transformed into the visibility domain with the \texttt{MIRIAD} task \texttt{uvmodel}; this allows the model to be compared directly to the interferometric data, for which the uncertainties are better understood.
+A $\chi^2$ metric is used to asses the quality of the fit.
+
+\section{Modeling Formalism}
+We assume the disk to be optically thing and devoid of significant levels of dust.
+\begin{itemize}
+  \item Evan talks about model here?
+\end{itemize}
+
+
+\section{MCMC Fitting}
+We explore the parameter space of the model using a Markov Chain Monte Carlo (MCMC) routine. Specifically, we use the affine-invariant formulation described by \cite{goodmanweare10} and implemented in Python as \texttt{emcee} \citep{foreman-mackey13}.  MCMC methods sample the full breadth of the parameter space associated with a specific model, allowing the posterior probability function of each parameter to be estimated. As such, the process not only identifies regions of high probability in parameter space, but uncertainties and degeneracies between parameters can be determined by examining the correlations the posteriors of each parameter.
+
+\begin{table}
+  \caption{MCMC}
+  \label{tab: params}
+  \begin{tabular}{lr}
+  \toprule
+    \multirow{2}{*}{Parameter} &
+    \multicolumn{2}{|c|}{\bfseries Implemented in}\\ \cline{3-4} \\
+  \midrule
+    $\log$ Disk Mass (\si{\Msun}) & \\
+    SB Law &  \\
+    Scale Factor &  \\
+    $r_{in}$ (\si{au}) &  \\
+    $r_{out}$ (\si{au}) &  \\
+    $i$ (\si{\degree}) &  \\
+    PA  (\si{\degree}) &  \\
+    March $F_*$ (\si{\micro Jy}) &  \\
+    August $F_*$ (\si{\micro Jy}) &  \\
+    June $F_*$ (\si{\micro Jy}) &   \\
+    lnprob \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
 \begin{enumerate}
   \item Describe model \& model pipeline
   \item weighting goes here?
 \end{enumerate}
-Testing!
 
 
 %===============================================================================

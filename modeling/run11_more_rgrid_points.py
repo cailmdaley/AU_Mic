@@ -234,7 +234,7 @@ def make_best_fits(run):
             aumic_fitting.band6_rms_values)
             ],
         title= run.name + r'Global Best Fit Model & Residuals',
-        savefile=run.name+'/' + run.name + '_bestfit_global.png')
+        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
         # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
         
         
