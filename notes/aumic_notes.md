@@ -1,22 +1,36 @@
 #  AU Mic Research Notes 
 ##### Spring/Summer 2017
 ------------------------------------------------------------
+#### 7/27/17:
 
-### To Do
-- fix the way the observation frequency is defined once band9 is up and running?
-- Read paper Meredith sent
-- Make combined residuals
+- imstat on $3\sigma$ region of band6_star_all.natural_clean.fits:
 
-##### Papers:
--   Thebault 2009
--   Wyatt 2008
--   matthews et al. 2014
--   hughes 2017
-------------------------------------------------------------
-##### For Meredith:
--   Which four schools should I send my scores to?
--   What if surface brightness has a turnover/critical radius?
+| Frequency   |    Velocity   |   Stokes | BrightnessUnit   |    BeamArea |
+|-------------|---------------|----------|------------------|-------------|
+| 2.21987e+11Hz   |       0km/s   |     I    |    Jy/beam     |   256.908 |
+| Npts      |      Sum    | FluxDensity         |  Mean       |     Rms
+| 9986 |   1.334832e+00   | 5.195759e-03   | 1.336703e-04   | 1.605511e-04
+| Std dev        | Minimum        | Maximum   | region count
+| 8.893642e-05  | -1.100369e-06   | 4.490895e-04       | 1
 
+Total flux = Sum / BeamArea = 5.19576 mJy  nor right...
+Error = rms * Npts = 1.603263285 mJy
+
+- star:
+  - flux density $\to$ 4.490895e-04
+  - coords $\to$ 20:45:09.845 -31.20.32.369
+- NW ansa:
+  - flux density $\to$ 3.291588e-04
+  - coords $\to$ 20:45:09.693 -31.20.30.834
+    - $\Delta \alpha = 0.152$ sec $=2.28''$
+    - $\Delta \delta = 1.535''$
+  - $\implies PA = 123.95$
+- SE ansa:
+  - flux density $\to$ 3.440531e-04
+  - coords $\to$ 20:45:10.021 -31.20.34.179
+    - $\Delta \alpha = -0.176$ sec $=-2.64''$
+    - $\Delta \delta = -1.81''$
+  - $\implies PA = 124.43$
 ------------------------------------------------------------
 #### 7/27/17:
 **Pomodoros:**

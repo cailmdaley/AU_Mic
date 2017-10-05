@@ -11,6 +11,7 @@ radmc3dPy
 *.csv
 uid*
 .DS*
+._*
 
 band6/imaging/cleans/old
 band6/imaging/cleans/older_composite/
