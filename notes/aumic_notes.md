@@ -1,6 +1,4 @@
 #  AU Mic Research Notes 
-##### Spring/Summer 2017
-------------------------------------------------------------
 #### 7/27/17:
 
 - imstat on $3\sigma$ region of band6_star_all.natural_clean.fits:
@@ -13,8 +11,8 @@
 | Std dev        | Minimum        | Maximum   | region count
 | 8.893642e-05  | -1.100369e-06   | 4.490895e-04       | 1
 
-Total flux = Sum / BeamArea = 5.19576 mJy  nor right...
-Error = rms * Npts = 1.603263285 mJy
+<!-- Total flux = Sum / BeamArea = 5.19576 mJy  nor right...
+Error = rms * Npts = 1.603263285 mJy -->
 
 - star:
   - flux density $\to$ 4.490895e-04

@@ -21,7 +21,8 @@
 \mainmatter 
 % \include{2_Observations}
 
-\chapter{Observations}
+\chapter{Obsorvations}
+\label{chap: observations}
 AU Mic was observed  with ALMA on three dates: 26 March 2014, 18 August 2014, and 24 June 2015. 
 All observations were configured with four spectral windows, and employed ALMA's 12m antennas and Band 7 receivers. 
 Within each observation AU Mic was observed in seven-minute segments.\footnote{Extraneous?}
@@ -110,17 +111,20 @@ This was done using the task \texttt{concat}, which combines datasets with point
 
 
 \chapter{Results}
-Figure \textit{not here yet} shows the dust continuum emission as seen by ALMA at \SI{1.3}{mm}; because M stars emit in the radio, stellar emission is also clearly visible at the image center.
-The peak signal to noise ratio is \textit{not here yet}. \footnote{How should I figure out the peak SNR given the presence of the star? Also, should I report a SNR for both cleans?}
-\textit{Total disk flux estimate? Tricky with the star?} 
-
-AU Mic's disk is resolved in both the radial and vertical directions by the ALMA observations, although the vertical height is of the same order as the beam size. 
-The disk extends to a distance of $\sim \SI{40}{au}$ on either side of the host star, although the NW side appears to reach slightly larger radial extents than the SE side (Figure \ref{fig: boccaletti}). 
-The SE side appears marginally brighter than the NW side; this contradicts \cite{macgregor13}'s observations, which indicate that the NW is slightly brighter.
-However, because neither detection is significant, it is likely that the discrepancies result from fluctuations due to the RMS noise and that the disk's surface brightness profile is in fact symmetric. 
-Image-domain analysis indicates a position angle (PA) of \ang{128} and an inclination that is not visually differentiable from edge-on.
-However, we are not able to detect the PA offset described by \cite{boccaletti15}. 
+\label{chap: results}
+Figure \textbf{not here yet} shows the combined dust continuum emission from all three observations at \SI{1.3}{mm}; because M stars emit in the radio, stellar emission is also clearly visible at the image center.
+We report the integrated flux over regions of the disk where the flux density is in excess of three times the rms noise to be \textbf{not here yet}; considering that we derive an average stellar flux of \textbf{not here yet} (see Section \ref{chap: analysis}), we estimate the total disk flux to be \textbf{not here yet}.
 The disk exhibits a surface brightness that increases with radius, peaking at $\sim \SI{30}{au}$.
+% The peak signal to noise ratio is \textbf{not here yet}.
+
+The radial structure of the disk is traced in Figure \ref{fig: boccaletti}. 
+Our analysis indicates that AU Mic's disk is resolved in both the radial and vertical directions by the ALMA observations, although the vertical height is of the same order as the beam size. 
+$3\sigma$ emission extends to a distance of \textbf{not here yet} on the NW side, and \textbf{not here yet} on the SE side. 
+This discrepancy can also be seen in the upper pane of Figure \ref{fig: boccaletti}. 
+The peak pixel of the NW ansa has a flux density of \SI{329.16}{\mu Jy} and a position angle (PA) of \ang{123.95}; the corresponding values for the SE ansa are \SI{344.05}{\mu Jy} and \ang{124.43}. 
+This contradicts \cite{macgregor13}'s observations, which indicate that the NW is slightly brighter.
+However, as neither detection is significant it is likely that the discrepancies result from fluctuations due to the RMS noise and that the disk's surface brightness profile is in fact symmetric. 
+In addition, the discrepancies in PA do not attain significance and so we are not able to detect the PA offset described by \cite{boccaletti15}. 
 
 \begin{figure}
   \centering
@@ -136,6 +140,7 @@ The disk exhibits a surface brightness that increases with radius, peaking at $\
 
 
 \chapter{Analysis}
+\label{chap: analysis}
 To more rigorously analyze geometric structure of the disk and the emissive properties of the constituent dust, we model the ALMA observations directly in the visibility domain.
 First, a model sky image is created by a ray-tracing code from a 2-D density and temperature grid. 
 The spatial resolution of the model image is \SI{0.3}{au} per pixel, i.e. \SI{10}{\percent} of the spatial scale sampled by the longest baseline in the data.
@@ -175,11 +180,6 @@ We explore the parameter space of the model using a Markov Chain Monte Carlo (MC
   \bottomrule
   \end{tabular}
 \end{table}
-
-\begin{enumerate}
-  \item Describe model \& model pipeline
-  \item weighting goes here?
-\end{enumerate}
 
 
 %===============================================================================
