@@ -40,9 +40,11 @@ This run builds upon run 13, setting a prior on the gap inner radius so that the
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
     
+    run_name = 'run14'
+    nwalkers = 50
     
     if args.run:
-        mcmc.run_emcee(run_name='run14', nsteps=10000, nwalkers=50, 
+        mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=nwalkers, 
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
             ('sb_law',            2.3,          2,         (-5.,     10.)), 
@@ -56,7 +58,7 @@ This run builds upon run 13, setting a prior on the gap inner radius so that the
             ('aug_starflux',      1.5e-4,       0.5e-4,    (0,       np.inf)),
             ('jun_starflux',      2.0e-4,       0.5e-4,    (0,       np.inf))])
     else:
-        run = mcmc.MCMCrun('run14', nwalkers=50, burn_in=args.burn_in)
+        run = mcmc.MCMCrun(run_name, nwalkers, burn_in=args.burn_in)
         
         if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
@@ -86,7 +88,7 @@ param_dict = OrderedDict([
     ('l_star',            0.09),
     ('scale_factor',      0.1),
     ('gap_r_in',          0.9),
-    ('gap_d_r',           0.3),
+    ('gap_d_r',           3.),
     ('pa',                128.41),
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
@@ -118,11 +120,11 @@ def fix_fits(model, obs, starflux):
     model_fits = fits.open(model.path + '.fits')
     crpix = int(model_fits[0].header['CRPIX1'])
     model_im = model_fits[0].data[0]
-    # try
-    #     model_im[crpix, crpix] = model.crpix_diskflux + starflux
-    # except AttributeError:
-    #     model.crpix_diskflux = model_im[crpix, crpix]
-    #     model_im[crpix, crpix] += starflux
+    try:
+        model_im[crpix, crpix] = model.crpix_diskflux + starflux
+    except AttributeError:
+        model.crpix_diskflux = model_im[crpix, crpix]
+        model_im[crpix, crpix] += starflux
     
     
     model_fits[0].header['CRVAL1'] = obs.ra
