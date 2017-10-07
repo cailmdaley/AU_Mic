@@ -23,12 +23,14 @@ Error = rms * Npts = 1.603263285 mJy -->
     - $\Delta \alpha = 0.152$ sec $=2.28''$
     - $\Delta \delta = 1.535''$
   - $\implies PA = 123.95$
+  - --> 2.749" separation
 - SE ansa:
   - flux density $\to$ 3.440531e-04
   - coords $\to$ 20:45:10.021 -31.20.34.179
     - $\Delta \alpha = -0.176$ sec $=-2.64''$
     - $\Delta \delta = -1.81''$
   - $\implies PA = 124.43$
+  - --> 3.201" separation
 ------------------------------------------------------------
 #### 7/27/17:
 **Pomodoros:**
