@@ -6,11 +6,12 @@ from collections import OrderedDict
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
-from aumic_fitting import band6_rms_values, band6_fits_images, band6_rms_values, band6_observations
 import aumic_fitting
 
+run_name='run17'
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, 
+    description= '''Python commands associated with emcee run17, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  inner radius
@@ -20,7 +21,7 @@ def main():
     7)  march starflux
     8)  august starflux
     9)  june starflux
-This run implements a constant-with-radius scale factor in order to explore which scale height prescription (linear or constant) better fits the data.''')
+This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiative transfer zrange: 20->5, and most importantly nphi 131-->351 (this corresponds to ~7 grid elements per beam at a radius of 40 au)''')
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
@@ -41,11 +42,10 @@ This run implements a constant-with-radius scale factor in order to explore whic
     
     
     if args.run:
-        mcmc.run_emcee(run_name='run9', nsteps=10000, nwalkers=50,
+        mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
             ('sb_law',            1.5,          1.5,       (-5.,     10.)),
-            ('scale_factor',      0.2,          0.2,       (0,       np.inf)),
             ('r_in',              10,           10,        (0,       np.inf)),
             ('d_r',               31.5,         10,        (0,       np.inf)),
             ('inc',               89,           1,         (0,       90)),
@@ -54,7 +54,7 @@ This run implements a constant-with-radius scale factor in order to explore whic
             ('aug_starflux',      1.50e-4,      1e-5,      (0,       np.inf)),
             ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
     else:
-        run = mcmc.MCMCrun('run9', nwalkers=50, burn_in=args.burn_in)
+        run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
         
         if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
@@ -82,7 +82,7 @@ param_dict = OrderedDict([
     ('rgrid_size',        500),
     ('zgrid_size',        500),
     ('l_star',            0.09),
-    ('scale_factor',      0.001),
+    ('scale_factor',      0.003),
     ('pa',                128.41),
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
@@ -92,18 +92,18 @@ def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
     PA = disk_params[-1]
 
-    model_disk = debris_disk.Disk(structure_params, obs=[300, 131, 300, 20], sh_relation='const')
+    model_disk = debris_disk.Disk(structure_params, obs=[300, 351, 300, 5])
     raytrace.total_model(model_disk,
         distance=9.91, # pc
         imres=0.03, # arcsec/pix
-        xnpix=512, #image size in pixels
+        xnpix=1024, #image size in pixels
         freq0=model.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequency
         PA=PA,
         offs=[0.0,0.0], # offset from image center
         nchans=1, # continum
         isgas=False, # continuum!
         includeDust=True, #continuuum!!
-        extra=0.0, # ?
+        extra=0, # ?
         modfile = model.root + model.name)
 
 
@@ -146,7 +146,7 @@ def lnprob(theta, run_name, to_vary):
     starfluxes = param_dict.values()[-3:]
 
     # intialize model and make fits image
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run_name + '/model_files/',
         name='model' + str(np.random.randint(1e10)))
     make_fits(model, disk_params)
@@ -181,7 +181,7 @@ def make_best_fits(run):
 
     # intialize model and make fits image
     print('Making model...')
-    model = fitting.Model(observations=band6_observations,
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run.name + '/model_files/',
         name=run.name + '_bestfit')
     make_fits(model, disk_params)
@@ -233,9 +233,6 @@ def make_best_fits(run):
             ],
         title= run.name + r'Global Best Fit Model & Residuals',
         savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
-        # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
 
-
-    
 if __name__ == '__main__':
     main()

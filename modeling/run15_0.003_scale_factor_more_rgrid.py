@@ -20,7 +20,7 @@ def main():
     7)  march starflux
     8)  august starflux
     9)  june starflux
-This run is identical to run 10 (scale_factor=0.003) except the number of r_grid points has been doubled to 1000.''')
+This run is identical to run 10 (scale_factor=0.003) except the number of r_grid points has been doubled to 1000. (Actually, the grid size was still at 500...)''')
     
     parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
@@ -102,7 +102,7 @@ def make_fits(model, disk_params):
         nchans=1, # continum
         isgas=False, # continuum!
         includeDust=True, #continuuum!!
-        extra=0.0, # ?
+        extra=0, # ?
         modfile = model.root + model.name)
 
 

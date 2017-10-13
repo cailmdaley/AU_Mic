@@ -196,7 +196,7 @@ class Observation:
             path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Plot a cross at the source position
-        self.ax.plot([0.0], [0.0], '*', markersize=6, markeredgewidth=1, color='k')
+        # self.ax.plot([0.0], [0.0], '*', markersize=6, markeredgewidth=1, color='k')
 
         # Add figure text
         try:
@@ -227,21 +227,16 @@ fig = plt.subplots(1, num, sharex=False, sharey=False,
     figsize=(plot_width * num, 6.5))[0]
 plt.subplots_adjust(wspace=-0.0)
 
-all_natural = Observation('../../cleans/current/aumic_band6_all_natural.fits',
-    1.4494822607957758e-05, fig=fig, pos=(0, num),
-    text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm']])
-        #   [4.6, 3.0, 'natural weighting']])
+all_natural = Observation('../../cleans/current/band6_star_all.natural_clean.fits',
+    1.49e-05, fig=fig, pos=(0, num),
+    text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm'],
+          [4.6, 3.0, 'natural weighting']])
           
-band9_natural = Observation('../../../band9/cleans/aumic_band9_natural.fits',
-    1.2078784e-04, fig=fig, pos=(1, num), cbspace=[400., 100.],
-    text=[[4.6, 4.0, 'AU Mic ALMA 0.4 mm']])
-        #   [4.6, 3.0, 'natural weighting']])
+all_200klambda = Observation('../../cleans/current/band6_star_all.200klambda_clean.fits',
+    2.83e-05, fig=fig, pos=(1, num),
+    text=[
+        [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
+        [4.6, 3.0, r'$200 k\lambda$ taper']])
           
-# all_taper = Observation('../../cleans/current/aumic_band6_all_taper.fits',
-#     1.89688053069e-05, fig=fig, pos=(1, num),
-#     text=[
-#         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
-#         [4.6, 3.0, r'$200 k\lambda$ taper']])
-    
 plt.savefig('aumic_diptych_all.png', dpi=700)
-plt.show(block=False)
+# plt.show(block=False)

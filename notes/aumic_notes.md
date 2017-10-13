@@ -1,7 +1,42 @@
 #  AU Mic Research Notes 
-##### Spring/Summer 2017
+
+
+
+
 ------------------------------------------------------------
-#### 7/27/17:
+#### 10/10/17: Fixing Model Grid Resolution 
+We've been working on a run to investigate the limits of our spatial resolution, to certify that we have in fact resolve the disk scale height.
+We fix the scale factor to 0.003 (~1/15 of the beam size). 
+The model image had a bunch of grid resolution problems--it looked like a bunch of superimposed bowties, because the size of the sky plane azimuthal grid elements was too large.
+I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.
+
+------------------------------------------------------------
+#### 10/10/17: Total Disk Flux
+cgcurs in=3sigma_image.im slev=a,1.49e-05 levs1=-3,3,6,9 device=/xs options=stats type=con region=arcsec,box'(-5,-5,5,5)'
+Sum =  1.27731E+00   Flux density =  4.97180E-03 Jy
+Minimum =  9.87927E-07  Maximum =  4.47913E-04 Jy/beam
+Mean =  1.51681E-04  sigma =  8.36131E-05 from     8421 valid pixels
+Data minimum at 231.00 pixels, 217.00 pixels
+Data maximum at 256.00 pixels, 257.00 pixels
+Data minimum at 20:45:09.903, -31:20:33.57
+Data maximum at 20:45:09.845, -31:20:32.37
+------------------------------------------------------------
+#### 10/7/17: Final RMS for Journal figures
+
+In response to concerns that the rms noise estimate from the journal-quality CASA cleans may be biased due to sidelobes/AU Mic's shape, I'm getting the rms from the residual clean maps.
+I'm calling imstat on the *entire* region, since the noise actually goes down when I define the region as a box in the lower third of the image. 
+Might as well use all the information we have!
+
+| weighting         | CASA clean rms | residual clean rms |
+|-------------------|----------------|--------------------|
+| natural (no taper)| 1.48e-05       | 1.49e-05           |
+| natural (taper)   | 1.92e-05       | 2.83e-05           |
+Residual clean and dirty rms values were essentially identical. Unsure what causes this discrepancy for only the taper clean...
+
+Noting that the residual rms values are higher, one would not be surprised to discover that using this rms value reduces the noise contours even more inthe journal-quality image--in fact, there are no noise contours.
+
+------------------------------------------------------------
+#### 10/6/17:
 
 - imstat on $3\sigma$ region of band6_star_all.natural_clean.fits:
 
@@ -13,8 +48,8 @@
 | Std dev        | Minimum        | Maximum   | region count
 | 8.893642e-05  | -1.100369e-06   | 4.490895e-04       | 1
 
-Total flux = Sum / BeamArea = 5.19576 mJy  nor right...
-Error = rms * Npts = 1.603263285 mJy
+Total flux = Sum / (Npts/BeamArea) = 34.341mJy? 
+<!-- Error = rms * Npts = 1.603263285 mJy -->
 
 - star:
   - flux density $\to$ 4.490895e-04
