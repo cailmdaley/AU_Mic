@@ -251,23 +251,25 @@ fig = plt.subplots(1, num, sharex=False, sharey=False,
 plt.subplots_adjust(wspace=-0.055)
 
 
-all_natural = Observation('../../cleans/current/aumic_all_natural.fits', 
-    1.57988852152e-05, pa_SE=128.3, fig=fig, pos=(0, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, 'natural weighting']])
+all_natural = Observation('../../cleans/current/band6_star_all.natural_clean.fits', 
+    1.49e-05, pa_SE=128.3, fig=fig, pos=(0, num))
+    # text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm'],
+    #       [4.6, 3.0, 'natural weighting']])
           
-all_taper = Observation('../../cleans/current/aumic_all_taper.fits',
-    1.97743011086e-05, pa_SE=128.3, fig=fig, pos=(1, num))
-    # text=[[4.7, 4.4, 'AU Mic ALMA 1.4mm'],
-    #       [4.7, 3.4, r'200 k$\lambda$ taper']])
+all_200klambda = Observation('../../cleans/current/band6_star_all.200klambda_clean.fits',
+    2.83e-05, pa_SE=128.2, fig=fig, pos=(1, num))
+    # text=[
+    #     [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
+    #     [4.6, 3.0, r'$200 k\lambda$ taper']])
+          
           
 
-for obs in [all_natural, all_taper]:
+for obs in [all_natural, all_200klambda]:
     obs.get_fits()
     obs.make_axis()
     obs.fill_axis()
 
 plt.savefig('aumic_horizontal_diptych_all.png')
-plt.show()
+# plt.show()
 
 # plt.show()

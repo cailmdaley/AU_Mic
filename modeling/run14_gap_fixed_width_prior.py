@@ -19,7 +19,7 @@ def main():
     7)  position angle
     8)  gap inner radius
     9)  march starflux
-    10)  august starflux
+    10) august starflux
     11) june starflux
 This run builds upon run 13, setting a prior on the gap inner radius so that the gap doesn't fall outside the disk extent (lol)''')
     
@@ -170,7 +170,7 @@ def lnprob(theta, run_name, to_vary):
 
 def make_best_fits(run):
     print('Starting to make model image and residuals...')
-    subset_df = run.main[run.main['gap_r_in'] < 20]
+    subset_df = run.main[run.main['gap_r_in'] > 10]
     # subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
@@ -240,8 +240,8 @@ def make_best_fits(run):
             aumic_fitting.band6_rms_values)
             ],
         title= run.name + r'Global Best Fit Model & Residuals',
-        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
-        # savefile=run.name+'/run6_bestfit_small_r_in.pdf', title=r'Run 6 Best Fit Model & Residuals for $r_{in} < 15$')
+        # savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+        savefile=run.name+'/' + run.name + '_bestfit_far_out_gap.pdf')
         
     # rms = aumic_fitting.band6_rms_values[-1]
     # fig = plotting.Figure(layout=(1,3),
