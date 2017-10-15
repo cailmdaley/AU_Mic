@@ -2,6 +2,11 @@
 
 
 
+------------------------------------------------------------
+#### 10/15/17: 3 sigma extent
+To find the 3 sigma extent, in boccaletti_plots.py print the separations corresponding to fit flux < 3*rms.
+SE extent = 4.59''
+NW extent = 4.32''
 
 ------------------------------------------------------------
 #### 10/10/17: Fixing Model Grid Resolution 
@@ -31,7 +36,12 @@ Might as well use all the information we have!
 |-------------------|----------------|--------------------|
 | natural (no taper)| 1.48e-05       | 1.49e-05           |
 | natural (taper)   | 1.92e-05       | 2.83e-05           |
-Residual clean and dirty rms values were essentially identical. Unsure what causes this discrepancy for only the taper clean...
+Residual clean and dirty rms values were essentially identical. 
+CASA and miriad may implement a taper differently; to test this I compare the off-source clean rms of the disk image in CASA and miriad:
+| weighting         | CASA clean rms | miriad clean rms |
+|-------------------|----------------|--------------------|
+| natural (taper)   | 1.92e-05       | 3.51e-05           |
+Pretty different! I'm just going to use the CASA clean rmses.
 
 Noting that the residual rms values are higher, one would not be surprised to discover that using this rms value reduces the noise contours even more inthe journal-quality image--in fact, there are no noise contours.
 
