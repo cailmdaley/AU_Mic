@@ -228,12 +228,12 @@ fig = plt.subplots(1, num, sharex=False, sharey=False,
 plt.subplots_adjust(wspace=-0.0)
 
 all_natural = Observation('../../cleans/current/band6_star_all.natural_clean.fits',
-    1.49e-05, fig=fig, pos=(0, num),
+    1.47444691066e-05, fig=fig, pos=(0, num),
     text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm'],
           [4.6, 3.0, 'natural weighting']])
           
 all_200klambda = Observation('../../cleans/current/band6_star_all.200klambda_clean.fits',
-    2.83e-05, fig=fig, pos=(1, num),
+    1.91655869923e-05 , fig=fig, pos=(1, num),
     text=[
         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
         [4.6, 3.0, r'$200 k\lambda$ taper']])
