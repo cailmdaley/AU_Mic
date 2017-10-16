@@ -23,7 +23,6 @@
   multirow,      % allows better table formatting, row-wise
   natbib,        % allows for the citations and Bibtex
   setspace,      % allows for doublespacing
-  siunitx,       % better unit handling
   rotating,      % allows landscape tables
   titlesec       % allows for the definition of title layouts
   % alltt,       % 
@@ -43,6 +42,9 @@
   % xfrac,       % 
   }
 \RequirePackage[small,bf]{caption} % allows the captioning of figures
+% units with pretty uncertainties
+\RequirePackage[separate-uncertainty = true,multi-part-units=single]{siunitx}
+
 %===============================================================================
 % STYLE / FORMATTING
 \geometry{letterpaper}

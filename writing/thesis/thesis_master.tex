@@ -25,9 +25,9 @@
 \label{chap: observations}
 AU Mic was observed  with ALMA on three dates: 26 March 2014, 18 August 2014, and 24 June 2015. 
 All observations were configured with four spectral windows, and employed ALMA's 12m antennas and Band 7 receivers. 
-Within each observation AU Mic was observed in seven-minute segments.\footnote{Extraneous?}
-One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 GHz, with a total bandwidth of 1.875 GHz and a channel spacing of 488 kHz.
-The remaining three spectral windows were configured to detect continuum emission with central frequencies of 228.5, 213.5, and 216.0 GHz, total bandwidths of 2 GHz, and channel spacings of 15.6 MHz. The corresponding wavelength range is \SIrange{1.3}{1.4}{\mm}
+One spectral window was centered around the CO $J = (2-1)$ transition at a frequency of 230.538001 GHz, with a total bandwidth of 1.875 GHz and a channel spacing of \SI{0.6}{km/s}.
+The remaining three spectral windows were configured to detect continuum emission with central frequencies of 228.5, 213.5, and 216.0 GHz, total bandwidths of 2 GHz, and channel spacings of \SI{21.7}{km/s}.
+% The spectral windows were configured with central frequencies of 230.538001 (the CO $J = (2-1)$ transition), 228.5, 213.5, 216.0 \si{GHz}, total bandwidths of 2 GHz, and channel spacings of 15.6 MHz. The corresponding wavelength range is \SIrange{1.3}{1.4}{\mm}
 
 \begin{table}	
   \centering
@@ -38,7 +38,7 @@ The remaining three spectral windows were configured to detect continuum emissio
     & 26 March 2014 & 18 August 2014 & 24 June 2015 \\
     \cmidrule(lr){2-4}
     Antennas: & 32 & 35 & 37 \\
-    Baselines (m): & 14--437 & 20--1268 & 30--1431 \\
+    Baseline length (m): & 14--437 & 20--1268 & 30--1431 \\
     On-source time (min): & 35 & 35 & 33 \\
     Flux calibrator: & Titan & J2056-472 & Titan \\
     Bandpass calibrator: & J1924-2914 & J2056-4714 & J1924-2914 \\
@@ -51,9 +51,16 @@ The remaining three spectral windows were configured to detect continuum emissio
 Information regarding the three observation dates can be found in Table \ref{tab:observations}. 
 The short-baseline March observation provides information about AU Mic's disk on large spatial scales; in contrast, the subsequent long-baseline August observation was intended to trace the small-scale structure of the disk. 
 The quality of the gain transfer for the August observation was tested using observations of the quasar J2057-3734.
-Due to subpar\footnote{too informal?} quality, the August data were supplemented with a second night of long-baseline observations in June 2015. 
+The long-baseline August data were supplemented with a second night of higher-quality observations (as indicated by the relative pwv levels) in June 2015.
 The quasar J2101-2933 was used to assess the gain transfer quality.
-During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared. While we initially fit and subtracted off the flare fluxes (see Table \ref{tab:flare fluxes}), it was ultimately decided that the data taken during the flare was too problematic to be included in our analysis.
+During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared. 
+
+Calibration, reduction, and imaging were carried out using the \texttt{CASA} and \texttt{MIRIAD} software packages. Standard ALMA reduction scripts were applied to the datasets: phase calibration was accomplished via water vapor radiometry tables, and system temperature calibrations were performed to account for variations in instrument and weather conditions. 
+Flux and bandpass calibrations were subsequently applied.
+
+To determine the flux of the flare as a function of time, we binned the data into one-minute intervals using the \texttt{CASA} task \texttt{split} and fit a point source in each bin to baselines between \SI{100}{\kilo \lambda} and \SI{1400}{\kilo \lambda} with \texttt{uvmodelfit}. 
+The resulting flare fits can be found in Table \ref{tab:flare fluxes}. 
+We exclude from our analysis the seven minutes during which the flare occurred, as it proved difficult to separate the stellar emission from the disk emission while it was changing so rapidly.
 
 \begin{table}	
   \centering
@@ -75,24 +82,18 @@ During the last segment of the June observation (04:23:38-04:29:58 UT), the host
   \end{tabular}
 \end{table}
 
-Calibration, reduction, and imaging were carried out using the \texttt{CASA} and
-\texttt{MIRIAD} software packages. Standard ALMA reduction scripts were applied
-to the datasets: phase calibration was accomplished via water vapor radiometry
-tables, and system temperature calibrations were performed to account for
-variations in instrument and weather conditions. Flux and bandpass calibrations
-were subsequently applied.
 
-
-The authors travelled to the NRAO facility in Charlottesville, VA in October
-2015 to further process the data in \texttt{CASA}. 
-For each observation, an elliptical gaussian was fit with the task \texttt{imfit} to a small region around the star in the sky plane (for the June date, the flare data were excluded).
-The equatorial coordinates of the the model gaussian centroid were then used to define the star position, which was uncertain due to AU Mic's high proper motion: each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
+AU Mic's equatorial coordinates were not well constrained across our observations due to the star's high proper motion.
+We fit an image-domain elliptical gaussian to a small region around the star on each date with the task \texttt{imfit}, and used the centroid of the Gaussian fit to define the star position.
+We note that for the June data, the exclusion of the flare changed the centroid of the Gaussian fit by \SI{0.07}{''}, i.e. $\sim 2$ pixels. 
+This could be explained if the flare were not symmetric with respect to the star.
+Finally, each dataset was phase shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
 
 Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper, to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines, to bring out the disk emission on larger spatial scales. 
 RMS noise levels for the resulting images as well as restoring beam sizes and position angles can be found in Table \ref{tab: imaging}.
 Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file before cleaning in order to account for the offset in phase center between datasets. 
-This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol} (set to a value of \SI{2}{''}).
+This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol}).
 
 \begin{table}
   \centering
@@ -112,12 +113,12 @@ This was done using the task \texttt{concat}, which combines datasets with point
 
 \chapter{Results}
 \label{chap: results}
-Figure \textbf{not here yet} shows the combined dust continuum emission from all three observations at \SI{1.3}{mm}; because M stars emit in the radio, stellar emission is also clearly visible at the image center.
-We report the integrated flux over regions of the disk where the flux density is in excess of three times the rms noise to be \textbf{not here yet}; considering that we derive an average stellar flux of \textbf{not here yet} (see Section \ref{chap: analysis}), we estimate the total disk flux to be \textbf{not here yet}.
+Figure \textbf{not here yet} shows the combined dust continuum emission from all three observations at \SI{1.3}{mm}; chromospheric emission from the M star is visible as a point source at the center of the image.
+We report the integrated flux over regions of the disk where the flux density is in excess of three times the rms noise to be \SI{4972.8 \pm 14.8}{\mu Jy}; considering that we derive an average stellar flux of \textbf{not here yet} (see Section \ref{chap: analysis}), we estimate the total disk flux to be \textbf{not here yet}.
 
 % The peak signal to noise ratio is \textbf{not here yet}.
 The radial structure of the disk is traced in Figure \ref{fig: boccaletti}. 
-Our analysis indicates that AU Mic's disk is resolved in both the radial and vertical directions by the ALMA observations, although the vertical height is of the same order as the beam size. 
+AU Mic's disk is resolved across $\sim13$ beams along the major axis, and is marginally resolved perpendicular to the major axis.
 $3\sigma$ emission extends to a distance of \textbf{not here yet} on the NW side, and \textbf{not here yet} on the SE side. 
 This discrepancy can also be seen in the upper pane of Figure \ref{fig: boccaletti}. 
 
@@ -148,8 +149,8 @@ Additionally, the discrepancies in PA between the two peaks do not attain signif
     \toprule
     Side & Flux Density (\si{\mu Jy/Beam}) & Separation (\si{au}) & PA (\si{\degree}) \\
     \midrule
-    NW & 329.16 & 27.5 & 123.95 \\
-    SE & 344.05 & 32.0 & 124.43 \\
+    NW & \num{329.2 \pm 14.8} & 24.8 & 128.30 \\
+    SE & \num{344.1 \pm 14.8} & 29.0 & 128.69 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -190,9 +191,9 @@ We explore the parameter space of the model using a Markov Chain Monte Carlo (MC
     $r_{out}$ (\si{au}) &  \\
     $i$ (\si{\degree}) &  \\
     PA  (\si{\degree}) &  \\
-    March $F_*$ (\si{\micro Jy}) &  \\
-    August $F_*$ (\si{\micro Jy}) &  \\
-    June $F_*$ (\si{\micro Jy}) &   \\
+    March $F_*$ (\si{\mu Jy}) &  \\
+    August $F_*$ (\si{\mu Jy}) &  \\
+    June $F_*$ (\si{\mu Jy}) &   \\
     lnprob \\
   \bottomrule
   \end{tabular}
