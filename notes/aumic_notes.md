@@ -13,7 +13,7 @@ NW extent = 4.32''
 We've been working on a run to investigate the limits of our spatial resolution, to certify that we have in fact resolve the disk scale height.
 We fix the scale factor to 0.003 (~1/15 of the beam size). 
 The model image had a bunch of grid resolution problems--it looked like a bunch of superimposed bowties, because the size of the sky plane azimuthal grid elements was too large.
-I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.
+~~I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.~~ This wasn't fine enough, had to crank it up to 351.
 
 ------------------------------------------------------------
 #### 10/10/17: Total Disk Flux
@@ -62,22 +62,26 @@ Total flux = Sum / (Npts/BeamArea) = 34.341mJy?
 <!-- Error = rms * Npts = 1.603263285 mJy -->
 
 - star:
-  - flux density $\to$ 4.490895e-04
-  - coords $\to$ 20:45:09.845 -31.20.32.369
-- NW ansa:
-  - flux density $\to$ 3.291588e-04
-  - coords $\to$ 20:45:09.693 -31.20.30.834
-    - $\Delta \alpha = 0.152$ sec $=2.28''$
+  - flux density --> 4.490895e-04
+  - coords --> 20:45:09.845 -31.20.32.369
+  - in degrees: 311.2910208    -31.3423247
+   
+  - NW ansa:
+  - flux density --> 3.291588e-04
+  - coords --> 20:45:09.693 -31.20.30.834
+  - in degrees: 311.2903875    -31.3418983
+    - $\Delta \alpha * \cos \delta = 0.152$ seconds $\cos(-31.3418983) =1.95''$
     - $\Delta \delta = 1.535''$
-  - $\implies PA = 123.95$
-  - --> 2.749" separation
+    - PA = 128.30
+    - 2.482" separation
 - SE ansa:
-  - flux density $\to$ 3.440531e-04
-  - coords $\to$ 20:45:10.021 -31.20.34.179
-    - $\Delta \alpha = -0.176$ sec $=-2.64''$
+  - flux density --> 3.440531e-04
+  - coords --> 20:45:10.021 -31.20.34.179
+  - in degrees: 311.2917542    -31.3428275
+    - $\Delta \alpha = -0.176$ seconds $\cos(-31.3423247) =-2.26''$
     - $\Delta \delta = -1.81''$
-  - $\implies PA = 124.43$
-  - --> 3.201" separation
+    - PA = 128.69
+    - 2.896" separation
 ------------------------------------------------------------
 #### 7/27/17:
 **Pomodoros:**
@@ -303,17 +307,20 @@ Compare to previously used imfit values:
     ra:   20:45:09.871593 +/- 0.000061 s (0.000778 arcsec along great circle)
     dec: -31.20.32.838199 +/- 0.000479 arcsec
     Peak: 378.9 +/- 1.3 uJy/beam
+    in degrees: 311.2911313 -31.3424550
 Compare to previously used imfit values:
 
     All times
     ra:   20:45:09.86765 +/- 0.00016 s (0.00203 arcsec along great circle)
     dec: -31.20.32.88803 +/- 0.00128 arcsec
     Peak: 862.3 +/- 7.7 uJy/beam
+    in degrees: 311.2911154    -31.3424689
 
     Fixvis phase center:
     J2000 20h45m09.8677s -031d20m32.89s
 
 For all dates, the imfit coordinates are just about exactly at the stellar emission (by visual inspection). For June, the previously used coordinates are significantly below and to the right of the star position.
+Separation: 0.069956821''
 
 ------------------------------------------------------------
 ####5/31/17: First day of summer research

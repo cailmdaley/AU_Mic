@@ -15,6 +15,7 @@
 % Packages
 \RequirePackage{
   % NECESSARY PACKAGES
+  amsmath,       % better math formatting
   booktabs,      % pretty tables
   fancyhdr,      % enables use of fancy pagestyle
   geometry,      % defines page layout
@@ -23,12 +24,10 @@
   multirow,      % allows better table formatting, row-wise
   natbib,        % allows for the citations and Bibtex
   setspace,      % allows for doublespacing
-  siunitx,       % better unit handling
   rotating,      % allows landscape tables
   titlesec       % allows for the definition of title layouts
   % alltt,       % 
   % amssymb,     % for math symbols
-  % amsmath,     % for math formatting for things like matrices 
   % epstopdf,    % allows the conversion of eps files to pdf and is required for figures
   % here,        % makes !h forces float here and !t forces float to top 
   % ifthen,      % 
@@ -43,6 +42,9 @@
   % xfrac,       % 
   }
 \RequirePackage[small,bf]{caption} % allows the captioning of figures
+% units with pretty uncertainties
+\RequirePackage[separate-uncertainty = true,multi-part-units=single]{siunitx}
+
 %===============================================================================
 % STYLE / FORMATTING
 \geometry{letterpaper}

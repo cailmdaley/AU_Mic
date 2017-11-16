@@ -3,7 +3,7 @@ import argparse
 import subprocess as sp; import os
 from astropy.io import fits
 from collections import OrderedDict
-
+import matplotlib.pyplot as plt; plt.switch_backend('agg')
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
