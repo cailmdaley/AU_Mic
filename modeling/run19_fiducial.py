@@ -10,20 +10,20 @@ from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run17'
+run_name='run19'
 def main():
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
-    description= '''Python commands associated with emcee run17, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run19, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
-    3)  inner radius
-    4)  outer radius (really inner radius + dr)
-    5)  inclination
-    6)  position angle
-    7)  march starflux
-    8)  august starflux
-    9)  june starflux
-This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiative transfer zrange: 20->5, and most importantly nphi 131-->351 (this corresponds to ~7 grid elements per beam at a radius of 40 au)''')
+    3)  scale factor, multiplied by radius to get scale height
+    4)  inner radius
+    5)  outer radius (really inner radius + dr)
+    6)  inclination
+    7)  position angle
+    8)  march starflux
+    9)  august starflux
+    10) june starflux
+This run consitutes (hopefully) our final, fiducial model.''')
 
     parser.add_argument('-r', '--run', action='store_true',
         help='begin or resume eemcee run.')
@@ -42,21 +42,24 @@ This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiat
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
 
-
     if args.run:
         mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            1.5,          1.5,       (-5.,     10.)),
-            ('r_in',              10,           10,        (0,       np.inf)),
+            ('sb_law',            2.3,          2,         (-5.,     10.)),
+            ('scale_factor',      0.025,        0.01,      (0,       np.inf)),
+            ('r_in',              8.8,          5,         (0,       np.inf)),
             ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               89,           1,         (0,       90)),
+            ('inc',               88.5,         0.5,       (0,       90.)),
             ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      3.94e-4,      5e-5,      (0,       np.inf)),
-            ('aug_starflux',      1.50e-4,      1e-5,      (0,       np.inf)),
-            ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
+            ('mar_starflux',      4.0e-4,       0.5e-4,    (0,       np.inf)),
+            ('aug_starflux',      1.5e-4,       0.5e-4,    (0,       np.inf)),
+            ('jun_starflux',      2.0e-4,       0.5e-4,    (0,       np.inf))])
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
+        # old_nsamples = run.groomed.shape[0]
+        # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
+        # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
 
         if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
@@ -64,11 +67,10 @@ This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiat
         if args.analyze or args.kernel_density: run.kde()
         if args.analyze or args.corner: run.corner()
 
-
 # default parameter dict:
 param_dict = OrderedDict([
     ('temp_index',        -0.5),
-    ('m_disk',            -8.),
+    ('m_disk',            -8.), # log
     ('sb_law',            2.3),
     ('r_in',              8.8),
     ('d_r',                31.5),
@@ -81,10 +83,10 @@ param_dict = OrderedDict([
     ('column_densities', [0.79, 1000]),
     ('abundance_bounds', [50, 500]),
     ('hand',              -1),
-    ('rgrid_size',        500),
+    ('rgrid_size',        1000),
     ('zgrid_size',        500),
     ('l_star',            0.09),
-    ('scale_factor',      0.003),
+    ('scale_factor',      0.1),
     ('pa',                128.41),
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
@@ -98,7 +100,7 @@ def make_fits(model, disk_params):
     raytrace.total_model(model_disk,
         distance=9.91, # pc
         imres=0.03, # arcsec/pix
-        xnpix=1024, #image size in pixels
+        xnpix=512, #image size in pixels
         freq0=model.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequency
         PA=PA,
         offs=[0.0,0.0], # offset from image center
@@ -222,19 +224,32 @@ def make_best_fits(run):
     paths.append('{}_all'.format(model.path))
 
     print('Making figure...')
-    fig = plotting.Figure(layout=(4,3),
-        paths=[[obs, path + '.fits', path + '.residuals.fits']
-            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
-        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+    #fig = plotting.Figure(layout=(4,3),
+    #    paths=[[obs, path + '.fits', path + '.residuals.fits']
+    #        for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+    #    rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+    #    texts=[
+    #        [[[4.6, 4.0, date]],
+    #        [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
+    #        None]
+    #        for date, rms in zip(['March', 'August', 'June', 'All'],
+    #        aumic_fitting.band6_rms_values)
+    #        ],
+    #    title= run.name + r'Global Best Fit Model & Residuals',
+    #    savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+    fig = plotting.Figure(
+        layout=(1,3),
+        paths=[
+            aumic_fitting.band6_fits_images[-1],
+            paths[-1] + '.fits',
+            paths[-1] + '.residuals.fits'],
+        rmses=3*[aumic_fitting.band6_rms_values[-1]],
         texts=[
-            [[[4.6, 4.0, date]],
-            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
-            None]
-            for date, rms in zip(['March', 'August', 'June', 'All'],
-            aumic_fitting.band6_rms_values)
-            ],
-        title= run.name + r'Global Best Fit Model & Residuals',
-        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+            [[4.6, 4.0, 'Data']],
+            [[4.6, 4.0, 'Model']],
+            [[4.6, 4.0, 'Residuals']]],
+        title=None, #r'Run 6 Global Best Fit Model & Residuals',
+        savefile=run.name+'/' + run.name + '_bestfit_concise.pdf')
 
 if __name__ == '__main__':
     main()

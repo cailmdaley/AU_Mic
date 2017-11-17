@@ -64,6 +64,10 @@ for i in range(len(SE_xpix_range)):
     SE_gauss_fit = fitter(SE_gauss_init, dec[ypix_range], SE_slice)
     SE_amps[i], SE_mus[i], SE_sigmas[i] = SE_gauss_fit.parameters
     
+print(ra_range[np.where(SE_amps < 14.9 * 3)])    
+print(ra_range[np.where(NW_amps < 14.9 * 3)[0][:-1]])    
+    
+
 # Subtract beam FWHM
 bmin = head['bmin'] * 3600. / 2
 bmaj = head['bmaj'] * 3600. / 2

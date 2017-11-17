@@ -10,65 +10,72 @@ from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run17'
+run_name='run18'
 def main():
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
-    description= '''Python commands associated with emcee run17, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run18, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
-    3)  inner radius
-    4)  outer radius (really inner radius + dr)
-    5)  inclination
-    6)  position angle
-    7)  march starflux
-    8)  august starflux
-    9)  june starflux
-This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiative transfer zrange: 20->5, and most importantly nphi 131-->351 (this corresponds to ~7 grid elements per beam at a radius of 40 au)''')
-
-    parser.add_argument('-r', '--run', action='store_true',
+    3)  scale factor, multiplied by radius to get scale height
+    4)  inner radius
+    5)  outer radius (really inner radius + dr)
+    6)  inclination
+    7)  position angle
+    8)  ring inner radius
+    9)  ring mass
+    10)  march starflux
+    11)  august starflux
+    12) june starflux
+This run investigates the possibility of a ring in the inner regions of the disk (parameters 8 & 9 above). The ring width is fixed at half the beam size, while the ring mass and inner radius are allowed to vary. It has similar parameters to run11, but has identical gridding parameters to run17_small_height_better_res.py (except that the number of pixels has been halved, decreasing only the amount of empty space around the disk) for the sake of consistency.''')
+    
+    parser.add_argument('-r', '--run', action='store_true', 
         help='begin or resume eemcee run.')
-
-    parser.add_argument('-a', '--analyze', action='store_true',
+        
+    parser.add_argument('-a', '--analyze', action='store_true', 
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-b', '--burn_in', default=0, type=int,
+    parser.add_argument('-b', '--burn_in', default=0, type=int, 
         help='number of steps \'burn in\' steps to exclude')
-    parser.add_argument('-bf', '--best_fit', action='store_true',
+    parser.add_argument('-bf', '--best_fit', action='store_true', 
         help='generate best fit model images and residuals')
-    parser.add_argument('-c', '--corner', action='store_true',
+    parser.add_argument('-c', '--corner', action='store_true', 
         help='generate corner plot')
-    parser.add_argument('-e', '--evolution', action='store_true',
+    parser.add_argument('-e', '--evolution', action='store_true', 
         help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--kernel_density', action='store_true',
+    parser.add_argument('-kde', '--kernel_density', action='store_true', 
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
-
-
+    
+    
     if args.run:
-        mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
+        mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50, 
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            1.5,          1.5,       (-5.,     10.)),
-            ('r_in',              10,           10,        (0,       np.inf)),
+            ('sb_law',            1,            1,         (-5.,     10.)), 
+            ('scale_factor',      0.03,         0.02,      (0,       np.inf)),
+            ('r_in',              8.8,          5,         (0,       np.inf)),
             ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               89,           1,         (0,       90)),
+            ('inc',               88.5,         0.5,       (0,       np.inf)),
             ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      3.94e-4,      5e-5,      (0,       np.inf)),
-            ('aug_starflux',      1.50e-4,      1e-5,      (0,       np.inf)),
-            ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
+            ('ring_r_in',         10.0,         5,         (0,       40.0)),
+            ('ring_mass',         -9.0,         1,         (-np.inf, np.inf)),
+            ('mar_starflux',      3.94e-4,      1e-4,      (0,       np.inf)),
+            ('aug_starflux',      1.49e-4,      1e-4,      (0,       np.inf)),
+            ('jun_starflux',      2.30e-4,      1e-4,      (0,       np.inf))])
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
-
+        # old_nsamples = run.groomed.shape[0]
+        # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
+        # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
+        
         if args.analyze or args.best_fit: make_best_fits(run)
         aumic_fitting.label_fix(run)
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
         if args.analyze or args.corner: run.corner()
 
-
 # default parameter dict:
 param_dict = OrderedDict([
     ('temp_index',        -0.5),
-    ('m_disk',            -8.),
+    ('m_disk',            -8.), # log
     ('sb_law',            2.3),
     ('r_in',              8.8),
     ('d_r',                31.5),
@@ -81,24 +88,28 @@ param_dict = OrderedDict([
     ('column_densities', [0.79, 1000]),
     ('abundance_bounds', [50, 500]),
     ('hand',              -1),
-    ('rgrid_size',        500),
+    ('rgrid_size',        1000),
     ('zgrid_size',        500),
     ('l_star',            0.09),
-    ('scale_factor',      0.003),
+    ('scale_factor',      0.1),
+    ('ring_r_in',         10.0),
+    ('ring_mass',         -9.0), # log
     ('pa',                128.41),
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
     ('jun_starflux',      2.50e-4)])
 
 def make_fits(model, disk_params):
-    structure_params = disk_params[:-1]
+    structure_params     = disk_params[:-3]
+    ring_r_in, ring_mass = disk_params[-3:-1]
     PA = disk_params[-1]
 
     model_disk = debris_disk.Disk(structure_params, obs=[300, 351, 300, 5])
+    model_disk.add_dust_mass(ring_mass, ring_r_in, ring_r_in + 2.)
     raytrace.total_model(model_disk,
         distance=9.91, # pc
         imres=0.03, # arcsec/pix
-        xnpix=1024, #image size in pixels
+        xnpix=512, #image size in pixels
         freq0=model.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequency
         PA=PA,
         offs=[0.0,0.0], # offset from image center
@@ -142,6 +153,7 @@ def lnprob(theta, run_name, to_vary):
         else: return -np.inf
 
     param_dict['m_disk'] = 10**param_dict['m_disk']
+    param_dict['ring_mass'] = 10**param_dict['ring_mass']
     param_dict['d_r'] += param_dict['r_in']
 
     disk_params = param_dict.values()[:-3]
@@ -167,6 +179,9 @@ def make_best_fits(run):
     # subset_df = run.main[run.main['r_in'] < 15]
     subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
+    model_params['ring_mass'] = -8.
+    model_params['r_in'] = 1.
+    # model_params = subset_df[subset_df['ring_mass'] == subset_df['ring_mass'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
     print('')
@@ -176,6 +191,7 @@ def make_best_fits(run):
 
 
     param_dict['m_disk'] = 10**param_dict['m_disk']
+    param_dict['ring_mass'] = 10**param_dict['ring_mass']
     param_dict['d_r'] += param_dict['r_in']
 
     disk_params = param_dict.values()[:-3]
