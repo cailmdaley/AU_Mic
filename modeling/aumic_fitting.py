@@ -43,7 +43,7 @@ def label_fix(run):
             df.loc[:,'jun_starflux'] *= 1e6
             df.loc[:,'aug_starflux'] *= 1e6
             
-        # df.loc[:,'inc'].where(df.loc[:,'inc'] < 90, 180-df.loc[:,'inc'], inplace=True)
+        df.loc[:,'inc'].where(df.loc[:,'inc'] < 90, 180-df.loc[:,'inc'], inplace=True)
         
         df.rename(inplace=True, columns={
             'm_disk' : r'Disk Mass ($M_{\odot}$)', 

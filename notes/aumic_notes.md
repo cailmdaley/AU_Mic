@@ -1,19 +1,23 @@
 #  AU Mic Research Notes 
 
 
+------------------------------------------------------------
+#### 10/15/17: Visibile/infrared scale heights
+- schneider14 (optical): 1.5 au (had to measure read off image; compare to the value read off by schuppler, assuming they represent the opening angle radians??!) 
+- metchev05 (infrared): 'FWHM ~4'
+- krist05 (optical): 1.9 au
 
 ------------------------------------------------------------
 #### 10/15/17: 3 sigma extent
 To find the 3 sigma extent, in boccaletti_plots.py print the separations corresponding to fit flux < 3*rms.
 SE extent = 4.59''
 NW extent = 4.32''
-
 ------------------------------------------------------------
 #### 10/10/17: Fixing Model Grid Resolution 
 We've been working on a run to investigate the limits of our spatial resolution, to certify that we have in fact resolve the disk scale height.
 We fix the scale factor to 0.003 (~1/15 of the beam size). 
 The model image had a bunch of grid resolution problems--it looked like a bunch of superimposed bowties, because the size of the sky plane azimuthal grid elements was too large.
-I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.
+~~I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.~~ This wasn't fine enough, had to crank it up to 351.
 
 ------------------------------------------------------------
 #### 10/10/17: Total Disk Flux
@@ -304,10 +308,14 @@ Compare to previously used imfit values:
     J2000 20h45m09.85471s -031d20m32.52034s
     
 ##### June:  
+    - $\Delta \alpha * \cos \delta = 0.152$ seconds $\cos(-31.3418983) =1.95''$
+    - $\Delta \delta = 1.535''$
+
     ra:   20:45:09.871593 +/- 0.000061 s (0.000778 arcsec along great circle)
     dec: -31.20.32.838199 +/- 0.000479 arcsec
     Peak: 378.9 +/- 1.3 uJy/beam
     in degrees: 311.2911313 -31.3424550
+    
 Compare to previously used imfit values:
 
     All times

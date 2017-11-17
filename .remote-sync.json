@@ -11,7 +11,7 @@
     "run8/model_files/*"
   ],
   "username": "cdaley",
-  "keyfile": "/Users/caildaley/.ssh/id_rsa",
+  "keyfile": "/Users/cdaley/.ssh/id_rsa",
   "watch": [],
   "transport": "scp"
 }
