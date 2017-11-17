@@ -224,19 +224,20 @@ def make_best_fits(run):
     paths.append('{}_all'.format(model.path))
 
     print('Making figure...')
-    #fig = plotting.Figure(layout=(4,3),
-    #    paths=[[obs, path + '.fits', path + '.residuals.fits']
-    #        for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
-    #    rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
-    #    texts=[
-    #        [[[4.6, 4.0, date]],
-    #        [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
-    #        None]
-    #        for date, rms in zip(['March', 'August', 'June', 'All'],
-    #        aumic_fitting.band6_rms_values)
-    #        ],
-    #    title= run.name + r'Global Best Fit Model & Residuals',
-    #    savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+    fig = plotting.Figure(layout=(4,3),
+       paths=[[obs, path + '.fits', path + '.residuals.fits']
+           for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+       rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+       texts=[
+           [[[4.6, 4.0, date]],
+           [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
+           None]
+           for date, rms in zip(['March', 'August', 'June', 'All'],
+           aumic_fitting.band6_rms_values)
+           ],
+       title= run.name + r'Global Best Fit Model & Residuals',
+       savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+       
     fig = plotting.Figure(
         layout=(1,3),
         paths=[
@@ -247,9 +248,29 @@ def make_best_fits(run):
         texts=[
             [[4.6, 4.0, 'Data']],
             [[4.6, 4.0, 'Model']],
-            [[4.6, 4.0, 'Residuals']]],
+            None],
+            # [[4.6, 4.0, 'Residuals']]],
         title=None, #r'Run 6 Global Best Fit Model & Residuals',
         savefile=run.name+'/' + run.name + '_bestfit_concise.pdf')
 
 if __name__ == '__main__':
     main()
+    
+    
+
+# texts1=[[
+#     [[4.6, 4.0, 'Data']],
+#     [[4.6, 4.0, 'Model']],
+#     [[4.6, 4.0, 'Residuals']]]]
+# rms=1
+# dates = ['date1', 'date2', 'date3']
+# texts=[
+#    [[[4.6, 4.0, date]],
+#    [[4.6, 4.0, 'rms={}'.format(rms)]],
+#    None]
+#    for date, rms in zip(['March', 'August', 'June', 'All'],
+#    ['date1', 'date2', 'date3', 'date4'])
+#    ]
+# texts   
+# texts1
+# 
