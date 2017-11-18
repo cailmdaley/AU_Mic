@@ -64,7 +64,7 @@ This run consitutes (hopefully) our final, fiducial model.''')
         # old_nsamples = run.groomed.shape[0]
         # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
         # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
-        
+
         if args.corner_vars:
             cols = list(run.groomed.columns)
             col_indices = [cols.index(col) for col in args.corner_vars]
@@ -72,7 +72,7 @@ This run consitutes (hopefully) our final, fiducial model.''')
         if args.analyze or args.best_fit: make_best_fits(run, concise=args.concise)
         aumic_fitting.label_fix(run)
         if args.corner_vars: corner_vars = run.groomed.columns[col_indices]
-        
+
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
         if args.analyze or args.corner: run.corner(variables=corner_vars)
@@ -263,8 +263,8 @@ def make_best_fits(run, concise=False):
                ],
            title= run.name + r'Global Best Fit Model & Residuals',
           savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
-          
+
 
 if __name__ == '__main__':
     main()
-    
+

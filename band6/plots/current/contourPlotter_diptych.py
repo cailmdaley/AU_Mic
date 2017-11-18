@@ -163,7 +163,7 @@ class Observation:
         cbar.set_ticks(np.arange(-2000, 2000, self.cbspace[0]))
 
         # Colorbar label
-        cbar.ax.text(0.425, 0.340, r'$\mu Jy / bm$', fontsize=15,
+        cbar.ax.text(0.4, 0.340, r'$\mu Jy / beam$', fontsize=15,
                      path_effects=[PathEffects.withStroke(linewidth=2, foreground="w")])
 
         # Overplot the beam ellipse
@@ -238,5 +238,5 @@ all_200klambda = Observation('../../cleans/current/band6_star_all.200klambda_cle
         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
         [4.6, 3.0, r'$200 k\lambda$ taper']])
           
-plt.savefig('aumic_diptych_all.png', dpi=700)
+plt.savefig('aumic_diptych_all.pdf', dpi=700)
 # plt.show(block=False)
