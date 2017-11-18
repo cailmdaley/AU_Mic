@@ -1,5 +1,7 @@
 #  AU Mic Research Notes 
-
+4.856 M_earth  (Earth masses)
+7.535 M_earth  (Earth masses)
+2.679 M_earth  (Earth masses)
 
 ------------------------------------------------------------
 #### 10/15/17: Visibile/infrared scale heights
