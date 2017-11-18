@@ -35,7 +35,7 @@ dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
 # Define y extent of gaussian
 SE_xpix_range = np.where((ra >  0) & (ra <= 5))[0][::-1]
 NW_xpix_range = np.where((ra <= 0) & (ra >= -5))[0]
-ra_range = ra[SE_xpix_range]
+ra_range = ra[SE_xpix_range] * 10 #au
 ypix_range = np.where(abs(dec) < 1)[0]
 
 
@@ -95,53 +95,59 @@ color = 'crimson'
 # legend1 = ax1.legend()
 ax1.set_title("Spine intensity")
 ax1.set_ylabel(r"Surface brightness ($\mu$Jy/beam)")
+
 SE = ax1.plot(ra_range, SE_amps, label='SE')
 NW = ax1.plot(ra_range, NW_amps[:-1], '--', label='NW', color=color)
 rms = 14.9
 ax1.fill_between(ra_range, SE_amps-rms, SE_amps+rms, alpha=0.4)
 ax1.fill_between(ra_range, NW_amps[:-1]-rms, NW_amps[:-1]+rms, alpha=0.4, color=color)
 
-# axins = inset_axes(ax1,
-#                    width="5%", # width = 30% of parent_bbox
-#                    height=0.2, # height : 1 inch
-#                    loc=3)
-inset = zoomed_inset_axes(ax1,
-                           zoom = 1,
-                           loc=3)
-xs = np.arange(-.7,.7, 0.01)
-gauss = 100*np.exp(-xs**2/(2*b_sigma_x**2))
+inset = zoomed_inset_axes(ax1, zoom = 1, loc=3)
+xs = np.arange(-.7*10,.7*10, 0.01 * 10)
+gauss = 100*np.exp(-xs**2/(2*(b_sigma_x*10)**2))
 gauss_inset = inset.plot(xs, gauss, 'k:', lw=0.7)
 inset.set_axis_off()
+
 # ax1.axvline(1.02, ls=':', color='m')
 # ax1.axvline(1.70, ls=':', color='m')
 # ax1.axvline(2.96, ls=':', color='m')
 # ax1.axvline(4.10, ls=':', color='m')
-ax1.set_xlim(0, 4.5)
-ax1.set_xticks([0,1,2,3,4])
+# ax1.axhline(3*14.9)
+ax1.set_xlim(0, 4.5*10)
+ax1.set_xticks(np.array([0,1,2,3,4])*10)
 legend1 = ax1.legend(loc='upper right')
 
 ax2.set_title("Spine deviation from midplane")
-ax2.set_ylabel("Elevation (\")")
-ax2.plot(ra_range, SE_mus, label='SE')
-ax2.plot(ra_range, NW_mus[:-1], '--', label='NW', color=color)
+ax2.set_ylabel("Elevation (au)")
+ax2.plot(ra_range, SE_mus*10, label='SE')
+ax2.plot(ra_range, NW_mus[:-1]*10, '--', label='NW', color=color)
 # ax2.axvline(1.02, ls=':', color='m')
 # ax2.axvline(1.70, ls=':', color='m')
 # ax2.axvline(2.96, ls=':', color='m')
 # ax2.axvline(4.10, ls=':', color='m')
-ax2.set_ylim(-0.15, 0.15)
+ax2.set_ylim(-0.15*10, 0.15*10)
 # legend3 = ax2.legend(loc='upper left')
 
-ax3.set_xlabel("Projected separation from star (\")")
+ax3.set_xlabel("Projected separation from star (au)")
 ax3.set_title("Disk FWHM")
-ax3.set_ylabel(r'Beam-subtracted FWHM (")')
-ax3.plot(ra_range, SE_disk_FWHM, label='SE')
-ax3.plot(ra_range, NW_disk_FWHM[:-1], '--', label='NW', color=color)
+ax3.set_ylabel(r'Beam-subtracted FWHM (au)')
+ax3.plot(ra_range, SE_disk_FWHM * 10, label='SE')
+ax3.plot(ra_range, NW_disk_FWHM[:-1] * 10, '--', label='NW', color=color)
 # ax3.plot(xaxis, SE_sigmas * 2.3548200450, label='SE')
 # ax3.plot(xaxis, NW_sigmas * 2.3548200450, '--', label='NW')
-ax3.set_ylim(0, 0.7)
+ax3.set_ylim(0, 0.7*10)
+ax3.set_yticklabels([0, 2, 4, 6])
 # legend4 = ax3.legend(loc='upper left')
 # plt.suptitle("Composite")
-fig.savefig("boccaletti_plots_all.png", dpi=700)
+
+plt.draw()
+ylabel_x = ax2.yaxis.label.get_position()[0]
+for ax in [ax1,ax2,ax3]:
+    ylabel_y = ax.yaxis.label.get_position()[1]
+    ax.yaxis.label.set_position((ylabel_x, ylabel_y))
+    ax.yaxis._autolabelpos=False
+
+fig.savefig("boccaletti_plots_all.pdf", dpi=700)
 # plt.show()
 
 #Check if slice profile is Gaussian

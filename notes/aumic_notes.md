@@ -1,13 +1,19 @@
 #  AU Mic Research Notes 
+4.856 M_earth  (Earth masses)
+7.535 M_earth  (Earth masses)
+2.679 M_earth  (Earth masses)
 
-
+------------------------------------------------------------
+#### 10/15/17: Visibile/infrared scale heights
+- schneider14 (optical): 1.5 au (had to measure read off image; compare to the value read off by schuppler, assuming they represent the opening angle radians??!) 
+- metchev05 (infrared): 'FWHM ~4'
+- krist05 (optical): 1.9 au
 
 ------------------------------------------------------------
 #### 10/15/17: 3 sigma extent
 To find the 3 sigma extent, in boccaletti_plots.py print the separations corresponding to fit flux < 3*rms.
 SE extent = 4.59''
 NW extent = 4.32''
-
 ------------------------------------------------------------
 #### 10/10/17: Fixing Model Grid Resolution 
 We've been working on a run to investigate the limits of our spatial resolution, to certify that we have in fact resolve the disk scale height.
@@ -304,10 +310,14 @@ Compare to previously used imfit values:
     J2000 20h45m09.85471s -031d20m32.52034s
     
 ##### June:  
+    - $\Delta \alpha * \cos \delta = 0.152$ seconds $\cos(-31.3418983) =1.95''$
+    - $\Delta \delta = 1.535''$
+
     ra:   20:45:09.871593 +/- 0.000061 s (0.000778 arcsec along great circle)
     dec: -31.20.32.838199 +/- 0.000479 arcsec
     Peak: 378.9 +/- 1.3 uJy/beam
     in degrees: 311.2911313 -31.3424550
+    
 Compare to previously used imfit values:
 
     All times

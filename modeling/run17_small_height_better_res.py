@@ -34,6 +34,8 @@ This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiat
         help='number of steps \'burn in\' steps to exclude')
     parser.add_argument('-bf', '--best_fit', action='store_true',
         help='generate best fit model images and residuals')
+    parser.add_argument('-con', '--concise', action='store_true',
+        help='concise best fit')
     parser.add_argument('-c', '--corner', action='store_true',
         help='generate corner plot')
     parser.add_argument('-e', '--evolution', action='store_true',
@@ -58,7 +60,7 @@ This run is like run 15, but to fix resolution issues, imsize: 512->1024, radiat
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
 
-        if args.analyze or args.best_fit: make_best_fits(run)
+        if args.analyze or args.best_fit: make_best_fits(run, concise=args.concise)
         aumic_fitting.label_fix(run)
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
@@ -163,7 +165,7 @@ def lnprob(theta, run_name, to_vary):
     return -0.5 * sum(model.chis)
 
 
-def make_best_fits(run):
+def make_best_fits(run, concise=False):
     # subset_df = run.main[run.main['r_in'] < 15]
     subset_df = run.main
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
@@ -222,19 +224,35 @@ def make_best_fits(run):
     paths.append('{}_all'.format(model.path))
 
     print('Making figure...')
-    fig = plotting.Figure(layout=(4,3),
-        paths=[[obs, path + '.fits', path + '.residuals.fits']
-            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
-        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
-        texts=[
-            [[[4.6, 4.0, date]],
-            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
-            None]
-            for date, rms in zip(['March', 'August', 'June', 'All'],
-            aumic_fitting.band6_rms_values)
-            ],
-        title= run.name + r'Global Best Fit Model & Residuals',
-        savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+    if concise:
+        fig = plotting.Figure(
+            layout=(1,3),
+            paths=[
+                aumic_fitting.band6_fits_images[-1],
+                paths[-1] + '.fits',
+                paths[-1] + '.residuals.fits'],
+            rmses=3*[aumic_fitting.band6_rms_values[-1]],
+            texts=[
+                [[4.6, 4.0, 'Data']],
+                [[4.6, 4.0, 'Model']],
+                [[4.6, 4.0, 'Residuals']]
+                ],
+            title=None, #r'Run 6 Global Best Fit Model & Residuals',
+            savefile=run.name+'/' + run.name + '_bestfit_concise.pdf')
+    else:
+        fig = plotting.Figure(layout=(4,3),
+           paths=[[obs, path + '.fits', path + '.residuals.fits']
+               for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+           rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+           texts=[
+               [[[4.6, 4.0, date]],
+               [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
+               None]
+               for date, rms in zip(['March', 'August', 'June', 'All'],
+               aumic_fitting.band6_rms_values)
+               ],
+           title= run.name + r'Global Best Fit Model & Residuals',
+          savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
 
 if __name__ == '__main__':
     main()
