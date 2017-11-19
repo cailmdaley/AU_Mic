@@ -46,11 +46,12 @@ def label_fix(run):
         df.loc[:,'inc'].where(df.loc[:,'inc'] < 90, 180-df.loc[:,'inc'], inplace=True)
         
         df.rename(inplace=True, columns={
-            'm_disk' : r'Disk Mass ($M_{\odot}$)', 
-            'sb_law' : r'SB Law',
-            'scale_factor' : r'Scale Factor', 
+            'm_disk' : r'$\log \ M_{dust}$ ($M_{\odot}$)', 
+            'sb_law' : r'$p$',
+            'scale_factor' : r'$h$', 
             'r_in' : r'$r_{in}$ (au)',
             'd_r' : r'$r_{out}$ (au)',
+            # 'd_r' : r'$\Delta r$ (au)',
             'inc' : r'$i$ ($\degree$)',
             'pa'  : r'PA  ($\degree$)',
             'mar_starflux' : r'March $F_{*}$ ($\mu$Jy)',

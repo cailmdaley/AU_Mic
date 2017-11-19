@@ -21,8 +21,12 @@ for i in range(6,100):
 run_names = [glob(run + '_*')[0][:-3] for run in runs]
 
 # pull nsamples, number of free params, and min chi^2 from each chain
+
 for run, run_name in zip(runs, run_names):
     chain = pd.read_csv('{}/{}_chain.csv'.format(run,run))
+    # print(run_name + ':') 
+    # print(chain.shape[0])
+    chain = chain.iloc[-2000*50:,:]
 
     run_info.loc[run_name, 'samples'] = chain.shape[0]
     run_info.loc[run_name, 'k'] = chain.shape[1]
