@@ -158,6 +158,7 @@ We examine the significance of these features more carefully in Section \ref{sec
   \caption{The AU Mic system imaged by ALMA at a wavelength of \SI{1.4}{mm}, using natural weighting with and without a Gaussian taper on the long baselines. 
   For the untapered weighting, the rms noise is \SI{14.8}{\mu Jy / beam} and the restoring beam has dimensions $\SI{0.52}{''} \times \SI{0.39}{''}$ with a PA of \ang{77.9}.
   The corresponding values for the tapered weighting are \SI{19.2}{\mu Jy / beam}, $\SI{0.87}{''} \times \SI{0.71}{''}$, and \ang{80.8}. 
+  Contours are integer multiples of the $3\sigma$ confidence level.
   The hatched ellipse in the bottom left of each pane designates the size and shape of the restoring beam.
   }
   \label{fig: aumic_imaged}
@@ -169,7 +170,7 @@ We examine the significance of these features more carefully in Section \ref{sec
   \includegraphics[width=.75\linewidth]{figures/boccaletti_plots}
   \caption{
   Image-domain analysis of the AU Mic debris disk radial and vertical structure. 
-  From top to bottom, the three panes show as a function of projected separation from the star i) the disk spine surface brightness, ii) the disk spine deviation from the midplane, iii) the disk FWHM. 
+  From top to bottom, the three panes show i) the disk spine surface brightness, ii) the disk spine deviation from the midplane, and iii) the disk FWHM as a function of projected separation from the star. 
   The Gaussian traced by the dotted line in the upper pane shows the width of the  synthesized beam in the radial direction.
   The fact that the image-domain vertical height of the disk is in excess of the beam contribution implies that our data spatially resolve the vertical structure of the disk.} 
   \label{fig: boccaletti}
@@ -179,7 +180,7 @@ We examine the significance of these features more carefully in Section \ref{sec
 
 \section{Analysis}
 \label{section: analysis}
-Previous studies of the scale height of debris disks have demonstrated a degeneracy between vertical structure, radial structure, and viewing geometry \citep[e.g.][]{milli14}.  
+Previous studies of the scale height of debris disks have demonstrated a degeneracy between vertical structure, radial structure, and viewing geometry \citep[e.g.,][]{milli14}.  
 The modeling approach we adopt is designed to use appropriate ray tracing along with MCMC methods to investigate the degree to which these known degeneracies impact our ability to measure the vertical structure of the disk.  
 We use the parametric structure and ray tracing disk code described in \cite{flaherty15}, itself an adaptation of earlier work by \cite{rosenfeld13}.
 Synthetic sky-projected images are generated from an assumed temperature and density structure and are subsequently Fourier transformed to create model visibilities that can be directly compared to the interferometric data.
@@ -203,20 +204,78 @@ $\Sigma_0$ normalizes the surface density structure for a given total dust mass 
 \Sigma_c &= \frac{M \left(p + 2 \right)}{2 \pi \left[ r_{out}^{(p+2)} - r_{in}^{(p+2)} \right]}.
 \end{align}
 
-Once the temperature and density grids are defined, a sky-brightness model image is created for a given set of observational parameters using a ray tracing algorithm. We assume a stellar luminosity of \SI{0.09}{\Lsun} and a distance to the star of \SI{9.91}{pc}; the observed \SI{1.3}{mm} stellar flux $F_\star$ is left as a free parameter for each observation date \citep{plavchan09,vanleeuwen07}.
-The ray tracing assumes an observed inclination $i$ and PA, both of which are free parameters.
+Once the temperature and density grids are defined, a sky-brightness model image is created using a ray tracing algorithm. 
+The observed disk position angle and inclination $i$ are free parameters.
+We assume a stellar luminosity of \SI{0.09}{\Lsun} and a distance to the star of \SI{9.91}{pc}; the observed \SI{1.3}{mm} stellar flux $F_\star$ is left as a free parameter for each observation date \citep{plavchan09,vanleeuwen07}.
 The dust opacity is set to \SI{2.3}{\cm^2 / \gram}, placing the model disk in the optically thin regime for the range of dust masses explored.\footnote{This is correct, right? I'm pretty sure we decided that the problems we were having with the skinny disk run were caused gridding rather than optical depth effects.} 
 The spatial resolution of the resulting model sky image is set to \SI{0.3}{au} per pixel, i.e. \SI{10}{\percent} of the spatial scale sampled by the longest baseline in the data. 
-The model image is subsequently sampled at the same spatial frequencies as the ALMA data and Fourier transformed into the visibility domain with the \texttt{MIRIAD} task \texttt{uvmodel}. 
+The model image is then sampled at the same spatial frequencies as the ALMA data and Fourier transformed into the visibility domain with the \texttt{MIRIAD} task \texttt{uvmodel}. 
 This allows the model to be compared directly to the interferometric data, for which the uncertainties are better understood.
 A $\chi^2$ metric is used to asses the quality of the fit.
 
 We explore the parameter space of the model using a Markov Chain Monte Carlo (MCMC) routine. 
 Specifically, we use the affine-invariant formulation described by \cite{goodmanweare10} and implemented in Python as \texttt{emcee} \citep{foreman-mackey13}.  
 MCMC methods sample parameter space such that the resulting sample distribution is proportional to the probability distribution, allowing the posterior probability function of each parameter to be estimated. 
-As such, the process not only identifies regions of high probability in parameter space, but uncertainties and degeneracies between parameters can be determined by examining the correlations between the posteriors of each parameter.
+As such, the process not only identifies regions of high probability in parameter space, but uncertainties and degeneracies between parameters can be determined by examining the correlations between the posteriors of each parameter. 
+We performed several MCMC runs in order to investigate a variety of model formalisms. 
+All runs used 50 walkers, and $10^5$ samples were drawn from each run to allow accurate statistical comparison between runs.
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\linewidth]{figures/fiducial_kde}
+  \caption{Marginalized posterior probability distributions for the fiducial run. The dashed lines designate the 16th and 84th percentiles, i.e. $1\sigma$ confidence intervals.}
+  \label{fig: kde}
+\end{figure}
+
+Initially, we varied ten parameters: the power law exponent ($p$), the scale height aspect ratio ($h$), the inner and outer radii ($r_{in}$, $r_{out}$), the disk inclination  ($i$) and position angle (PA), and a separate stellar flux ($F_\star$) for each date. 
+To ensure that the disk outer radius remains exterior to the inner radius, the parameter $r_{out}$ is not explicitly set as a free parameter in the fitting process. 
+Instead, the inner radius $r_{in}$  and the radial extent $\Delta r$ of the disk are set as the free parameters with the prior $\Delta r > 0$. 
+The disk structure is subsequently set by $r_{out} = r_{in} + \Delta r$.
+This model formalism resulted in a best fit $\chi^2$ value of 626163.598 (reduced $\chi^2=2.053$), and we treat this parameterization as our fiducial model.
+
+Marginalized posterior probability distributions for the fiducial model parameters are shown in Figure \ref{fig: kde}. 
+While the majority of the distributions are Gaussian, the power law index $p$ and outer radius $r_{out}$ exhibit acute bimodality. 
+The inner radius $r_{in}$ is also bimodal, though to a lesser extent.
+All three parameters are degenerate, as can be seen in Figure \ref{fig: degeneracies}; as such we conclude that the three bimodalities are linked.
+% as $r_{out}$ is defined as the sum of $r_{in}$ and $\Delta r$, the degeneracy between $p$ and $r_{out}$ is actually the superposition of the degeneracies between $p$ and the two radial metrics from which $r_{out}$ is defined.
+While the fiducial best fit model has $p=0.8$ and $r_{out}=\SI{42.3}{au}$, another lower-likelihood solution is allowed at $p \approx 2.6$ and $r_{out} \approx \SI{41}{au}$.
+We note these latter values for are in good agreement with \cite{macgregor13}'s best fit power law index of 2.32 and outer radius of \SI{40.3}{au}.
+Similarly, an inner radius of \SI{24.0}{au} yields the best fit but another solution appears at $r_{in} < \SI{10}{au}$.
+Once again, the lower-likelihood solution is similar to \cite{macgregor13}'s best fit inner radius of \SI{8.8}{au}.
+
+\begin{figure}
+  
+  \begin{subfigure}[b]{\linewidth}
+  \includegraphics[width=\linewidth]{figures/fiducial_best_fit}
+  \caption{The fiducial best fit model and residuals}
+  \label{fig: fiducial}
+  \end{subfigure}
+  
+  \begin{subfigure}[b]{\linewidth}
+  \includegraphics[width=\linewidth]{figures/skinny_best_fit}
+  \caption{The `skinny' disk best fit model and residuals.}
+  \label{fig: skinny}
+  \end{subfigure}
+  \caption{Best fit model image and residuals, sampled at the spatial frequencies of the ALMA data and cleaned using natural weighting. Contours are integer multiples of the ALMA data $3\sigma$ confidence level}
+\end{figure}
+
+The best fit model image and residuals can be found Figure \ref{fig: fiducial}; as can be seen from the residual map, the outer regions of the disk are reproduced well by the model. 
+However $3\sigma$ residuals remain at the location of the star, as well as at symmetric positions at a separation of $\sim \SI{10}{au}$ on either side of the star. 
+We note these residuals share the location of the local intensity maxima described in Section \ref{section: results}. 
+The convergence of these features leads us to consider the possibility of either a dust density enhancement (i.e. ring) or reduction (i.e. gap) in the inner regions of the disk. 
+As a gap or ring would cause the radial surface brightness profile of the disk to deviate from that given by the simple power law used in our modeling, such a feature would also explain the bimodalities in the parameters associated with the disk radial structure mentioned above.
+Indeed, we interpret the mode associated with a greater disk extent and steeper power law to include the ring or gap, while the mode assocated with a lesser disk extend and shallower paw law to exclude the ring or gap.
+
+We first explored the effects of adding a gap (i.e. a localized reduction in the disk surface density), to the inner regions of the disk.
+
+The median values and best fit model parameters for several different model formalisms can be found in Table \ref{tab: params}. 
+We use both the AICc, a form of the Aikake Information Criterion (AIC) corrected for finite datasets, and the Bayesian Information Criterion (BIC) to compare goodness of fit between models with different numbers of free parameters.  
+A model with a single $F_\star$ across all three dates was also investigated, but exhibited a statistically significantly poorer best fit model. 
+Significant residuals were visible at the location of the star, and analysis using the AICc indicates that a variable stellar flux is preferred with a $7.4 \sigma$ confidence interval.
 
 \begin{table}
+  \centering
   \caption{MCMC}
   \label{tab: params}
   \renewcommand{\arraystretch}{1.2}
@@ -241,19 +300,21 @@ As such, the process not only identifies regions of high probability in paramete
   \end{tabular}
 \end{table}
 
-The median values and best fit model parameters for several different model formalisms can be found in Table \ref{tab: params}. 
-We use both the AICc, a form of the Aikake Information Criterion (AIC) corrected for finite datasets, and the Bayesian Information Criterion (BIC) to compare goodness of fit between models with different numbers of free parameters.  
-Initially, we varied ten parameters: the power law exponent ($p$), the scale height factor ($h$),  the inner and outer radii ($r_{in}$, $r_{out}$), the disk inclination  ($i$) and position angle (PA), and a separate stellar flux ($F_\star$) for each date. 
-This resulted in a best fit $\chi^2$ value of 626163.598 (reduced $\chi^2=2.053$), and we treat this model parameterization as our fiducial model.
-A model with a single $F_\star$ across all three dates was also investigated, but exhibited a statistically significantly poorer best fit model. 
-Significant residuals were visible at the location of the star, and analysis using the AICc indicates that a variable stellar flux is preferred with a $7.4 \sigma$ confidence interval.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\linewidth]{figures/degeneracy_corner}
+  \caption{'Corner' plot showing the mild degeneracy between aspect ratio $h$ and inclination $i$. There is no evidence of degeneracy between the aspect ratio and the disk radial width $\Delta r$. \textbf{Note:} Is it even worth including $\Delta r$ here? If not, I could just show the $h$ vs $i$ conditional pane in the free space of \ref{fig: kde}. Goin in the other direction, should the power law index $p$ be added? The other big degeneracy in the modeling is between $\Delta r$ and $p$..}
+  \label{fig: degeneracies}
+\end{figure}
 
 The posterior distribution for the scale height parameter suggests that the data are capable of measuring the scale height despite the mild degeneracy between scale height and other parameters like the radial structure and viewing geometry.  
 Even when marginalized over these other parameters, the posterior distribution indicates a measured value of $h=0.031^{+0.005}_{-0.005}$, which indicates a $\sim 6 \sigma$ measurement of the scale height rather than an upper limit.
 To verify this result in a rigorous manner, we investigate a model parameterization in which the scale height is set to a value below ALMA's resolution limits.
 If a the disk is in fact resolved, such a `skinny' disk model should perform significantly worse than the fiducial model.
 The aspect ratio is fixed at a value of $0.003$, so that even at the \SI{40}{au} outer edge of the disk the scale height is $\sim 1/3$ of the beam size.
-The `skinny' model fails to reproduce the data as well as the fiducial model at the $4.2 \sigma$ level, as given by the AICc.
+The ‘skinny’ model results in a significantly poorer fit to the data than the fiducial model with variable scale height, with the best fit values differing at the $4.2\sigma$ level according to the AICc.
+The best fit `skinny' model image and residuals are shown in Figure \ref{fig: skinny}.
 
 
 \section{Discussion}
