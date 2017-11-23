@@ -71,11 +71,11 @@ This run consitutes (hopefully) our final, fiducial model.''')
 
         if args.analyze or args.best_fit: make_best_fits(run, concise=args.concise)
         aumic_fitting.label_fix(run)
-        if args.corner_vars: corner_vars = run.groomed.columns[col_indices]
+        if args.corner_vars: args.corner_vars = run.groomed.columns[col_indices]
         
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
-        if args.analyze or args.corner: run.corner(variables=corner_vars)
+        if args.analyze or args.corner: run.corner(variables=args.corner_vars)
 
 # default parameter dict:
 param_dict = OrderedDict([
