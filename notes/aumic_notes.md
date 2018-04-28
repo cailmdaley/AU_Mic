@@ -1,20 +1,318 @@
-#  AU Mic Research Notes 
-4.856 M_earth  (Earth masses)
-7.535 M_earth  (Earth masses)
-2.679 M_earth  (Earth masses)
+#  AU Mic Research Notes
 
 ------------------------------------------------------------
+
+#### 4/16/18: Annulus residual reduction
+
+from ds9 region statistics:
+- upper right: 56 $\mu$Jy reduced to 39 $\mu$Jy
+- star: 46 $\mu$Jy reduced to 40 $\mu$Jy
+- lower left: 45 $\mu$Jy reduced to 36 $\mu$Jy
+ 
+------------------------------------------------------------
+
+#### 4/15/18: Smallest spatial scale
+
+``` python
+import numpy as np
+import astropy.units as u
+longest_baseline= 1320.*u.m / (1.4*u.mm)
+
+angular_scale = np.degrees(1 / longest_baseline.decompose().value)*3600
+angular_scale
+angular_scale # 0.21876570359540523
+```
+
+------------------------------------------------------------
+
+
+#### 4/14/18: Propagating error of Macgregor flux density
+``` python
+from uncertainties import ufloat
+lower = ufloat(7.14,0.25) + ufloat(0.32, 0.06)
+upper = ufloat(7.14,0.12) + ufloat(0.32, 0.06)
+print(lower) # 7.46+/-0.26
+print(upper) # 7.46+/-0.13
+
+#package seems to stop reporting an extra digit at 0.35 not 0.2??
+print(ufloat(1000,0.35))
+```
+------------------------------------------------------------
+
+#### 4/14/18: M star flare notes
+
+~ 6.4 % M stars are active; periods of activity up to 10 days?
+https://www.sciencedirect.com/science/article/pii/S1384107615001268
+
+modeling of M star radio emission seems to predict / fit data with variability from 0.5 to 1 mJy over a 0.44 day rotation period
+http://iopscience.iop.org/article/10.3847/1538-4357/aaa59f/pdf
+
+The emission from the Algol system is known to be highly variable and of very high brightness temperature (~109 K) (Lestrade et al. 1988). More specifically, it has been identified as gyrosynchrotron emission from mildly relativistic electrons accelerated by magnetic reconnections in its stellar chromosphere (as also known for Sun and other stars). The spectrum of such emission peaks at a few centimetres, and may extend into the millimetre wavelength domain (Dulk 1985). The flux observed at 850 $\mu$m therefore might be such a tail, rather than thermal emission from a debris disc. The recently measured variability of the millimetre flux density observed at the SMA strengthens this interpretation (Wyatt/Wilner, private communication).... 
+Hence, although it may be possible for a debris disc to exist around Algol, evidence from longer wavelengths points to the emission at 850 $\mu$m being due to radio variability rather than a debris disc.
+https://ui.adsabs.harvard.edu/#abs/2017MNRAS.470.3606H/abstract
+
+radio variability on timescales of days, even weeks to months?
+http://iopscience.iop.org/article/10.3847/1538-4357/aa7aa4/pdf
+
+more (14) radio variable sources, some M stars; minutes-days timescales
+http://iopscience.iop.org/article/10.1088/1674-4527/17/10/105/meta
+
+paper about variability in debris disks
+http://iopscience.iop.org/article/10.1088/2041-8205/765/2/L44/pdf
+
+------------------------------------------------------------
+
+#### 4/14/18: Plavchan Luminosity uncertainty
+``` python
+import numpy as np
+from uncertainties import ufloat
+import astropy.units as u
+import astropy.constants as c
+R = 0.84*u.Rsun
+L = 0.09*u.Lsun
+T = ufloat(3500, 100) * (1*u.K) # K
+L_calc = (4 * np.pi * R.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T**4)
+print(L_calc) # 0.095+/-0.011 solLum
+```
+
+------------------------------------------------------------
+
+#### 4/11/18: Metchev PA
+```python
+from u  ncertainties import ufloat
+
+NW = ufloat(130.1, 0.2) 
+SE = ufloat(129.5, 0.4) 
+(NW + SE) / 2 
+- ufloat(128.49, 0.07)
+```
+
+------------------------------------------------------------
+
+#### 4/10/18: Discussion calculations
+
+Calculating the size of the largest possible body, assuming Earth density
+`w (1.5 M_earth / (4/3 * pi * 5.5 g/cm^3))^(1/3) in earth radii`
+
+Calculating stirring extent for a single stirring body:
+`w 5*40 au * (1.5 M_earth / (3*0.5 M_sun))^(1/3)`
+
+Calculating stirring extent for a Neptune  
+`w 5*35 au * (15 M_earth / (3*0.5 M_sun))^(1/3)`  
+`w 5*47 au * (15 M_earth / (3*0.5 M_sun))^(1/3)`  
+- average of 5 and 7 $\implies$ 6 au 
+
+Calculating number of bodes of size 340 km:  
+`w 1.5 M_earth / (4/3*pi*(340km)^3 * 2 g/cm^3)`  
+
+------------------------------------------------------------
+
+#### 3/31/18: Scale height dectability
+
+```python
+import numpy as np; import matplotlib.pyplot as plt
+xs = np.arange(-3,3,0.01)
+sigma = 1.2
+gauss = 23 * np.exp(-1. * (xs / sigma)**2)
+SNR_3_sep = np.abs(xs[np.where(gauss < 2)]).min() # separation in sigmas
+SNR_3_sep = 1.5699999999999026
+
+H = 1.2 # au; sigma = H
+SNR_3_sep_au = SNR_3_sep * H # turn into 3 sigma 'scale height' in au
+SNR_3_sep_au = 1.8839999999998831
+```
+------------------------------------------------------------
+
+#### 3/31/18: Distance uncertainty propagation
+
+```python
+from uncertainties import ufloat
+parallax = ufloat(100.91, 1.06)
+dist = 1000 / parallax;
+dist = 9.909820632246557+/-0.10409681766109753
+
+```
+------------------------------------------------------------
+
+#### 3/1/18: All calculations in one place
+
+1. Aspect ratio $\to$ escape velocity:
+    - $<v_{rel}>\ \sim\  h\sqrt{\frac{12 G M_\star}{r}}\ \sim\ v_{esc}(s_{big}) \approx 357.6$ m/s  
+      - `w 0.031 * sqrt(12 * G * 0.5 M_sun / (40 au))`  
+      - $\sigma = \sigma_h \sqrt{\frac{12 G M_\star}{r}} = 57.68$ m/s  
+        - `w 0.005 * sqrt(12 * G * 0.5 M_sun / (40 au))`  
+
+2. Escape velocity can be related to the particle's mass and size, assuming a density:  
+  $$v_{esc} (s_{big}) = \sqrt{\frac{2 G M_{big}}{s_{big}}} = s_{big}\sqrt{\frac{8 \pi G \rho}{3}}$$
+    - $s_{big} = v_{esc} \sqrt{\frac{3}{8 \pi G \rho}} = 338.2$ km  
+      - `w 357.6 m/s * sqrt( 3 / (8 * pi * G * 2 g/cm^3)) in km`  
+      - $\sigma = \sigma_v \sqrt{\frac{3}{8 \pi G \rho}} = 54.55$ km  
+        - `w 57.68 m/s * sqrt( 3 / (8 * pi * G * 2 g/cm^3)) in km`
+    - $M_{big} = \frac{v_{esc}^2 s_{big}}{2 G} \approx 3.24 \times 10^{20}$ kg 
+      - `w (357.6 m/s)^2 * 338.2 km / (2 * G)` 
+      - ${\displaystyle \sigma={\sqrt {\left({\frac {\partial M}{\partial v}}\right)^{2}\sigma_{v}^{2}+\left({\frac {\partial M}{\partial s}}\right)^{2}\sigma_{s}^{2}}}} = 1.098 \times 10^{20}$ kg
+        - `w sqrt( (54.55 m/s * 2 * 357.6 m/s * 338.2 km / (2*G))^2  + (50 km * (357.6 m/s)^2 / (2*G))^2)`  
+3. Stirring zone of influence is 6 Hill radii:  
+$$ 
+  \Delta r \sim 6 {r_{\mathrm {H} } \approx 6a{\sqrt[{3}]{\frac {m}{3M}}}} 
+$$
+  All calculations @ 40 au
+    - Lower limit $m = M_{big} \implies \Delta r = 0.1145$ au.  
+      - `w 6 * 40 au * (3.24e20 kg / (3 * 0.5 * M_sun)) ^(1/3)`
+    - Upper limit $m = 2.3 M_{\oplus} \implies \Delta r = 3.993$ au.  
+      - `w 6 * 40 au * (2.3 M_earth / (3 * 0.5 * M_sun)) ^(1/3)`
+4. Number of Kuiper Belt Objects:  
+    1. Fuentes & Holman 2008:  
+        - Bias corrected, etc.; should be representative of total population of TNOs. 
+        - Covers a solid angle of $\Omega = 21,600$ square degrees
+        - _Cumulative density plot:_ (I think this is surface density?)
+          ![cum](Figures/fuentes&holman_cum_density.png)
+          - $\implies \Omega N(100\ km) \sim 361,600$
+          - $\implies \Omega N(340\ km) \sim 4520$
+    2. Assuming 100,000 KBOs from [archived New Horizon's blog](https://web.archive.org/web/20141113225430/http://pluto.jhuapl.edu/overview/piPerspective.php?page=piPerspective_08_24_2012) and [NASA's Kuiper belt page](https://solarsystem.nasa.gov/solar-system/kuiper-belt/overview/) and $q=4$:
+      $$
+        N(100\ km) = \beta 100^{-3} \sim 100,000 \implies \beta = 1e11\\
+        N(340\ km) = \beta 340^{-3} \sim 2544
+      $$
+    
+
+
+
+------------------------------------------------------------
+
+#### 2/23/18: Meeting with Margaret & Hilke
+
+- **Questions**
+  - How do we go from $M_{dust}$ and $H$ to a total dynamical mass? Without knowledge about $p$ and $q$?
+    - because there's essentially no damping, the disk becomes more and more dynamically hot over time. Because of this we can mostly make 
+    - this is the mass ABOVE the collisional cascade
+  - Can we make a more accurate estimate if we use Evan's $p$ and $q$ values?
+  - What went into the plot from the Band 6 proposal?
+    - assume equipartition, **if** eccentricities/inclinations are less than their Hill eccentricities/inclinations
+      - this comes from finding Hill radius of particles and... keplerian shear
+    - Gravitational stirring, collisional damping; bigger things stir faster
+    - typical velocity $\to$ combination of stirring and damping rates $\to$ size of biggest bodies
+    - assume how effective collisional damping is
+      - when total mass of collided bodies equals mass of colliding body, body is effectively damped.
+    - assume planet is embedded in disks
+      - 6 hill radii; dependent on disk velocity?
+    
+- Because $\Delta p \sim 0$, damping is very effective; like Kuiper Belt
+- Original assumption (single-velocity collisional cascade), damping is negligible 
+- $q$ tells us about how the bodies are held together; probably not gravity dominated 
+- low $q$ implies that not much KE is lost in collisions
+- particles may not be circular at mm sizes; this makes the internal strengths even weaker $\to$ porous grains held together my molecular bonds
+- generally, strength are predicted to increase as $a \to 0$; we're finding the opposite.
+- 
+
+------------------------------------------------------------
+
+#### 2/11/18: Making a Plan  
+
+##### Conventions:  
+- $a_d$ is grain size traced by observations  
+- $a_{top}$ is size of largest body in cascade  
+- $a_{max}$ is size of largest body in disk  
+- $v_{rel}$ is encounter velocity dispersion or impact velocity
+- $v(r)$ is velocity dispersion function
+
+##### Known Qauntities: 
+- $h(a_d)$
+- $M_{dust}$
+- $\bar{\tau} (\lambda) \to \tau_d$ (or the latter can be determined from modeling?)
+- $\Sigma_d$, either directly from modeling or using Eq. 4 in Quillen
+
+##### Derivable Quantities
+- $h(a_d) \to v(a_d) \to v(r)$ with an assumed value for $p$
+- $M_{dust} \to N(a=\lambda) \to N(a)$ with an assumed value for $q$
+  - this gives us mass, but doesn't use scale height information.
+  - also tricky because $q$ isn't well constrained for $a > a_{top}$
+- {$\tau_d, v(a_d)$, assumed value for $q$} $\to a_{top}$
+  - or can be inferred directly from $v(a_d)$ if $\sim v_{esc}(a_{top})$
+- $\Sigma_d, a_d\ \to \Sigma(a) \to \Sigma(a) m (a)$ 
+  - $\to \Sigma(a_{top})$
+- $\Sigma(a_{max}) m(a_{max})$: puts constraint on surface density of largest bodies, and thus on $q$ for $a> a_{top}$?
+ 
+##### Other Ideas
+- Incorporating Pan & Schlichting
+  - make a guess about where the strength/velocity regimes lie to choose a better value of $q$? or a series of values for $q$? 
+  - Quillen neglects dyanimcal friction from smaller particles... combine with Pan & Schlichting? this sounds awful  
+
+------------------------------------------------------------
+
+#### 2/8/18: Ruminations on Theory  
+
+##### Thebault:
+- Impact velocity or 'encounter velocity dispersion' of the observed grains is approximately the same as the escape velocity of the bodies at the top of the cascade: 
+  $$v_{rel}(a_d) = v_{esc}(a_{top})$$  
+- Equipartition between in-plane and vertical motions: 
+  $$<i> = \frac{<e>}{2} \implies  <e>^2 = 4<i>^2$$
+  - velocity imparted by dynamical interactions $\to$ eccentriicty is divided equally between the disk plane and vertical direction (inclination $<i> \approx \sqrt{2} h$ )
+- Relating observed aspect ratio $h(a_d)$ to escape velocity of largest bodies $v_{esc}(s_{big})$:
+  $$<v_{rel}(a_d)>\ \sim\ v_{Kep}(r) \cdot \sqrt{<i^2> + 1.25 <e^2>}\ \sim\ v_{esc}(s_{big})$$
+  which can be rewritten as
+  $$<v_{rel}(a_d)>\ \sim\ \sqrt{ \frac{G M_\star}{r}} \cdot \sqrt{<i^2> + 5 <i>^2}\ \sim\ v_{esc}(s_{big})\\
+  <v_{rel}(a_d)>\ \sim\ \sqrt{\frac{12 G M_\star}{r}} \cdot h(a_d)\ \sim\ v_{esc}(s_{big})$$
+  or, in terms of velocity dispersion function:
+  $$ v(a_d)\ \sim\ \sqrt{\frac{6 G M_\star}{r}} \cdot h(a_d)\ \sim\ v_{esc}(s_{big})$$
+  <!-- - for AU Mic {$r=40$ au, $M_\star = 0.31 M_\odot$, $h(a_d)=0.025$} we have $v_{esc}(s_{big}) = 227$ m/s. Assuming a density of $\rho = 2 \text{ g/cm}^3$ implies: -->
+  Escape velocity can be related to the particless mass and size, assuming a density:
+  - $v_{esc} (s_{big}) = \sqrt{\frac{2 G M_{big}}{s_{big}}} = s_{big}\sqrt{\frac{8 \pi G \rho}{3}} =$ 
+  - $s_{big} = v_{esc} \cdot \sqrt{\frac{3}{8 \pi G \rho}} = j$  
+  - $M_{big} = \frac{v_{esc}^2 s_{big}}{2 G} \approx 3.301×10^{20}$ kg    
+    - `w (360 m/s)^2 * 340 km / (2 * G)` 
+    - ${\displaystyle \sigma_{M}={\sqrt {\left({\frac {\partial M}{\partial v}}\right)^{2}\sigma_{v}^{2}+\left({\frac {\partial M}{\partial s}}\right)^{2}\sigma_{s}^{2}}}} = 1.203  \times 10^{20}$ kg
+      - `w sqrt( (60 m/s * 2 * 360 m/s * 340 km / (2*G))^2  + (50 km * (360 m/s)^2 / (2*G))^2)`
+  
+  
+##### Quillen:
+- $H \to$ inclination dispersion $\to$ velocity dispersion $\to$ collisional energy $\to$ dust production rate
+- "Because the absorption or the emissivity coefficient of a dust grain with radius a is reduced for $\lambda > a$, and there are more dust grains with smaller radii, we expect the optical depth to be related to the number density of particles of radius $a \sim \lambda$"
+- Scale height to inclination:
+  $$ <z^2>\ \approx\ \frac{r^2 <i^2>}{2} \implies \bar{i} \sim \sqrt{2}h $$ 
+  where $\bar{i} = \sqrt{<i^2>}$ and $<i^2>$ is the inclination dispersion
+- Number-size scaling relation:
+  $$N(a) = N_d \left(\frac{a}{a_d} \right)^{1-q}$$
+  - Interparticle velocity dispersion is twice the particle velocity dispersion duh!
+  $$ v(r)^2 = \frac{1}{2}v_{rel}(r)^2$$
+- *Observables to Theory*
+  - $h(a_d) \to v(a_d)$
+  - observed normal optical depth $\bar{\tau}(\lambda)\ \to\ \tau(a_d=\lambda) = \tau_d$, the optical depth of grains of size $a_d$
+  - $v(a_d), \tau_d, q, \Omega, t_{age}\ \to\ a_{top}$
+  - $\Sigma_d, a_d\ \to \Sigma(a_{top})$ (really for any $a \leq a_{top}$)
+- $\Sigma(a_{max}) m(a_{max})$ (puts constraint on top of size spectrum?)
+    <!-- - (w 10^14.5) g^2/cm^2 / (4/3 * pi * (4 km)^3 * 2 g/cm^3)) -->
+
+##### Pan & Schlichting:
+- Differential body size spectrum:
+  $$ \frac{dN}{da} \propto a^{-q}\\
+   \implies N(a) \propto a^{1-q}$$
+  - "number of bodies with radius $\geq a$"
+  - "number of podies in logarithmic size interval about a"
+- Velocity dispersion function:
+  $$ v(a) \propto a^p$$
+- 'scale height is of order $v_{rel}/\Omega$'
+  $$v_{rel}(a) \sim h(a) \cdot r \cdot \Omega \\
+  v_{rel}(a) \sim h(a) \cdot r \cdot \sqrt{\frac{G M_\star}{r^3}}\\
+  v_{rel}(a) \sim h(a) \cdot \sqrt{\frac{G M_\star}{r}}$$
+  - same as Thebault derivation above (factor of $\sqrt{12}$ aside) 
+
+------------------------------------------------------------
+
 #### 10/15/17: Visibile/infrared scale heights
 - schneider14 (optical): 1.5 au (had to measure read off image; compare to the value read off by schuppler, assuming they represent the opening angle radians??!) 
 - metchev05 (infrared): 'FWHM ~4'
-- krist05 (optical): 1.9 au
+- krist05 (optical): 1.9 au (elsewhere quoted as 2.5-3.5 AU)
 
 ------------------------------------------------------------
+
 #### 10/15/17: 3 sigma extent
 To find the 3 sigma extent, in boccaletti_plots.py print the separations corresponding to fit flux < 3*rms.
 SE extent = 4.59''
 NW extent = 4.32''
+
 ------------------------------------------------------------
+
 #### 10/10/17: Fixing Model Grid Resolution 
 We've been working on a run to investigate the limits of our spatial resolution, to certify that we have in fact resolve the disk scale height.
 We fix the scale factor to 0.003 (~1/15 of the beam size). 
@@ -22,16 +320,18 @@ The model image had a bunch of grid resolution problems--it looked like a bunch 
 ~~I'm setting the number of azimuthal grid points ('nphi') to 251; this corresponds a grid element size of 1 au (~1/4-1/5 the beam size) at 40 au.~~ This wasn't fine enough, had to crank it up to 351.
 
 ------------------------------------------------------------
+
 #### 10/10/17: Total Disk Flux
-cgcurs in=3sigma_image.im slev=a,1.49e-05 levs1=-3,3,6,9 device=/xs options=stats type=con region=arcsec,box'(-5,-5,5,5)'
-Sum =  1.27731E+00   Flux density =  4.97180E-03 Jy
-Minimum =  9.87927E-07  Maximum =  4.47913E-04 Jy/beam
-Mean =  1.51681E-04  sigma =  8.36131E-05 from     8421 valid pixels
-Data minimum at 231.00 pixels, 217.00 pixels
-Data maximum at 256.00 pixels, 257.00 pixels
-Data minimum at 20:45:09.903, -31:20:33.57
-Data maximum at 20:45:09.845, -31:20:32.37
+cgcurs in=3sigma_image.im slev=a,1.49e-05 levs1=-3,3,6,9 device=/xs options=stats type=con region=arcsec,box'(-5,-5,5,5)'  
+Sum =  1.27731E+00   Flux density =  4.97180E-03 Jy  
+Minimum =  9.87927E-07  Maximum =  4.47913E-04 Jy/beam  
+Mean =  1.51681E-04  sigma =  8.36131E-05 from     8421 valid pixels  
+Data minimum at 231.00 pixels, 217.00 pixels  
+Data maximum at 256.00 pixels, 257.00 pixels  
+Data minimum at 20:45:09.903, -31:20:33.57  
+Data maximum at 20:45:09.845, -31:20:32.37  
 ------------------------------------------------------------
+
 #### 10/7/17: Final RMS for Journal figures
 
 In response to concerns that the rms noise estimate from the journal-quality CASA cleans may be biased due to sidelobes/AU Mic's shape, I'm getting the rms from the residual clean maps.
@@ -52,6 +352,7 @@ Pretty different! I'm just going to use the CASA clean rmses.
 Noting that the residual rms values are higher, one would not be surprised to discover that using this rms value reduces the noise contours even more inthe journal-quality image--in fact, there are no noise contours.
 
 ------------------------------------------------------------
+
 #### 10/6/17:
 
 - imstat on $3\sigma$ region of band6_star_all.natural_clean.fits:
@@ -72,14 +373,28 @@ Total flux = Sum / (Npts/BeamArea) = 34.341mJy?
   - coords --> 20:45:09.845 -31.20.32.369
   - in degrees: 311.2910208    -31.3423247
    
-  - NW ansa:
+- NW ansa:
   - flux density --> 3.291588e-04
   - coords --> 20:45:09.693 -31.20.30.834
   - in degrees: 311.2903875    -31.3418983
     - $\Delta \alpha * \cos \delta = 0.152$ seconds $\cos(-31.3418983) =1.95''$
-    - $\Delta \delta = 1.535''$
-    - PA = 128.30
-    - 2.482" separation
+    - $\Delta \delta = 1.535''$  
+ 
+  ``` python
+  
+  from uncertainties import ufloat, unumpy
+  import numpy as np
+  flux_density = ufloat(3.291588e-04, 1.5e-05)
+  # uncertainty in position is beam size / SNR
+  sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
+  sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
+  delta_ra = ufloat(1.95, sigma_ra); delta_dec = ufloat(1.535, sigma_dec)
+  sep_au_NW = (delta_ra**2 + delta_dec**2)**(1/2) * 10
+  pa_NW = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
+  sep_au = 24.81677859835962+/-0.20689604650955343
+  pa_NW = 128.20909555997156+/-0.429533385284153
+  ```
+    
 - SE ansa:
   - flux density --> 3.440531e-04
   - coords --> 20:45:10.021 -31.20.34.179
@@ -87,8 +402,24 @@ Total flux = Sum / (Npts/BeamArea) = 34.341mJy?
     - $\Delta \alpha = -0.176$ seconds $\cos(-31.3423247) =-2.26''$
     - $\Delta \delta = -1.81''$
     - PA = 128.69
-    - 2.896" separation
+    - 2.896" separation  
+ 
+  ``` python
+  
+  flux_density = ufloat(3.440531e-04, 1.5e-05)
+  # uncertainty in position is beam size / SNR
+  sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
+  sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
+  delta_ra = ufloat(-2.26, sigma_ra); delta_dec = ufloat(-1.81, sigma_dec)
+  sep_au_SE = (delta_ra**2 + delta_dec**2)**(1/2) * 10
+  pa_SE = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
+  sep_au_SE = 28.954619665953132+/-0.19727787660646948
+  pa_SE = 128.69071212353822+/-0.35366250858778997
+  pa_SE - pa_NW = 0.4816165635666607+/-0.5563956317713802
+  ```
+  
 ------------------------------------------------------------
+
 #### 7/27/17:
 **Pomodoros:**
 1.   Get CASA script going
@@ -98,6 +429,7 @@ Need to figure out a way to easily access observation rms for cleaning model ima
 -   Supply pathname to image for rms?
 
 ------------------------------------------------------------
+
 #### 7/27/17:
 **Pomodoros:**
 1.   Make best fit function output visibilities ready for uvcat
@@ -105,10 +437,12 @@ Need to figure out a way to easily access observation rms for cleaning model ima
 3.   Make residuals as well as convolved images, and start on casa script
 
 ------------------------------------------------------------
+
 #### 7/27/17:
 'run5_26walkers_10params' went a little wrong--the first june spw was actually a duplicate of an august spw, so I'm starting run 6 to better describe things.
 
 ------------------------------------------------------------
+
 #### 7/16/17:
 1000 step run with 16 walkers takes ~57 hours
 
@@ -117,10 +451,12 @@ Meredith pointed out this may be because we are oversubtracting the stellar flux
 
 
 ------------------------------------------------------------
+
 #### 6/30/17:
 We have to treat each spectral window seperately, as `uvmodel` can't handle spectral windows. Thus, splitting out each spw and weighting seperately.
 
 ------------------------------------------------------------
+
 #### 6/16/17: Reweighting
 
 **note:** I changed the June visibilities name from `aumic_jun_noflare_allspws` to simply `aumic_jun_allspws` since we're certainly not using the flare anymore.
@@ -161,14 +497,13 @@ for uvf in uvfs:
 
 ```
 
-
-
 ------------------------------------------------------------
+
 #### 6/16/17: Fixing March
 Although I previously said that the March date seemed fine, visual inspection indicates that we are oversubtracting the stellar flux:
 ![](Figures/aumic_mar_oversubtracted.png)
 
-Because the March baselines are so short ($<450$ m), we are not able to obtain the star flux by fitting a point source to the longest baselines; the flux of the disk is present at even the longest baselines. 
+Because the March baselines are so short ($450$ m), we are not able to obtain the star flux by fitting a point source to the longest baselines; the flux of the disk is present at even the longest baselines. 
 As such, I am employing an image-domain approach. 
 I fit a 24th order polynomial to the radial surface brightness profile of the disk, excluding the inner radii where stellar emission is present. 
 Using the fit, I am able to derive an estimate of the disk flux at the location of the star, and thus find the star flux. 
@@ -199,6 +534,7 @@ split(vis='aumic_mar_allspws.fixvis.ms',
 The resulting visibilities appear very slighltly oversubtracted, but it's good enough for now.
 
 ------------------------------------------------------------
+
 #### 6/14/17: Final corrections on visibility files, and exclusion of flare 
 Now that we a more reliable result for the June star position, Meredith and I have decided that it would be a good idea to re-subtract the stellar componenet from the actual star position, rather than the flare position. I apply `uvmodelfit` to the I used the following code to fit a point source to several different baseline ranges; the point source flux should converge to the stellar flux as the shorter baselines are excluded.
 ``` python
@@ -230,7 +566,7 @@ The procedure for June is as follows:
     split(vis='aumic_jun_noflare_allspws.fixvis.ms',
         outputvis='aumic_jun_noflare_allspws.fixvis.uvsub.ms',
     	datacolumn='corrected')
-   ```
+    ```
 3.  Now, pull all files from the `24jun2015_flare_main`, which contains all flare-subtracted visibilities, and concatenate into single file:
 ``` python
 import subprocess
@@ -243,6 +579,7 @@ When the output vis is cleaned, some stellar emission clearly remains. This is w
 ***Given the difficulties that I experienced with the bad spectral window during the flare timewindow, the persistent flare/stellar flux in the supposedly corrected flare visibilities, and general uncertainty about how we fit the point sources to the star/flare the first time around, I'm deciding to fully eliminate the flare timewindow (4:23:38-4:29:58) from the data we use for imaging and modeling.***
 
 ------------------------------------------------------------
+
 **Other dates:** I went back to re-check March and August using a for loop similar to that above---March seems fine, but I'm redoing August. I went with `uvrange='500~1200`, which yields `I = 0.00012281 +/- 1.17063e-08`. Jy The procedure is as follows:
 
 1.  Fix phasecenter:      
@@ -275,6 +612,7 @@ fixvis(vis = 'aumic_mar_allspws.concat.ms',
 For consistency, I'm also creating a copy called `aumic_mar_allspws.fixvis.uvsub.ms`
 
 ------------------------------------------------------------
+
 #### 6/13/17: Position fixing: imfit on non-flare component of June date
 A different method to fix the June flare offset problem: if the flare is indeed asymmetric and pulled the imfit position away from the true star position, this can be remedied by calling imfit on the non-flare part of the June observation. First,
 I will use March and August as controls.
@@ -310,13 +648,11 @@ Compare to previously used imfit values:
     J2000 20h45m09.85471s -031d20m32.52034s
     
 ##### June:  
-    - $\Delta \alpha * \cos \delta = 0.152$ seconds $\cos(-31.3418983) =1.95''$
-    - $\Delta \delta = 1.535''$
 
-    ra:   20:45:09.871593 +/- 0.000061 s (0.000778 arcsec along great circle)
-    dec: -31.20.32.838199 +/- 0.000479 arcsec
-    Peak: 378.9 +/- 1.3 uJy/beam
-    in degrees: 311.2911313 -31.3424550
+    ra:   20:45:09.871593 +/- 0.000061 s (0.000778 arcsec along great circle)  
+    dec: -31.20.32.838199 +/- 0.000479 arcsec  
+    Peak: 378.9 +/- 1.3 uJy/beam  
+    in degrees: 311.2911313 -31.3424550  
     
 Compare to previously used imfit values:
 
@@ -329,16 +665,40 @@ Compare to previously used imfit values:
     Fixvis phase center:
     J2000 20h45m09.8677s -031d20m32.89s
 
+Now, to calculate the shift caused by excluding the flare:
+``` python
+from uncertainties import ufloat, unumpy as unp
+dec_flare   = ufloat( -( 31 + 20/60. + 32.838199/60**2 ), 0.000479/60**2 )
+ra_flare    = ufloat( 9.871593, 0.000061 )
+dec_noflare = ufloat( -( 31 + 20/60. + 32.88803 /60**2 ), 0.00128 /60**2 )
+ra_noflare  = ufloat( 09.86765, 0.00016 )
+# when converted to an angle, errors match with "arcsec along great circle" 
+
+d_ra_arcsec = 15 * ( 
+    ra_flare   * unp.cos( unp.radians( dec_flare   ) ) 
+  - ra_noflare * unp.cos( unp.radians( dec_noflare ) ) )
+d_dec_arcsec = 60**2 * (dec_flare - dec_noflare)
+
+angular_sep = unp.sqrt( d_ra_arcsec**2 + d_dec_arcsec**2 )
+# angular_sep = array(0.07096964818969821+/-0.0018333986944531894, dtype=object)
+print(angular_sep*10)
+
+```
+
 For all dates, the imfit coordinates are just about exactly at the stellar emission (by visual inspection). For June, the previously used coordinates are significantly below and to the right of the star position.
 Separation: 0.069956821''
 
 ------------------------------------------------------------
-####5/31/17: First day of summer research
+
+#### 5/31/17: First day of summer research
+
 - Relative position uncertainty (per synthesized beam) = $\frac{\theta_{sb}}{SNR}$
 - $\to$ Fixvis phasecenter
 
 ------------------------------------------------------------
-####5/28/17: Star position
+
+#### 5/28/17: Star position
+
 Sooo it's been a while since I've written any notes. In the last month and a half,
 I have:
 
@@ -386,7 +746,8 @@ be used as the new phasecenters (`fixvis` will be applied to all three dates for
 consistency).
 
 ------------------------------------------------------------
-####4/8/17: Final iteration of data files?
+
+#### 4/8/17: Final iteration of data files?
 
 Aug $\chi^2$|Jun $\chi^2$|Mar $\chi^2$
 ------------ | -------------- | ------------
@@ -402,15 +763,14 @@ Aug $\chi^2$ | Jun $\chi^2$   | Mar $\chi^2$
 0.97191927   | 2.59185666     | 1.97182168
 1.02544892   | **2.29280139** | 1.97257757
 
----
-####3/21/17: Pixel location:
+#### 3/21/17: Pixel location:
 
 - ctrpix remains the same if I make image 257 pixels
 - `interpolate.rotate` works on arrays, and does not mention a rotation centroid--I assume it must choose the float center point of the array
 
 CRPIXn from FITS standard:
 
-> The value field shall contain a floating point number, identifying the location of a reference point along axis n, in units of the axis index. This value is based upon a counter that runs from 1 to NAXISn with an increment of 1 per pixel. The reference point value need not be that for the center of a pixel nor lie within the actual data array. Use comments to indicate the location of the index point relative to the pixel.
+ The value field shall contain a floating point number, identifying the location of a reference point along axis n, in units of the axis index. This value is based upon a counter that runs from 1 to NAXISn with an increment of 1 per pixel. The reference point value need not be that for the center of a pixel nor lie within the actual data array. Use comments to indicate the location of the index point relative to the pixel.
 
 From STSCI:
 
@@ -418,7 +778,7 @@ From STSCI:
 
 --------------------------------------------------------------------------------
 
-####3/21/17: Flare date and bad spws
+#### 3/21/17: Flare date and bad spws
 
 Recently I realized that the time window we split out to fix the bad spw in the June date was exactly the time window of the flare. This makes me somewhat suspicious, and Meredith and I decided I should do some more digging, espcially considering all the work we put into making the flare data useable.
 
@@ -431,11 +791,11 @@ The `plotms` of amp vs. time for spw3 (the bad one) and spw1 (well behaved) are 
 
 This is a little confusing, since spw1 had a pretty nice $\chi^2$; but we did remove that flare time window for _all_ spws...
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 <br>
 
-####2/26/17---3/20/17: Image Centering
+#### 2/26/17---3/20/17: Image Centering
 
 While comparing images made with different date combinations (i.e. removing August date because of poor quality), I noticed that the disk was offset from the image center for certain combinations. We have decided that this is caused by the non-homogeneous pointing centers (due to proper motion) of the three datasets. When `tclean` is called on a collection of datasets with different pointing centers, the pointing center of the first of the datasets is chosen as the origin of the image, and all datasets are combined in the _uv_-domain, with their phase offsets preserved. The resulting sky-domain image is both offset from the image center and a false representation of the disk.
 

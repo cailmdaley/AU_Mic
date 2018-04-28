@@ -1,0 +1,102 @@
+% Master Style file for thesis
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{thesis}
+
+%===============================================================================
+% USER MACROS
+\newcommand{\sun}{\odot}
+\newcommand{\earth}{\oplus}
+\newcommand{\Msun}{M_\odot}
+\newcommand{\Lsun}{L_\odot}
+\newcommand{\Rsun}{R_\odot}
+\newcommand{\Mearth}{M_\oplus}
+\newcommand{\Learth}{L_\oplus}
+\newcommand{\Rearth}{R_\oplus}
+\newcommand{\Mjup}{M_{Jup}}
+%===============================================================================
+% Packages
+\RequirePackage{
+  % NECESSARY PACKAGES
+  amsmath,       % better math formatting
+  amssymb,       % better math formatting
+  booktabs,      % pretty tables
+  geometry,      % defines page layout
+  graphicx,      % allows for inclusion of graphics and page scaling and rotation
+  lscape,        % allows for the creation of landscape pages-- important for large tables
+  multirow,      % allows better table formatting, row-wise
+  natbib,        % allows for the citations and Bibtex
+  setspace,      % allows for doublespacing
+  rotating,      % allows landscape tables
+  titlesec,       % allows for the definition of title layouts
+  url,
+  tocloft,
+  fancyhdr,      % enables use of fancy pagestyle
+  % alltt,       % 
+  % amssymb,     % for math symbols
+  % epstopdf,    % allows the conversion of eps files to pdf and is required for figures
+  % here,        % makes !h forces float here and !t forces float to top 
+  % ifthen,      % 
+  % indentfirst, % 
+  % longtable,   % 
+  % moreverb,    % 
+  % multicol,    % 
+  % multirow,    % 
+  % relsize,     % 
+  % rotating     % 
+  % wasysym,     % 
+  % xfrac,       % 
+  }
+\RequirePackage[small,bf]{caption} % allows the captioning of figures
+% \RequirePackage{subcaption}    % subfigures and subcaptions
+\RequirePackage[caption=false]{subfig}
+% units with pretty uncertainties
+\RequirePackage[
+  separate-uncertainty=true,
+  multi-part-units=single, 
+  bracket-numbers=false]{siunitx}
+
+%===============================================================================
+% STYLE / FORMATTING
+\geometry{paperwidth=8.5in,paperheight=11in, left=1.5in, right=1.25in, top=1in, bottom=1in}
+
+\pagenumbering{arabic}
+\doublespacing
+
+\titleformat{\chapter}
+  {\normalfont\huge\bfseries}
+  {\chaptertitlename\ \thechapter.}{20pt}{}
+\titleformat{\section}
+  {\normalfont\normalsize\itshape}
+  {\thesection.}{1em}{}
+
+\renewcommand\cftchapaftersnum{.}% adds dot after chapter title in ToC
+\renewcommand\cftchapdotsep{\cftdotsep}% adds leader dots from chapter titles to page numbers
+\renewcommand{\cftsecaftersnum}{.}% adds dot after section title in ToC
+%===============================================================================
+% Journal Definitions
+\newcommand{\aap}{{\it A\&A}}
+\newcommand{\aaps}{{\it A\&AS}}
+\newcommand{\aj}{{\it AJ}}
+\newcommand{\apj}{{\it ApJ}}
+\newcommand{\apjl}{{\it ApJL}} 
+\newcommand{\apjs}{{\it ApJS}}
+\newcommand{\araa}{{\it ARA\&A}}
+\newcommand{\iaucirc}{{\it IAU Circular}}
+\newcommand{\mnras}{{\it MNRAS}} 
+\newcommand{\nat}{{\it Nature}}
+\newcommand{\pasj}{{\it PASJ}}
+\newcommand{\pasp}{{\it PASP}}
+\newcommand{\ssr}{{\it SSRv}}
+\newcommand{\sciam}{{\it Scientific American}}
+\newcommand{\jgr}{{\it JGR}}
+\newcommand{\grl}{{\it GRL}}
+\newcommand{\icarus}{{\it ICAR}}
+\newcommand{\na}{{\it NA}}
+\newcommand{\actaa}{{\it ACA}}
+\newcommand{\apss}{{\it Ap\&SS}}
+%===============================================================================
+
+% Our citation style will be aa (astronomy style):
+\citestyle{aa}
+\bibliographystyle{apj}
+\endinput

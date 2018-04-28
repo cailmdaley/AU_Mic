@@ -1,29 +1,31 @@
-radmc3dPy-0.28.1
-radmc3dPy
-
-*.image
-*.ms
 *.uvf
 *.vis
-*.region
+*.ms
 *.uvsub
 *.fixvis
-*.csv
 uid*
+
+*.image
+*.im
+*.region
+*.csv
 .DS*
 ._*
 
-band6/imaging/cleans/old
-band6/imaging/cleans/older_composite/
-band6/imaging/cleans/older_separate/
-band6/visibility_processing/*
-!band6/visibility_processing/FINAL_VISIBILITY_CORRECTION
-!band6/visibility_processing/marfix
+*.log
+*.last
 
+band6
+!band6/cleans/current
+!band6/plots/current
 
-modeling/*data_files
+band9
+!band9/**/*.fits
+
 modeling/*obs_files
 *model_files
 
-writing/jesse_thesis
 **.latex
+*.synctex.gz
+*.aux
+*.-cache.yaml

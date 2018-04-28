@@ -5,6 +5,7 @@ from astropy.io import fits
 from collections import OrderedDict
 import matplotlib.pyplot as plt; plt.switch_backend('agg')
 
+import json
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
@@ -64,9 +65,9 @@ This run adds a additional annulus of dust to the system, varying the annulus in
             ('annulus_mass',      7.0e-5,       4.0e-5,    (0,       np.inf))])
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
-        # old_nsamples = run.groomed.shape[0]
-        # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
-        # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
+        old_nsamples = run.groomed.shape[0]
+        run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
+        print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
 
         if args.corner_vars:
             cols = list(run.groomed.columns)
@@ -105,8 +106,9 @@ param_dict = OrderedDict([
     ('aug_starflux',      2.50e-4),
     ('jun_starflux',      2.50e-4),
     ('annulus_r_in',      10.0),
-    ('annulus_r_out',     1.5), # annulus_r_in gets added to this later
+    ('annulus_r_out',     0.1), # annulus_r_in gets added to this later
     ('annulus_mass',      7.0e-5)])
+annulus_d_r = 0.08 #hack
 
 def make_fits(model, disk_params, annulus_params):
     structure_params = disk_params[:-1]
@@ -163,16 +165,17 @@ def lnprob(theta, run_name, to_vary):
 
     param_dict['m_disk'] = 10**param_dict['m_disk']
     param_dict['d_r'] += param_dict['r_in']
-    param_dict['annulus_r_out'] += param_dict['annulus_r_in']
+    param_dict['annulus_r_out'] = param_dict['annulus_r_in'] + annulus_d_r
+    
 
     disk_params    = param_dict.values()[:-6]
     starfluxes     = param_dict.values()[-6:-3]
     annulus_params = param_dict.values()[-3:]
 
     # intialize model and make fits image
+    name = 'model' + str(np.random.randint(1e10))
     model = fitting.Model(observations=aumic_fitting.band6_observations,
-        root=run_name + '/model_files/',
-        name='model' + str(np.random.randint(1e10)))
+        root=run_name + '/model_files/', name=name)
     make_fits(model, disk_params, annulus_params)
     for pointing, starflux in zip(model.observations, starfluxes):
         for obs in pointing:
@@ -180,8 +183,11 @@ def lnprob(theta, run_name, to_vary):
             model.obs_sample(obs)
             model.get_chi(obs)
 
-    model.delete()
 
+    # print(name + ': mean={}'.format(-0.5 * sum(model.chis)))
+    print('')
+    
+    # model.delete()
     return -0.5 * sum(model.chis)
 
 
@@ -199,7 +205,7 @@ def make_best_fits(run, concise=False):
 
     param_dict['m_disk'] = 10**param_dict['m_disk']
     param_dict['d_r'] += param_dict['r_in']
-    param_dict['annulus_r_out'] += param_dict['annulus_r_in']
+    param_dict['annulus_r_out'] = param_dict['annulus_r_in'] + annulus_d_r
 
     disk_params    = param_dict.values()[:-6]
     starfluxes     = param_dict.values()[-6:-3]
@@ -275,8 +281,21 @@ def make_best_fits(run, concise=False):
                ],
            title= run.name + r'Global Best Fit Model & Residuals',
           savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
-
+# 
+# 
+# texts=[
+#     [[4.6, 4.0, 'Data']],
+#     [[4.6, 4.0, 'Model']],
+#     [[4.6, 4.0, 'Residuals']]
+#     ]
+# texts = np.array([texts], dtype=object) if type(texts) is str \
+#     else np.array(texts, dtype=object)
+# if type(texts.flatten()[0]) is not float: texts = texts.flatten()
+# np.array(texts, dtype=object)
+# for text in texts:
+#     for t in text:
+#         print(*t)
+# 
 
 if __name__ == '__main__':
     main()
-

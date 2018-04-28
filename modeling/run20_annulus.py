@@ -187,7 +187,7 @@ def lnprob(theta, run_name, to_vary):
 
 def make_best_fits(run, concise=False):
     # subset_df = run.main[run.main['r_in'] < 15]
-    subset_df = run.main
+    subset_df = run.main.iloc[250*run.nwalkers:251*run.nwalkers]
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
