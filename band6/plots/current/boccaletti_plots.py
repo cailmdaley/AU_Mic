@@ -16,8 +16,8 @@ image = '../../cleans/current/band6_star_all.natural_clean'
 # Read the header from the observed FITS continuum image:
 head = fits.getheader(image + ".fits")
 # Read in images and rotate so that disk is horizontal
-im = rotate(fits.getdata(image + ".fits").squeeze(),
-            angleSE, reshape=False) * 1e6
+im = rotate(fits.getdata(image + ".fits").squeeze(), angleSE, 
+    reshape=False) * 1e6
 
 # Generate x and y axes: offset position in arcsec
 nx = head['NAXIS1']
@@ -73,11 +73,9 @@ bmin = head['bmin'] * 3600. / 2
 bmaj = head['bmaj'] * 3600. / 2
 bpa = head['bpa']; bpa
 
-
 theta = (-bpa + angleSE) * np.pi/180
 b_FWHM_y = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta))**2 +
             (bmaj * np.sin(theta))**2)
-b_FWHM_y    
 b_FWHM_x = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta + np.pi/4))**2 +
             (bmaj * np.sin(theta + np.pi/4))**2)
 b_sigma_x = b_FWHM_x/2.35482004503

@@ -5,7 +5,7 @@ import numpy as np
 from glob import glob
 
 # create df
-run_info = pd.DataFrame(columns=['samples', 'k',  'chi', 'red_chi', 'AICc', 'AIC_sigma', 'd_BIC'], dtype=float)
+run_info = pd.DataFrame(columns=['samples', 'k',  'lnprob', 'AICc', 'AIC_sigma', 'd_BIC'], dtype=float)
 run_info.name = 'run'
 
 # get # of visibilities
@@ -30,16 +30,17 @@ for run, run_name in zip(runs, run_names):
 
     run_info.loc[run_name, 'samples'] = chain.shape[0]
     run_info.loc[run_name, 'k'] = chain.shape[1]
-    run_info.loc[run_name, 'chi'] = chain.lnprob.max() * -2
-run_info.red_chi = run_info.chi / nvis
+    run_info.loc[run_name, 'lnprob'] = chain.lnprob.max()
 
 # calculate AIC --> AICc
-AIC = 2 * run_info.k + run_info.chi
+AIC = 2 * (run_info.k - run_info.lnprob)
 run_info.AICc = AIC + (2*run_info.k * (run_info.k + 1)) / (nvis - run_info.k - 1)
+
 # AICc differs from AIC by only 0.001, but what the hell let's use it.
 
 # calculate model relative liklehood, converto to guassian sigma
 rel_like = np.exp((run_info.AICc['run19_fiducial'] - run_info.AICc)/2.)
+# rel_like = np.exp((run_info.AICc.min() - run_info.AICc)/2.)
 gauss = scipy.stats.norm()
 for row in run_info.index:
     try:
@@ -48,7 +49,8 @@ for row in run_info.index:
         run_info.loc[row, 'AIC_sigma'] = np.nan
 
 # calculate delta BIC
-run_info.d_BIC = np.log(nvis)*run_info.k + run_info.chi
+run_info.d_BIC = np.log(nvis)*run_info.k - 2 * run_info.lnprob
 run_info.d_BIC -= run_info.d_BIC['run19_fiducial']
+# run_info.d_BIC -= run_info.d_BIC.min()
 
 print(run_info.sort_values('AIC_sigma', ascending=True).round(3))
