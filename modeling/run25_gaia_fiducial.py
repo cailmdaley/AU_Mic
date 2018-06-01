@@ -4,15 +4,16 @@ import subprocess as sp; import os
 from astropy.io import fits
 from collections import OrderedDict
 import matplotlib.pyplot as plt; plt.switch_backend('agg')
+import copy
 
 
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run19'
+run_name='run25'
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run19, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run25, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  scale factor, multiplied by radius to get scale height
@@ -23,7 +24,7 @@ def main():
     8)  march starflux
     9)  august starflux
     10) june starflux
-This run consitutes (hopefully) our final, fiducial model.''')
+This run is a redo of the previous fiducial model run19. This run uses the new Gaia distance to AU Mic and a new gridding resolution.''')
 
     parser.add_argument('-r', '--run', action='store_true',
         help='begin or resume eemcee run.')
@@ -49,16 +50,16 @@ This run consitutes (hopefully) our final, fiducial model.''')
     if args.run:
         mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
             lnprob = lnprob, to_vary = [
-            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            2.3,          2,         (-5.,     10.)),
-            ('scale_factor',      0.025,        0.01,      (0,       np.inf)),
-            ('r_in',              8.8,          5,         (0,       np.inf)),
-            ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               88.5,         0.5,       (0,       90.)),
-            ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      4.0e-4,       0.5e-4,    (0,       np.inf)),
-            ('aug_starflux',      1.5e-4,       0.5e-4,    (0,       np.inf)),
-            ('jun_starflux',      2.0e-4,       0.5e-4,    (0,       np.inf))])
+            ('m_disk',            -7.54,        0.06,      (-np.inf, np.inf)),
+            ('sb_law',            1,            0.5,         (-np.inf, np.inf)),
+            ('scale_factor',      0.031,        0.005,      (0,       np.inf)),
+            ('r_in',              18,           5,         (0,       np.inf)),
+            ('d_r',               24.3,         5,         (0,       np.inf)),
+            ('inc',               88.6,         0.4,       (0,       90.)),
+            ('pa',                128.49,       0.07,       (0,       360)),
+            ('mar_starflux',      3.9e-4,       0.2e-4,    (0,       np.inf)),
+            ('aug_starflux',      1.5e-4,       0.2e-4,    (0,       np.inf)),
+            ('jun_starflux',      2.2e-4,       0.2e-4,    (0,       np.inf))])
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
         # old_nsamples = run.groomed.shape[0]
@@ -80,12 +81,12 @@ This run consitutes (hopefully) our final, fiducial model.''')
 # default parameter dict:
 param_dict = OrderedDict([
     ('temp_index',        -0.5),
-    ('m_disk',            -8.), # log
-    ('sb_law',            2.3),
-    ('r_in',              8.8),
-    ('d_r',                31.5),
+    ('m_disk',            -7.54), # log
+    ('sb_law',             2),
+    ('r_in',               20),
+    ('d_r',                22),
     ('r_crit',            150.0),
-    ('inc',               89.5),
+    ('inc',               88.6),
     ('m_star',            0.31),
     ('co_frac',           0.0001),
     ('v_turb',            0.081),
@@ -93,14 +94,14 @@ param_dict = OrderedDict([
     ('column_densities', [0.79, 1000]),
     ('abundance_bounds', [50, 500]),
     ('hand',              -1),
-    ('rgrid_size',        500),
+    ('rgrid_size',        1000),
     ('zgrid_size',        500),
     ('l_star',            0.09),
-    ('scale_factor',      0.1),
-    ('pa',                128.41),
-    ('mar_starflux',      2.50e-4),
-    ('aug_starflux',      2.50e-4),
-    ('jun_starflux',      2.50e-4)])
+    ('scale_factor',      0.031),
+    ('pa',                128.49),
+    ('mar_starflux',      3.90e-4),
+    ('aug_starflux',      1.50e-4),
+    ('jun_starflux',      2.20e-4)])
 
 def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
@@ -108,9 +109,9 @@ def make_fits(model, disk_params):
 
     model_disk = debris_disk.Disk(structure_params, obs=[300, 351, 300, 5])
     raytrace.total_model(model_disk,
-        distance=9.91, # pc
-        imres=0.03, # arcsec/pix
-        xnpix=512, #image size in pixels
+        distance=9.725, # pc
+        imres=0.015, # arcsec/pix
+        xnpix=1024, #image size in pixels
         freq0=model.observations[0][0].uvf[0].header['CRVAL4']*1e-9, # obs frequency
         PA=PA,
         offs=[0.0,0.0], # offset from image center
@@ -153,11 +154,12 @@ def lnprob(theta, run_name, to_vary):
             param_dict[free_param[0]] = theta[i]
         else: return -np.inf
 
-    param_dict['m_disk'] = 10**param_dict['m_disk']
-    param_dict['d_r'] += param_dict['r_in']
+    param_dict_copy = copy.copy(param_dict)
+    param_dict_copy['m_disk'] = 10**param_dict_copy['m_disk']
+    param_dict_copy['d_r'] += param_dict_copy['r_in']
 
-    disk_params = param_dict.values()[:-3]
-    starfluxes = param_dict.values()[-3:]
+    disk_params = param_dict_copy.values()[:-3]
+    starfluxes = param_dict_copy.values()[-3:]
 
     # intialize model and make fits image
     model = fitting.Model(observations=aumic_fitting.band6_observations,

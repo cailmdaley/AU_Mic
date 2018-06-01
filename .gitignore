@@ -4,16 +4,20 @@
 *.uvsub
 *.fixvis
 uid*
-
 *.image
 *.im
 *.region
-*.csv
 .DS*
 ._*
 
 *.log
 *.last
+
+**.latex
+*.synctex.gz
+*.aux
+*.-cache.yaml
+
 
 band6
 !band6/cleans/current
@@ -23,9 +27,5 @@ band9
 !band9/**/*.fits
 
 modeling/*obs_files
+*.csv
 *model_files
-
-**.latex
-*.synctex.gz
-*.aux
-*.-cache.yaml

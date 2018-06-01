@@ -7,7 +7,7 @@
   "target": "/Volumes/disks/CAIL/AU_Mic/",
   "ignore": [
     ".git/**",
-    "modeling/**/model_files/**/*.*",
+    "modeling/**/model_files/*",
     "*.csv"
   ],
   "username": "cdaley",
