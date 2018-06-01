@@ -8,8 +8,10 @@
 \frontmatter % this is the stuff that comes before the real text:
 \include{0_TitlePage}
 \pagestyle{empty}
-\include{0_Epigraph}
-% \include{0_Thanks}
+\include{1_Epigraph}
+\include{2_Thanks}
+% \include{3_Abstract}
+
 \tableofcontents \pagestyle{empty}
 
 \mainmatter 
@@ -73,6 +75,12 @@ In this work, we aim to investigate the forces at work in the later stages of pl
 \section{Circumstellar Disks and the Collisional Cascade}
 \label{disks, cascade intro}
 
+\begin{figure}[!ht]
+  \includegraphics[width=\linewidth]{../figures/disk_evolution}
+  \caption{Planetary system life sequence: (i) A nebula becomes gravitationally unstable and begins collapse. (ii) Angular momentum is conserved, and a flat accretion disk emerges from the infalling envelope. (iii) A protoplanetary disk forms around the pre-main-sequence star, and planetary bodies begin to form in the disk. (iv) The hot, dense protoplanetary material dissipates, leaving behind only planets and smaller planetesimals in a debris disk. Credit: Bill Saxton/NSF/AUI/NRAO.}
+  \label{fig: evolution}
+\end{figure}
+
 Though Kant's model suffered from several faulty assumptions and lacked mathematical rigor, the nebular hypothesis remains the accepted theory dictating the formation and evolution of the Solar System.
 In its current form, the nebular hypothesis could be outlined as follows; a visual representation is provided in Figure \ref{fig: evolution}.
 An interstellar cloud or `nebula,' composed primarily of molecular hydrogen, becomes gravitationally unstable and begins to collapse upon itself.
@@ -89,12 +97,6 @@ As Kant predicted, matter falling onto the central star in a process known as ac
 Photoevaporation, in which radiation from the star carries gas particles out of the system, is active throughout the lifetime of a protoplanetary disk and is thought to be responsible for quickly dissipating the disk once accretion halts \citep{ercolano&pascucci17,clarke01}.
 These processes cause the primordial or first-generation material of the protoplanetary disk to dissipate, leaving behind only second-generation ``debris''---planets, asteroids, comets, dust, and sometimes gas \citep{hughes18}.
 The resulting debris disks, optically thin and significantly less luminous than their protoplanetary counterparts, are found around at least 25\% of Solar-type stars and are likely to be as common as the exoplanetary systems with which they are thought to be associated \citep{montesinos16}.
-
-  \begin{figure}
-  \includegraphics[width=\linewidth]{../figures/disk_evolution}
-  \caption{Planetary system life sequence: (i) A nebula becomes gravitationally unstable and begins collapse. (ii) Angular momentum is conserved, and a flat accretion disk emerges from the infalling envelope. (iii) A protoplanetary disk forms around the pre-main-sequence star, and planetary bodies begin to form in the disk. (iv) The hot, dense protoplanetary material dissipates, leaving behind only planets and smaller planetesimals in a debris disk. Credit: Bill Saxton/NSF/AUI/NRAO}
-  \label{fig: evolution}
-\end{figure}
 
 While planet formation and growth are thought to come to a close within \SI{400}{Myr} for terrestrial planets and within \SI{10}{Myr} for gas giants, circumstellar systems continue to evolve long after \citep{chambers13,d'angelo10}.
 Debris disks can be found around stars as old as \SI{11}{Gyr}, although their incidence rate tends to decrease with age up to about \SI{1}{Gyr}. 
@@ -121,7 +123,15 @@ By studying the vertical structure of a debris disk, we can learn about the deta
 \section{Observing Debris Disks}
 \label{observing intro}
 
-\begin{figure}
+The small dust grains produced by a collisional cascade can be observed at a wide range of wavelengths, and it is emission from such grains that allows us to detect debris disks around other stars.
+At first glance this may seem counterintuitive, considering that for typical values of the collisional cascade size spectrum index $q$ the mass of dust particles is negligible when compared to the mass locked up in larger planetesimals.
+However the dust grains are responsible for the majority of the disk's surface density, and thus are the dominant source of emission.
+The cool temperatures of debris disks---typically less than \SI{100}{K} for Solar-type stars---means that the dust particles emit blackbody radiation at far infrared and millimeter wavelengths.
+Thermal emission from dust grains actually dwarfs stellar emission at longer wavelengths, creating a bump or `infrared excess' in the system's spectrum and spectral energy distribution (SED).
+Debris disks have historically been detected in this manner; \cite{aumann84} was the first to do so.
+Figure \ref{fig: SED} shows a toy model of a composite spectrum from a star-debris disk system, tuned to broadly match that of the AU Mic system.
+
+\begin{figure}[!ht]
   \includegraphics[width=\linewidth]{../figures/disk_SED}
   \caption{
   A toy model of a debris disk spectrum with parameters roughly matching those of AU Mic. 
@@ -131,17 +141,9 @@ By studying the vertical structure of a debris disk, we can learn about the deta
   \label{fig: SED}
 \end{figure}
 
-The small dust grains produced by a collisional cascade can be observed at a wide range of wavelengths, and it is emission from such grains that allows us to detect debris disks around other stars.
-At first glance this may seem counterintuitive, considering that for typical values of the collisional cascade size spectrum index $q$ the mass of dust particles is dwarfed by that locked up in larger planetesimals.
-However the dust grains are responsible for the majority of the disk's surface density, and thus are the dominant source of emission.
-The cool temperatures of debris disks---typically less than \SI{100}{K} for Solar-type stars---means that the dust particles emit blackbody radiation at far infrared and millimeter wavelengths.
-Thermal emission from dust grains actually dwarfs stellar emission at longer wavelengths, creating a bump or `infrared excess' in the system's spectrum and spectral energy distribution (SED).
-Debris disks have historically been detected in this manner; \cite{aumann84} was the first to do so.
-Figure \ref{fig: SED} shows a toy model of a composite spectrum from a star-debris disk system, tuned to broadly match that of the AU Mic.
-
 Spatially resolved observations can provide more detailed information across a wide range of wavelengths (Figure \ref{fig: observation comparison}).
 At optical and near-infrared wavelengths dust grains are too cold to emit significant amounts thermal radiation, but they do scatter radiation from the central star; the spatial distribution of the smallest grains in the disk can thus be determined from short-wavelength scattered light images of the disk.
-On the other hand, the development of high-sensitivity interferometric arrays such as the Atacama Large Millimeter/submillimeter array (ALMA) has significantly extended the range of wavelengths at which we can observe debris disks.
+On the other hand, the development of high-sensitivity interferometric arrays such as the Atacama Large Millimeter/submillimeter array (ALMA) has significantly extended the range of wavelengths at which we can resolve debris disks.
 ALMA combines the signals from individual radio antennas (fifty-four \SI{12}{m} and twelve \SI{7}{m}) to detect millimeter sources with much greater sensitivity and resolution than would be possible with a single antenna.
 Particles of dust are efficient emitters only if they are larger than the wavelength of the emitted light, so long-wavelength thermal emission seen by ALMA traces the larger dust grains that are more likely to be cospatial with the parent planetesimal population (e.g. Figure \ref{fig: observation comparison}d).
 
@@ -151,18 +153,10 @@ Particles of dust are efficient emitters only if they are larger than the wavele
   An illustration of the effect of observing wavelength on apparent structure of debris disks, from \cite{hughes18}. 
   \textbf{Top:} the Fomalhaut debris disk.
   \textit{Hubble Space Telescope} (\textit{HST}) scattered light images trace small dust grains reflecting optical emission from the central star \citep[\textbf{a},][]{kalas13}, while longer-wavelength observations from \textit{Herschel} \citep[\textbf{b},][]{acke12} and ALMA \citep[\textbf{c},][]{macgregor17} detect the spatial distribution of thermally-emitting larger dust grains.
-  \textbf{Bottom:} ALMA observations (contours, this work) trace larger grains orbiting within $\sim \SI{40}{au}$ of the star, while scattered light \textit{HST} images \citep[colormap,][]{schneider14} reveal a more extended population of small grains.
+  \textbf{Bottom:} the AU Mic debris disk. ALMA observations (contours, this work) trace larger grains orbiting within $\sim \SI{40}{au}$ of the star, while scattered light \textit{HST} images \citep[colormap,][]{schneider14} reveal a more extended population of small grains.
   }
   \label{fig: observation comparison}
 \end{figure}
-
-Our own Solar System boasts a debris disk with two distinct belts.
-The innermost component can be seen from Earth as the faint glow of the zodiacal light, the only debris disk emission visible to the naked eye (Figure \ref{fig: zodiacal}). 
-The zodiacal light is made up of starlight reflected off of countless dust grains in the inner solar system; most ($\sim 80\%$) of these grains are collisionally produced by Jupiter-family comets and subsequently scattered inwards by by Jupiter, but a small fraction ($\sim 10\%$) originate in the asteroid belt \citep{nesvorny10,wyatt2008}.
-The second component of the Solar System, known as the Kuiper belt, extends from the orbit of Neptune (\SI{30}{au}) to slightly less than \SI{50}{au}.
-The Kuiper belt is made up of planetesimals and collisionally produced dust that has been relatively unaffected by the planet formation that occurred in the inner regions of the Solar System.
-Some Kuiper belt objects are quite large: for example Pluto, $\sim \SI{2400}{km}$ across, is a member of the Kuiper belt.
-Debris disks around other stars often share the two-component structure of the Solar System's debris disk, but nearly all detected so far are at least an order of magnitude more luminous \citep{matthews14}.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{../figures/zodiacal_light}
@@ -173,12 +167,21 @@ Debris disks around other stars often share the two-component structure of the S
   \label{fig: zodiacal}
 \end{figure}
 
+\clearpage
+Our own Solar System boasts a debris disk with two distinct belts.
+The innermost component can be seen from Earth as the faint glow of the zodiacal light, the only debris disk emission visible to the naked eye (Figure \ref{fig: zodiacal}). 
+The zodiacal light is made up of starlight reflected off of countless dust grains in the inner solar system; most of these grains ($\sim 80\%$) are collisionally produced by Jupiter-family comets and subsequently scattered inwards by by Jupiter, but a small fraction ($\sim 10\%$) originate in the asteroid belt \citep{nesvorny10,wyatt2008}.
+The second component of the Solar System, known as the Kuiper belt, extends from the orbit of Neptune (\SI{30}{au}) to slightly less than \SI{50}{au}.
+The Kuiper belt is made up of planetesimals and collisionally produced dust that has been relatively unaffected by the planet formation that occurred in the inner regions of the Solar System.
+Some Kuiper belt objects are quite large: for example Pluto, $\sim \SI{2400}{km}$ across, is a member of the Kuiper belt.
+Debris disks around other stars often share the two-component structure of the Solar System's debris disk, but nearly all detected so far are at least an order of magnitude more luminous \citep{matthews14}.
+
 \section{The AU Mic Debris Disk}
 \label{AU Mic intro}
 
 Kuiper belt analogs, characterized by low optical depths and dust produced by destructive processes rather than agglomeration, can be found around many stars \citep{hughes18}.
 A notable example is the edge-on debris disk around nearby (\SI{9.91}{pc}) M3IVe star AU Mic; its constituent dust particles are thought to be produced by a ``birth ring'' of parent planetesimals located at $\sim \SI{40}{au}$ \citep{vanleeuwen07, strubbe&chiang06}.
-The first M star detected to have a far-infrared excess in its SED, AU Mic hosts one of the best-studied debris disks \citep[][; see Figure \ref{fig: SED}]{moshir90}. 
+The first M star detected to have a far-infrared excess in its SED \citep[][see Figure \ref{fig: SED}]{moshir90}, AU Mic hosts one of the best-studied debris disks. 
 As a member of the $\beta$ Pic Moving Group, it is thought to be relatively young: $\SI{23 \pm 2}{Myr}$ \citep{binks&jeffries14,mamajek&bell14,malo14}. 
 The disk around AU Mic was first resolved by \cite{kalas04} in scattered light, and a host of observations spanning the optical to the submillimeter have followed \citep{augereau&beust06,macgregor13,matthews15,schneider14,wang15}. 
 Notably, the debris around AU Mic exhibits a so-far-unique time variability at scattered light wavelengths.
@@ -192,7 +195,7 @@ Such work has been undertaken by several authors using visible and infrared obse
 However, \cite{thebault09} demonstrates that radiation pressure from the host star should excite the smallest dust grains, imparting a `natural' scale height to the disk even in the absence of large bodies dynamically stirring the disk. 
 Thus longer-wavelength ($\lambda \geq \SI{50}{\mu m}$) observations are required to measure disk scale height as determined by dynamical stirring alone, since the grains dominating the emission at these wavelengths are large enough to be impervious to the effects of radiation pressure.
 
-In this work we present new \SI{0.3}{\arcsecond} Atacama Large Millimeter/submillimeter Array \newline (ALMA) \SI{1.3}{mm} observations of the AU Mic debris disk. 
+In this work we present new \SI{0.3}{\arcsecond} Atacama Large Millimeter/submillimeter Array (ALMA) \SI{1.3}{mm} observations of the AU Mic debris disk. 
 These observations represent a factor of $\sim 2$ improvement in both spatial resolution and rms noise relative to \cite{macgregor13}'s previous ALMA observations of the system, and our analysis indicates that the vertical structure of the disk is resolved with 4-6$\sigma$ confidence.
 In \S \ref{chapter: observations} we present the new observations and describe the data reduction.  
 \S \ref{chapter: results} quotes the basic observational results and compares the millimeter morphology of the disk with the morphology at shorter wavelengths.  
@@ -274,7 +277,7 @@ We exclude from our analysis the seven minutes during which the flare occurred, 
   	4:29:00--4:29:58 & $(5.20 \pm 1.0) \times 10^2$\\
     \bottomrule
   \end{tabular}
-	\caption{Central point source flux before and during the June flare}
+	\caption{Central point source flux before and during the June flare.}
   \label{tab:flare fluxes}
 \end{table}
 
@@ -297,17 +300,6 @@ This was done using the task \texttt{concat}, which combines datasets with point
 \chapter{Results}
 \label{chapter: results}
 
-\begin{figure}
-  \includegraphics[width=\linewidth]{../figures/aumic_imaged}
-  \caption{The AU Mic system imaged by ALMA at a wavelength of \SI{1.3}{mm}, using natural weighting with and without a Gaussian taper on the long baselines. 
-  For the untapered weighting, the rms noise is \SI{15}{\mu Jy / beam} and the restoring beam has dimensions $\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$ with a PA of \ang[angle-symbol-over-decimal]{77.9}.
-  The corresponding values for the tapered weighting are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and \ang[angle-symbol-over-decimal]{80.8}. 
-  Contours are integer multiples of the three times the rms noise.
-  The hatched ellipse in the bottom left of each pane designates the size and shape of the restoring beam.
-  }
-  \label{fig: aumic_imaged}
-\end{figure}
-
 Figure \ref{fig: aumic_imaged} shows the combined dust continuum emission from all three observations at \SI{1.3}{mm}; chromospheric emission from the M star is visible as a point source at the center of the image \citep{cranmer13}. 
 The peak signal-to-noise ratio of dust emission is $\sim 23$.
 Using the \texttt{MIRIAD} task \texttt{cgcurs}, we measure an integrated flux of \SI{4.97 \pm 0.08}{\milli Jy} enclosed within the $3\sigma$ contours of the naturally weighted image.  
@@ -318,6 +310,17 @@ The ansa to the NW exhibits a maximum flux density of \SI{330 \pm 15}{\mu Jy/bea
 The peak flux densities of the ansae differ by less than the rms noise, indicating that there is no significant difference in brightness between the two limbs of the disk.
 Indeed, the apparent flux asymmetry in these data is in the opposite direction of the apparent flux asymmetry in \cite{macgregor13}, providing further circumstantial evidence that there is no significant flux asymmetry at millimeter wavelengths. 
 Additionally, the discrepancy in position angle between the two peaks falls within the estimated uncertainties and so we are not able to confirm the scattered light PA offset observed by \cite{boccaletti15}. 
+
+\begin{figure}[t]
+  \includegraphics[width=\linewidth]{../figures/aumic_imaged}
+  \caption{The AU Mic system imaged by ALMA at a wavelength of \SI{1.3}{mm}, using natural weighting with and without a Gaussian taper on the long baselines. 
+  For the untapered weighting, the rms noise is \SI{15}{\mu Jy / beam} and the restoring beam has dimensions $\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$ with a PA of \ang[angle-symbol-over-decimal]{77.9}.
+  The corresponding values for the tapered weighting are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and \ang[angle-symbol-over-decimal]{80.8}. 
+  Contours are integer multiples of the three times the rms noise.
+  The hatched ellipse in the bottom left of each pane designates the size and shape of the restoring beam.
+  }
+  \label{fig: aumic_imaged}
+\end{figure}
 
 \begin{figure}
   \centering
@@ -470,12 +473,13 @@ However, $2 \sigma$ residuals are still present at the location of the bumps; th
 Image domain analysis indicates that the bump to the SE has a separation of $\sim \SI{11}{au}$, while the NW bump has a separation of $\sim \SI{8}{au}$  (Figure \ref{fig: boccaletti}). 
 This discrepancy could be explained if the hypothetical ring were eccentric.
 
+
 The median values and best-fit model parameters for the fiducial and ring parameterizations can be found in Table \ref{tab: params}. 
 We use both the AICc, a form of the Aikake Information Criterion (AIC) corrected for finite datasets, and the Bayesian Information Criterion (BIC) to compare goodness of fit between models with different numbers of free parameters.  
 The best-fit ring model is preferred to the fiducial model with $3.72 \sigma$ confidence on the AICc; conversely, the fiducial model is preferred to the ring model on the BIC with $\Delta \text{BIC} = 4.26$.
 As such, we are not able to conclusively confirm the presence of an additional ring of mm dust grains in the AU Mic disk.
 A model with a single $F_\star$ across all three dates was also investigated, but did not reproduce the data to the same degree of accuracy as the fiducial model.
-Significant residuals were visible at the location of the star, and analysis using the AICc indicates that a stellar flux varying by more than a factor of 2 over a period of months to years is preferred with a $7.3 \sigma$ confidence interval.
+Significant residuals were visible at the location of the star, and analysis using the AICc indicates that a stellar flux varying by more than a factor of 2 over a period of months to years is preferred with $7.3 \sigma$ confidence.
 
 \begin{table}
   \centering
@@ -504,7 +508,6 @@ Significant residuals were visible at the location of the star, and analysis usi
   \bottomrule
   \end{tabular}
 \end{table}
-
 
 \section{Investigating Vertical Structure}
 \label{section: vertical analysis}
@@ -553,7 +556,7 @@ Simulations of radio emission from low-mass stars allow for variability of more 
 \section{Radial Structure}
 \label{section: radial discussion}
 
-\begin{figure}
+\begin{figure}[!ht]
   \includegraphics[width=\linewidth]{../figures/surface_density}
   \caption{
     Comparison between the best-fit surface density profiles obtained in \cite{macgregor13} (solid red line) and this work (dashed blue line).
@@ -693,9 +696,24 @@ ALMA is a partnership of ESO (representing its member states), NSF (USA) and NIN
 The Joint ALMA Observatory is operated by ESO, AUI/NRAO and NAOJ.  
 The National Radio Astronomy Observatory is a facility of the National Science Foundation operated under cooperative agreement by Associated Universities, Inc.
 This research made use of: Astropy, a community-developed core Python package for Astronomy \citep{astropy}, Pandas \citep{mckinney}, NumPy \citep{van2011numpy}, emcee \citep{foreman-mackey13}, and \textit{Uncertainties: a Python package for calculations with uncertainties}, Eric O. LEBIGOT, \url{http://pythonhosted.org/uncertainties/}.
-%===============================================================================
+
+
 % BIBLIOGRAPHY:
-\clearpage
+%===============================================================================
+\backmatter
+\fancypagestyle{plain}{%
+% clear all header and footer fields, we don't want these for the bibliography
+\fancyhf{} 
+% except we want the page number to sbhow up in the center of the footer:
+\fancyfoot[C]{\thepage} 
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+\pagestyle{plain}
+%change title spacing once again, for the bibliography:
+\titlespacing*{\chapter}{0pt}{0in}{*3}
+%Add the bibliography to the table of contents, it doesn't show up by default, you have to specify it:
+\addcontentsline{toc}{chapter}{\textbf {Bibliography}}
+
 \bibliography{/Users/cdaley/Documents/Research/AU_Mic/writing/AU_Mic_bibliography.bib}
 \nocite{laplace}
 %===============================================================================
