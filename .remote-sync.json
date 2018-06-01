@@ -6,8 +6,9 @@
   "port": "22",
   "target": "/Volumes/disks/CAIL/AU_Mic/",
   "ignore": [
+    ".remote-sync.json",
     ".git/**",
-    "modeling/**/model_files/**/*.*",
+    "modeling/**/model_files/**",
     "*.csv"
   ],
   "username": "cdaley",

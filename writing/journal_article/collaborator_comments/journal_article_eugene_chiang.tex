@@ -98,14 +98,51 @@ The first M star detected to have a far-infrared excess, AU Mic hosts one of the
 As a member of the $\beta$ Pic Moving Group, it is thought to be relatively young: $\SI{23 \pm 2}{Myr}$ \citep{binks&jeffries14,mamajek&bell14,malo14}. 
 The disk around AU Mic was first resolved by \cite{kalas04} in scattered light, and a host of observations spanning the optical to the submillimeter have followed \citep{augereau&beust06,macgregor13,matthews15,schneider14,wang15}. 
 Notably, the debris around AU Mic exhibits a so-far-unique time variability at scattered light wavelengths.
-\cite{boccaletti15} identify five features---local intensity maxima offset from the disk midplane---on the SE side of the disk. 
-These features are quickly moving away from the star along the disk midplane at projected velocities that are not consistent with Keplerian rotation; in fact, the outermost two features appear to be unbound from the star. 
-Both dust emission from a localized source such as a planet \citep{boccaletti15,sezestre17} and collisional dust avalanches \citep{chiang&fung17} have been proposed to explain these features.
+%EIC: begin
+%EIC: need bibtex reference for latest paper boccaletti18
+\cite{boccaletti15} and \cite{boccaletti18} identify 
+%five features---
+several
+local intensity maxima offset from the disk midplane 
+%---
+on the southeast side of the disk. 
+These features are
+%quickly moving
+moving quickly
+away from the star along the disk midplane
+at projected velocities that are not consistent with Keplerian rotation;
+in fact, the outermost
+%two
+features appear to be unbound from the star
+(see also \citet{sezestre17} who provide kinematic fits and invoke 
+a dust source of unspecified nature). 
+\citet{chiang&fung17} propose that these fast-moving features
+are dust particles repelled by a time-variable stellar wind that triggers
+dust avalanches when the wind blows strongest. These avalanches
+are seeded by the debris remaining from the recent disruption of
+a $\sim$400-km sized progenitor. In this paper we will provide
+an independent constraint on the presence of comparably sized planetesimals.
+%Both dust emission from a localized source such as a planet \citep{boccaletti15,sezestre17} and collisional dust avalanches \citep{chiang&fung17} have been proposed to explain these features.
 
-In this work we present new \SI{0.3}{\arcsecond} Atacama Large Millimeter/submillimeter Array \newline (ALMA) \SI{1.3}{mm} observations of the AU Mic debris disk. 
-These observations represent a factor of $\sim 2$ improvement in both spatial resolution and rms noise relative to \cite{macgregor13}'s previous ALMA observations of the system, and our analysis indicates that the vertical structure of the disk is resolved with 4-6$\sigma$ confidence.
+%In this work we present
+We present here
+%EIC: end
+new \SI{0.3}{\arcsecond} Atacama Large Millimeter/submillimeter Array \newline (ALMA) \SI{1.3}{mm} observations of the AU Mic debris disk. 
+These observations represent a factor of $\sim 2$ improvement in both spatial resolution and rms noise relative to
+%EIC: avoid awkward apostrophe
+% \cite{macgregor13}'s
+previous ALMA observations of the system
+by \cite{macgregor13},
+and our analysis indicates that the vertical structure of the disk is resolved with 4-6$\sigma$ confidence.
 In \S \ref{section: observations} we present the new observations and describe the data reduction.  
-\S \ref{section: results} quotes the basic observational results regarding the disk flux, morphology, and gas content.  
+%EIC: my parents taught me never to start a sentence with a symbol.
+%\S 
+Section 
+\ref{section: results}
+%EIC: "quotes" makes it seem as if you are quoting someone else, but obviously this is all original work
+%quotes
+documents
+the basic observational results regarding the disk flux, morphology, and gas content.  
 In \S \ref{section: analysis} we conduct a parametric exploration of a 2-dimensional disk model in order to investigate the degeneracy between vertical structure, radial structure, and viewing geometry.
 In \S \ref{section: discussion} we discuss our results, particularly the constraints on the dynamical excitation of the disk imposed by our measurement of the scale height, and compare them to previous observations.
 The results of our measurement of scale height and its implications for the total disk mass are summarized in \S 6.
@@ -195,7 +232,9 @@ This change in the fit stellar location could be explained if the flare were not
 Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines to bring out the disk emission on larger spatial scales. 
 In scheme (i) the rms noise $\sigma$ was \SI{15}{\mu Jy / beam} and the restoring beam was $\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$ with a position angle (PA) of \ang[angle-symbol-over-decimal]{77.9}. 
-In scheme (ii), the corresponding values are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and \ang[angle-symbol-over-decimal]{80.8}
+In scheme (ii), the corresponding values are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and 
+%EIC: added period to end of sentence.
+\ang[angle-symbol-over-decimal]{80.8}.
 Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file (with a common pointing center) before cleaning in order to account for the offset in phase center between datasets. 
 This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol}.
 
@@ -232,7 +271,18 @@ Additionally, the discrepancy in position angle between the two peaks falls with
   The solid blue line shows the southeast limb of the disk, while the dashed red line shows the northeast limb.
   From top to bottom, the three panes show i) the disk spine surface brightness with errors given by the rms noise, ii) the disk spine deviation from the midplane, and iii) the disk FWHM as a function of projected separation from the star. 
   The Gaussian traced by the dotted line in the first pane shows the projected width in the radial direction of the naturally weighted synthesized beam of the combined dataset.
-  The fact that the image-domain vertical height of the disk is in excess of the beam contribution implies that our data spatially resolve the vertical structure of the disk.} 
+%EIC: Following sentence ("The fact that ...") is not obvious to me just by looking at the figure.
+%       In fact, the beam size as indicated by the Gaussian drawn on the top panel looks like it has a FWHM
+%       of ~5 AU > the beam-subtracted FWHM plotted in the third panel. (I was pleased to see this
+%       acknowledged in the main text, and to read about the various reasons why this is not necessarily
+%       cause for alarm.)
+%       I think the last sentence just needs to be reworded --- to acknowledge that the vertical beam
+%       is technically larger than what is plotted, but that this is OK for various reasons discussed in
+%       the main text under section 4.3. I gave it a stab.
+%  The fact that the image-domain vertical height of the disk is in excess of the beam contribution implies that our data spatially resolve the vertical structure of the disk.
+Although the last panel indicates a vertical disk FWHM that is technically smaller than the vertical FWHM of the beam,
+it still represents a significant detection of vertical structure, for reasons explained in 
+\S \ref{subsection: vertical analysis}.} 
   \label{fig: boccaletti}
 \end{figure}
 
@@ -241,7 +291,9 @@ At each radial location along the disk major axis, a one-dimensional Gaussian wa
 The top, center, and bottom panes correspond respectively to the amplitude, centroid, and beam-subtracted FWHM of the Gaussian fits. 
 Broadening effects of the synthesized beam in the vertical direction have been removed by subtracting in quadrature the Gaussian beam FWHM from the Gaussian fit FWHM.
 In more physical terms, the three panes represent the intensity at the location of the disk ``spine,'' the spine's elevation from the midplane, and the disk FWHM.
-We were unable to detect (in either the combined dataset or the three individual epochs) the intensity variations or excursions of the disk spine from the midplane that characterize the fast-moving features observed by \cite{boccaletti15}.
+We were unable to detect (in either the combined dataset or the three individual epochs) the intensity variations or excursions of the 
+%EIC: added boccaletti18
+disk spine from the midplane that characterize the fast-moving features observed by \cite{boccaletti15,boccaletti18}.
 This is not entirely surprising, as both \cite{sezestre17} and \cite{chiang&fung17} suggest that the clouds are composed of sub-micron-sized grains which do not emit efficiently in the millimeter.
 
 The disk is resolved across $\sim 17$ beams along the major axis, and cursory image-domain analysis indicates the disk is marginally resolved perpendicular to the major axis as well (Figure \ref{fig: boccaletti}, bottom pane).
@@ -289,12 +341,20 @@ $\Sigma_c$ normalizes the surface density structure for a given total dust mass 
 \end{align}
 
 The observed disk PA and inclination $i$ are free parameters.
-We adopt a stellar luminosity of \SI{0.09}{L_\sun} \citep{plavchan09} and a distance to the star of \SI{9.91 \pm 0.10}{pc} \citep{vanleeuwen07};\footnote{We are currently re-running all models with the new Gaia distance of \SI{9.725 \pm 0.005}{pc}.} the observed \SI{1.3}{mm} stellar flux $F_\star$ is left as a free parameter for each observation date.
+We adopt a stellar luminosity of \SI{0.09}{L_\sun} \citep{plavchan09} and a distance to the star of \SI{9.91 \pm 0.10}{pc}
+%EIC: persnickety point / feel free to ignore: are you accounting for the change in stellar luminosity
+%       that results from the new Gaia distance? It may not change 0.09 L_sun to the first significant figure,
+%       so probably not worth worrying about. 
+ \citep{vanleeuwen07};\footnote{We are currently re-running all models with the new Gaia distance of \SI{9.725 \pm 0.005}{pc}.} the observed \SI{1.3}{mm} stellar flux $F_\star$ is left as a free parameter for each observation date.
 We note that the uncertainty in the stellar distance could affect the modeled disk mass and disk radial extent, while the 10\% systematic flux uncertainty could affect the modeled disk mass and stellar flux.
 The spatial resolution of the resulting model sky image is set to \SI{0.3}{au} per pixel, chosen to be $\sim \SI{10}{\percent}$ of the spatial scale sampled by the longest baseline in the data. 
 After the model image is generated by the ray tracing code, it is Fourier transformed into the visibility domain and sampled at the same spatial frequencies as the ALMA data with the \texttt{MIRIAD} task \texttt{uvmodel}.
 This allows the model to be compared directly to the visibilities in the Fourier domain, where uncertainties are better characterized than in the image domain.
-A $\chi^2$ metric is used to asses the quality of the fit.
+%EIC: spelling
+A $\chi^2$ metric is used to
+%asses
+assess 
+the quality of the fit.
 
 We explore the parameter space of the model using the affine-invariant formulation of the MCMC algorithm described by \cite{goodmanweare10} and implemented in Python as \texttt{emcee} \citep{foreman-mackey13}.  
 MCMC routines sample parameter space such that the density of samples in a given region is proportional to the local probability density, allowing estimation of the posterior probability functions themselves.
@@ -303,6 +363,12 @@ We assume uniform priors for all parameters; the dust mass was sampled in logari
 No prior bounds were placed on the logarithm of the dust mass.
 Priors placed on the stellar flux and disk inner radius, width, and aspect ratio ensured that these parameters were always greater than zero, while the prior placed on the power law exponent ensured $-5 < p < 10$.
 The position angle was confined to the range $\ang{1} < \text{PA} < \ang{360}$, and the inclination to $\ang{0} < i < \ang{90}$.
+%EIC: "Leaving the inclination unbounded does not affect the preferred inclination ..."
+%      This sounds funny and confusing for a couple reasons.
+%      -- Leaving the inclination unbounded would seem to be the best possible thing
+%      to do because "unbounded" implies "unbiased"; we don't want to affect the outcome in some unfair way.
+%      -- Technically the inclination is bounded --- it is confined to be between 0 and 90 deg.
+%      I think this needs to be reworded.
 Leaving the inclination unbounded does not affect the preferred inclination; the MCMC chain simply converges to two positions symmetric about \ang{90}.
 We performed several MCMC runs in order to investigate a variety of model formalisms. 
 All runs used 50 walkers, and $10^5$ samples were drawn from each run to allow accurate statistical comparison between runs.
@@ -321,6 +387,10 @@ This model formalism resulted in a best-fit $\chi^2$ value of 626163.598 (reduce
 
 \begin{figure}
   \centering
+%EIC: top left corner, single panel (BTW, I think most papers call these "panels", not "panes". But
+%       if you want to keep calling them "panes", I don't mind; it reminds me of "window panes").
+%       Is the y-axis really $h$? I don't think so. It should be some kind of probablilty density, right?
+%       Same issue with the y-axis of every plot along the diagonal.
   \includegraphics[width=0.9\linewidth]{../figures/degeneracy_corner}
   \caption{`Corner' plot showing degeneracies between a subset of the free parameters for the fiducial model.
   Two families of solutions are visible, and are most prominent in the $p$, $r_{in}$, and $r_{out}$ distributions.
@@ -482,7 +552,10 @@ Regardless of the origin of AU Mic's short- and long-term variability, we emphas
 
 Modeling of the radial structure discussed in \S \ref{subsection: radial analysis} is broadly consistent with the previous analysis of millimeter wavelength emission from the disk performed by \cite{macgregor13} as can be seen in Figure \ref{fig surface_density}. 
 However, the factor of $\sim 2$ increase in spatial resolution introduces additional interpretive complexities when comparing the results.
-While our outer radius is only \SI{2}{au} larger than than the previously reported value of \SI{40.3}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
+%EIC
+While our outer radius is only \SI{2}{au} larger than 
+%than 
+the previously reported value of \SI{40.3}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
 In contrast to $r_{in} = 23.8_{-0.9}^{ +0.6}$ \si{au} preferred by our MCMC analysis, \cite{macgregor13} report $8.8_{-1.0} ^{+11.0}$ \si{au}.
 Neither parameter is well constrained: the authors report a $3 \sigma$ upper limit of \SI{21}{au}, whereas conversely we find a $2 \sigma$ lower limit of $\sim \SI{1}{au}$.
 Similar discrepancies arise in the posterior distribution for $p$, which is degenerate with $r_{in}$.
@@ -498,13 +571,36 @@ Although these surface brightness enhancements do not attain $3 \sigma$ signific
 \cite{schneider14} also observe an optical-wavelength `bump' $\sim \SI{13}{au}$ SE of the star and slightly elevated from the disk midplane (i.e. to the NE).
 No matching surface brightness enhancement is observed on the NW side of the disk, which is obscured by the STIS occulting wedge for $r \lesssim \SI{12}{au}$.
 On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a distance of $\sim \SI{45}{au}$ from the star.
-They note that these features may share a common causality, and posit that dust orbits in the inner disk are non-coplanar with those found at larger separations.
+They note that these features may share a common
+%EIC
+%causality, 
+cause,
+and posit that dust orbits in the inner disk are non-coplanar with those found at larger separations.
 
 Near-infrared GPI obsevations presented in \cite{wang15} further corroborate the presence of a `bump' to the SE, characterized by a FWHM roughly triple the FWHM at an equivalent separation on the NW side of the disk. 
 No features are detected at a corresponding separation to the NW.
 Figure 4 of \cite{wang15} shows a composite map of the bump as seen by GPI, STIS, and ALMA; the common location of the bump in both scattered light and mm observations would indicate that the mm- and micron-sized grains are cospatial.
-The micron-sized grains traced by scattered light are thought to be mostly confined to a narrow `birth ring' at $\sim \SI{40}{au}$ \citep{strubbe&chiang06}. 
-Thus, if the millimeter bump visible in both this work and in \cite{macgregor13} is indeed cospatial with the scattered light bump, it would suggest that the true stellocentric separation of of the millimeter feature is $\sim \SI{40}{au}$ and that its apparent stellocentric separation of $\sim \SI{10}{au}$ is due to projection effects.
+%EIC: It's a cascade. Everything is born from something bigger. That's why we call it the *birth* ring. 
+%       SC06 covered the entire cascade, from the bottom of the cascade (micron) to 
+%       the top (10 cm--1 meter; their equation 29), including the mm-wave SED (Figure 8). 
+%       Actually, if anything, it's the larger cm-to-m-sized progenitors that are "mostly confined"
+%       to the birth ring, since the micron-sized progeny are sent out onto eccentric orbits by 
+%       stellar wind/radiation pressure. 
+The micron-sized grains traced by scattered light,
+%EIC: added
+and all larger bodies ranging up to the cm-to-m sizes characterizing
+the top of the collisional cascade,
+are thought to 
+%EIC: tweaked
+%be mostly confined to 
+originate from
+a narrow `birth ring' at $\sim \SI{40}{au}$ \citep{strubbe&chiang06}. 
+%EIC: I re-worded the last sentence.
+%Thus, if the millimeter bump visible in both this work and in \cite{macgregor13} is indeed cospatial with the scattered light bump, it would suggest that the true stellocentric separation of the millimeter feature is $\sim \SI{40}{au}$ and that its apparent stellocentric separation of $\sim \SI{10}{au}$ is due to projection effects.
+Thus it is possible that the millimeter bump visible in this work and in \cite{macgregor13}
+are actually cospatial with the scattered light bump and that all features are located at a true
+stellocentric separation of $\sim \SI{40}{au}$ (the apparent stellocentric separation
+of $\sim \SI{10}{au}$ would be due to projection).
 
 \subsection{Vertical Structure}
 \label{subsection: vertical discussion}
@@ -533,7 +629,11 @@ It is not unexpected that optical and infrared measurements of the scale height 
 This effect preferentially excites smaller dust grains, `puffing' up the disk at mid-IR to visible wavelengths, while the larger grains that dominate emission at longer wavelengths remain near the midplane.
 \cite{thebault09} proposes a `natural' minimum debris disk thickness of $h = \num{0.04 \pm 0.02}$ as seen at wavelengths smaller than \SI{50}{\mu \meter}.
 The author also runs a collisional model tailored to the AU Mic system assuming no intrinsic dynamical excitation, and reports $H = \SI{1}{au}$ for $r \leq \SI{40}{au}$ when degraded to the resolution of scattered light images.
-Although this scale height falls within the range of `natural' debris disk thicknesses, the authors stress that this does not amount to an assertion that the disk is dynamically cold due to the simplicity of their model and fitting process.
+Although this scale height falls within the range of `natural' debris disk thicknesses, the 
+%EIC: it's just a single author, right? Philippe Thebault? Or maybe this is an example of the "royal we"?
+%authors stress 
+author stresses
+that this does not amount to an assertion that the disk is dynamically cold due to the simplicity of their model and fitting process.
 
 In recent years, the vertical structure of several other debris disks has been tentatively resolved with ALMA.
 $\sim \SI{5.5}{au}$ spatial resolution observations of 
@@ -546,9 +646,22 @@ Assuming an Keplerian rotation and edge-on inclination, the authors report the f
 where the scale height $H$ is the standard deviation of the Gaussian vertical density distribution.
 For reference to this work, this corresponds to a scale height of \SI{4}{au} at a separation of \SI{40}{au}.
 \cite{kennedy18} analyze $\SI{11.6}{au} \times \SI{13.1}{au}$ spatial resolution observations of the HR 4796A debris disk, reporting a marginal detection of the disk scale height.
-The authors find that a vertically resolved ring (FWHM $= \SI{7 \pm 1}{au}$) is favored over a vertically unresolved ring (FHWM $< \SI{4}{au}$) with $\Delta BIC = 6.8$.
-This FHWM corresponds to a Gaussian standard deviation $H \approx \SI{3.0 \pm 0.4}{au}$ and, at the $\sim \SI{80}{au}$ radial location of the ring, a scale factor of $h \approx 0.038 \pm 0.005$.
-Although the relative $BIC$ reported by the authors meets the condition for `strong' evidence of a statistically higher-quality fit ($\Delta BIC > 6$), the fact that the preferred FWHM is nearly a factor of two smaller than the spatial resolution of the data calls into question the certainty of the measurement.
+The authors find that a vertically resolved ring (FWHM $= \SI{7 \pm 1}{au}$) is favored over a vertically unresolved ring
+%EIC
+%(FHWM 
+(FWHM 
+$< \SI{4}{au}$) with $\Delta BIC = 6.8$. 
+This
+%EIC 
+%FHWM
+FWHM
+corresponds to a Gaussian standard deviation $H \approx \SI{3.0 \pm 0.4}{au}$ and, at the $\sim \SI{80}{au}$ radial location of the ring, a scale factor of $h \approx 0.038 \pm 0.005$.
+Although the relative $BIC$ reported by the authors meets the condition for `strong' evidence of a statistically higher-quality fit ($\Delta BIC > 6$),
+%EIC: "the fact that the ... nearly a factor of two smaller ... calls into question ..."
+%       Seems an unfair criticism. Doesn't our work suffer from the same problem? 2/3 instead of 1/2,
+%       as discussed in the last paragraph of our section 4.3?
+%       Text needs to change here.
+the fact that the preferred FWHM is nearly a factor of two smaller than the spatial resolution of the data calls into question the certainty of the measurement.
 In sum, the vertical structure of debris disks is just beginning to be resolved in the millimeter thanks to the improvements in sensitivity and resolution provided by ALMA; to our knowledge, AU Mic exhibits the narrowest millimeter-wavelength scale height of any known debris disk.
 
 
@@ -591,6 +704,8 @@ In sum, the largest bodies in the AU Mic disk cannot be smaller than \SI{340 \pm
 Conversely, the largest body stirring the disk cannot be larger than $\sim \SI{1.5}{M_\earth}$ or the scale height would exceed the value measured in this work.
 It should also be noted that because the scale height measured at the outer edge of the disk is comparable to the spatial resolution of the data, and since scale height decreases with decreasing radius, the observations are only sensitive to the scale height near the $\sim \SI{40}{au}$ outer disk radius. 
 If the disk is stirred by an ensemble of \SI{340}{km} planetesimals, they would necessarily be located within this outer region of the disk. 
+%EIC: I agree with Hilke --- the $e$ dependence should be dropped (it refers to the Hill sphere radius at periapse,
+%      and so is being used out of context here). Accordingly, Figure 7 should also be dropped, and this paragraph rewritten.
 That being said, a planet is capable of stirring the disk at a distance of roughly five Hill Radii \citep{greenzweig&lissauer90}, defined as\footnote{To Margaret and Hilke: Meredith and I are a little confused here, as the expression for the Hill radius would imply that the stirring zone of a planet goes to 0 as its eccentricity goes to 1. Is this okay?}
 \begin{align}
     r_{H} = a (1-e) \qty(\frac{m_p}{3M_\star})^{1/3}.
@@ -599,7 +714,24 @@ Thus if the mass were concentrated within a single \SI{1.5}{M_\earth} body, it c
 Similarly, our measurement of the scale height excludes Uranus or Neptune analogs of mass $\sim \SI{15}{M_\earth}$ within \SI{6}{au} of the parent body belt. 
 Figure \ref{fig: perturber} shows the relationship between the eccentricity, orbital separation, and mass of a single perturbing body.
 
-
+%EIC: new last paragraph
+The properties of the perturbers estimated in this work are consistent
+with those inferred by \citet{chiang&fung17} on independent grounds
+using the time-variable infrared observations by \citet{boccaletii15,boccaletti18}.
+Our lower limit on the perturbing body size of $\sim$340 km fits with the
+$\sim$400 km radius for their Varuna-like progenitor (for reference,
+Varuna is among the larger objects in the Kuiper belt). Moreover, there should
+be on the order of $10^3$ such objects according to their scenario (the argument
+is as follows: since the lifetime of the debris left from the catastrophic disruption
+of a Varuna-sized progenitor is $\sim$$3 \times 10^4$ yr \citep[][their equation 21]{chiang&fung17},
+and since the age of the AU Mic system is $\sim$20 Myr, there must have been
+20 Myr / $3 \times 10^4$ yr $\sim 700$ such progenitors over the system lifetime.
+A population on the order of $10^3$ bodies
+then yields an order-unity probability for observing the aftermath of a single
+catastrophic collision today). An ensemble of $\sim$$10^3$ bodies each with a mass of
+$4\pi/3 \cdot 2.5 \, {\rm g} \, {\rm cm}^{-3} \cdot (400 \, {\rm km})^3 \sim 10^{-4} M_\oplus$
+amounts to a total mass of $\sim$$0.1 M_\oplus$, safely below the upper limit of $1.5 M_\oplus$
+established by our present work.
 
 \section{Conclusion}
 \label{section: conclusion}
@@ -614,25 +746,58 @@ By comparing our measurement of the scale height to the steady-state collisional
 In the lower-limit case where collisional velocity damping is inefficient, the stirring bodies would have a radius of \SI{340 \pm 60}{km}, corresponding to a characteristic mass $\sim 50$ times less than that of Pluto.
 On the other hand, velocity damping may balance stirring; this condition allows us to place an upper limit of $\sim \SI{1.5}{M_\earth}$ on the mass of stirring bodies.
 This is a dynamical mass, distinct from the lunar mass of dust grains inferred from the millimeter flux of the disk.
-These results therefore rule out the presence of a gas giant or Neptune analog in the outer disk, but are suggestive of a significant population of large asteroids or perhaps an Earth-mass planet stirring the dust distribution.  
+These results therefore rule out the presence of a gas giant or Neptune analog in the outer disk, but are suggestive of a significant 
+%EIC: begin
+population of large asteroids 
+having a combined mass of less than one Earth. Such a population has been inferred on independent
+grounds using time-variable infrared observations \citep{chiang&fung17}.
+%or perhaps an Earth-mass planet stirring the dust distribution.  
+%EIC: end
 
 We see no indication of the fast-moving features detected by \cite{boccaletti15}, but the data are suggestive of an additional ring of dust at $\sim \SI{10}{au}$.
 Models with a ring interior to the main disk provide a better fit to the data, but measures of statistical significance remain equivocal as to whether such models minimize the information lost in the modeling process.
-Thus the presence of a ring remains uncertain.
-If a secondary ring of dust does exist in the AU Mic debris disk, planets are of course an obvious explanation; P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate interior to \SI{1}{au}, but AU Mic's stellar activity make it difficult to confirm the radial velocity detection.
-Even if the candidate is confirmed, it is unlikely that a planet so close to the star would be responsible for a ring at \SI{10}{au}.
-That being said, a confirmed detection could provide a promising origin for AU Mic's fast-moving features.
+Thus the presence of a ring remains uncertain. 
+%EIC: begin
+%EIC: maybe "obvious" to you, but not obvious to me. How is a ring at 10 AU "explained" by a planet?
+%       I deleted the speculation, but left intact the reference to Peter Plavchan.
+%If a secondary ring of dust does exist in the AU Mic debris disk, planets are of course an obvious explanation; 
+P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate interior to \SI{1}{au}, but AU Mic's stellar activity make it difficult to confirm the radial velocity detection.
+%Even if the candidate is confirmed, it is unlikely that a planet so close to the star would be responsible for a ring at \SI{10}{au}.
+%EIC: Sorry, I disagree strongly with the last sentence. Perhaps you can explain to me why a confirmed
+%       detection of a planet (particularly one interior to 1 AU) would explain AU Mic's fast-moving features?
+%       I am happy to discuss why I do not think such an explanation is viable, if you would like (skype/phone/email).
+%That being said, a confirmed detection could provide a promising origin for AU Mic's fast-moving features.
+%EIC: end
 
 Looking forward, the scale height measurement presented in this work could be combined with other measurements of AU Mic's scale height at widely-separated (sub)millimeter wavelengths.
 This would allow the size-dependent velocity dispersion and internal strengths of bodies in AU Mic's collisional cascade to be constrained, testing the assumption of collisional cascade theory that velocity dispersion is constant with grain size.
-The ALMA Band 9 observations of AU Mic presented in the forthcoming work of Carter et. al (in preparation) may be able to provide such constraints.
-Our measurements of the AU Mic system provide a proof of concept that spatially resolved observations of the vertical structure at millimeter wavelengths can constrain the presence of Uranus and Neptune analogs, which are undetectable by other planet-detection techniques.  
-Applying this technique to other high-inclination debris disks with a range of central stellar masses will provide unique constraints on the prevalence of Uranus and Neptune analogs throughout the galaxy.
-
+The ALMA Band 9 observations of AU Mic presented in the forthcoming work of
+%EIC: begin
+%Carter et. al 
+Carter et al. 
+(in preparation) may be able to provide such constraints.
+Our measurements of the AU Mic system provide a proof of concept that spatially resolved observations of the vertical structure at millimeter wavelengths can constrain the presence of Uranus and Neptune analogs
+%EIC: added
+and even large Kuiper belt object analogues,
+which are undetectable by
+%other
+standard 
+planet-detection techniques.  
+Applying this technique to other high-inclination debris disks with a range of central stellar masses will provide unique constraints on the prevalence of 
+%Uranus and Neptune analogs 
+large perturbing bodies
+throughout the
+%galaxy.
+Galaxy.
+%EIC: end
 
 \section*{Acknowledgements}
 C.D. is sponsored by a NASA CT Space Grant Undergraduate Research Fellowship and Wesleyan University's Research in the Sciences Fellowship.  
 C.D., A.M.H., E.C., and K.F. gratefully acknowledge support from NSF grant AST-1412647.  
+%EIC: I actually don't have a middle initial. But sometimes in papers I will use "I" to distinguish myself
+%       from other E.C.'s. If Evan Carter has a middle initial, perhaps he can use his. If not, I am happy to use
+%       my pen initial.
+E.I.C. acknowledges support from the National Science Foundation.
 This paper makes use of the following ALMA data:  ADS/JAO.ALMA\#2012.1.00198.S.  
 ALMA is a partnership of ESO (representing its member states), NSF (USA) and NINS (Japan), together with NRC (Canada), MOST and ASIAA (Taiwan), and KASI (Republic of Korea), in cooperation with the Republic of Chile.  
 The Joint ALMA Observatory is operated by ESO, AUI/NRAO and NAOJ.  

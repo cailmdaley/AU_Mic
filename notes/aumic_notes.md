@@ -2,12 +2,41 @@
 
 ------------------------------------------------------------
 
+#### 3/31/18: New Runs: Gaia Distance & Galario 
+
+- new distance is 9.725+/-0.005
+- Galario seems to convolve the model & visibilities differently than uvmodel, leading to different $\chi^2$ values.
+    - standard parameters for aumic:
+        - `uvmodel: 631239`
+        - `Galario: 636357`  
+ 
+    this implies a discrepancy of one part in 0.8%
+    
+    - changing the log dust mass to -6 instead of ~ -7.5:
+        - `uvmodel: 9840571`
+        - `Galario: 9717760`  
+
+    this implies a discrepancy of 4 parts in 1.2% *in the other direction*...  
+    put another way, the ratio of their changes $(Galario_{bad}-Galario_{good})/(uvmodel_{bad}-uvmodel_{good}) = 0.986$.    
+
+these discrepancies seem insignificant so i'm moving forward with the run. it's 22% faster (24.7 s vs 31.6 s for one model/12 convolutions)
+
+
+
+------------------------------------------------------------
+
+#### 3/31/18: Questions for Zach re: AU Mic Gas
+
+1. for the AU Mic standard keplerian model, which model parameters are fixed and which are free parameters?
+
+------------------------------------------------------------
+
 #### 3/31/18: New Gaia distance
 
 ```python
 from uncertainties import ufloat
-gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943)
-gaia_dist = 1000 / parallax; #9.724836365496536+/-0.004592563162732345
+gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943) 
+gaia_dist = 1000. / gaia_parallax; #9.724836365496536+/-0.004592563162732345
 print(gaia_dist)
 
 ```
@@ -695,6 +724,7 @@ d_ra_arcsec = 15 * (
 d_dec_arcsec = 60**2 * (dec_flare - dec_noflare)
 
 angular_sep = unp.sqrt( d_ra_arcsec**2 + d_dec_arcsec**2 )
+print(angular_sep)
 # angular_sep = array(0.07096964818969821+/-0.0018333986944531894, dtype=object)
 print(angular_sep*10)
 
