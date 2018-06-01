@@ -12,6 +12,7 @@ uid*
 
 *.log
 *.last
+.nfs*
 
 **.latex
 *.synctex.gz
