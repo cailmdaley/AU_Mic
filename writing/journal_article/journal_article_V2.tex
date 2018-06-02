@@ -69,7 +69,7 @@ The vertical distribution of dust in debris disks is particularly sensitive to t
 Inferences of dynamical mass from debris disk vertical structure have previously been applied to infrared and optical observations of several systems, but the smaller particles traced by short-wavelength observations are `puffed up' by radiation pressure, yielding only upper limits on the total dynamical mass. 
 The large grains that dominate the emission at millimeter wavelengths are essentially impervious to the effects of stellar radiation, and therefore trace the underlying mass distribution more directly. 
 Here we present ALMA \SI{1.3}{mm} dust continuum observations of the debris disk around the nearby M star AU Mic.  
-The \SI{3}{au} spatial resolution of the observations, combined with the favorable edge-on geometry of the system, allows us to measure the vertical structure of the disk; we report a scale height-to-radius aspect ratio of $h = \num{0.031 \pm 0.005}$. 
+The \SI{3}{au} spatial resolution of the observations, combined with the favorable edge-on geometry of the system, allows us to measure the vertical structure of the disk; we report a scale height-to-radius aspect ratio of $h = \num{0.031 \pm 0.005}$ between $\sim \SI{24}{au}$ and $\sim \SI{42}{au}$. 
 Comparing the observed aspect ratio to a theoretical model of steady-state, size-dependent velocity distributions in the collisional cascade we estimate the total mass of bodies stirring the disk to be $\sim \SI{1.5}{M_\earth}$.  
 These measurements rule out the presence of a gas giant or Neptune analog in the outer disk, but are suggestive of the presence of large planetesimals stirring the dust distribution.
 \vspace{3em}
@@ -115,10 +115,10 @@ The results of our measurement of scale height and its implications for the tota
 \section{Observations}
 \label{section: observations}
 AU Mic was observed  with ALMA on three dates: 26 March 2014, 18 August 2014, and 24 June 2015 (see Table \ref{tab:observations}).
-The baseline lengths range between \SIlist{12;1320}{m}; the longest baseline among the three observations traces an angular scale of \SI{0.22}{\arcsecond} and a spatial scale of \SI{2.2}{au}.
 All observations employed ALMA's 12m antennas and Band 7 receivers, including four independently tunable spectral windows. 
 One spectral window was centered around the CO~$\mathrm{J}=2-1$ transition at a rest frequency of 230.538001 GHz, with a total bandwidth of 1.875 GHz and a channel spacing of \SI{0.6}{km/s}.
 The remaining three spectral windows were configured to detect continuum emission with central frequencies of 228.5, 213.5, and 216.0 GHz, total bandwidths of 2 GHz, and channel spacings of \SI{21.7}{km/s}.
+The baseline lengths range between \SIlist{12;1320}{m}; the longest baseline among the three observations traces an angular scale of \SI{0.22}{\arcsecond} and a spatial scale of \SI{2.2}{au}.
 
 \begin{table}	
   \centering
@@ -182,7 +182,7 @@ We exclude from our analysis the seven minutes during which the flare occurred, 
   	4:29:00--4:29:58 & $(5.20 \pm 1.0) \times 10^2$\\
     \bottomrule
   \end{tabular}
-	\caption{Central point source flux before and during the June flare}
+	\caption{Central point source flux before and during the June 24 flare}
   \label{tab:flare fluxes}
 \end{table}
 
@@ -230,7 +230,7 @@ Additionally, the discrepancy in position angle between the two peaks falls with
   \centering
   \includegraphics[width=.75\linewidth]{../figures/boccaletti_plots}
   \caption{
-  Image-domain analysis of the AU Mic debris disk radial and vertical structure. 
+  The AU Mic debris disk's radial and vertical structure, extracted from the naturally weighted image in Figure \ref{fig: aumic_imaged}. 
   The solid blue line shows the southeast limb of the disk, while the dashed red line shows the northeast limb.
   From top to bottom, the three panes show i) the disk spine surface brightness with errors given by the rms noise, ii) the disk spine deviation from the midplane, and iii) the disk FWHM as a function of projected separation from the star. 
   The Gaussian traced by the dotted line in the first pane shows the projected width in the radial direction of the naturally weighted synthesized beam of the combined dataset.
@@ -257,7 +257,7 @@ In more physical terms, the three panes represent the intensity at the location 
 We were unable to detect (in either the combined dataset or the three individual epochs) the intensity variations or excursions of the disk spine from the midplane that characterize the fast-moving features observed by \cite{boccaletti15,boccaletti18}.
 This is not entirely surprising, as both \cite{sezestre17} and \cite{chiang&fung17} suggest that the clouds are composed of sub-micron-sized grains which do not emit efficiently in the millimeter.
 
-The disk is resolved across $\sim 17$ beams along the major axis, and cursory image-domain analysis indicates the disk is marginally resolved perpendicular to the major axis as well (Figure \ref{fig: boccaletti}, bottom pane).
+The disk is resolved across $\sim 17$ beams along the major axis, and cursory image-domain analysis indicates the disk is marginally resolved perpendicular to the major axis as well (vertical FWHM $\sim \SI{3}{au} \sim 1$ beam across; see Figure \ref{fig: boccaletti}, bottom pane).
 $3\sigma$ emission as determined from the surface brightness profile in Figure \ref{fig: boccaletti} extends to a radial distance of $\sim \SI{43}{au}$ on the NW side and $\sim \SI{46}{au}$ on the SE side. 
 We note the presence of local intensity maxima, nearly symmetric about the star at a distance of $\sim \SI{10}{au}$; it is unclear if these are real features of the disk or are artifacts of the rms noise or cleaning process. 
 We examine the significance of these features in \S \ref{section: analysis}.
@@ -439,7 +439,8 @@ At the $\sim \SI{40}{au}$ outer edge of the disk, this aspect ratio implies a ve
 The corresponding disk FWHM is \SI{2.8 \pm 0.5}{au}, consistent with an image-domain FWHM of $\sim \SI{3}{au}$ estimated from Figure \ref{fig: boccaletti}.
 To verify that we in fact measured the scale height, we investigate a model parameterization in which the scale height is set to a value well below ALMA's resolution limits.
 The aspect ratio is fixed at a value of $0.003$, so that even at the outer edge of the disk the scale height is $\sim \SI{3}{\percent}$ of the beam size along the disk's vertical axis.
-If the disk is in fact resolved, such a `skinny' disk model should perform significantly worse than the fiducial model.
+If the disk is in fact resolved by the observations, such a `skinny' disk model should perform significantly worse than the fiducial model.
+Hence, we can quantify the statistical significance of our detection of the scale height by comparing the best-fit skinny model to the best-fit fiducial model.
 The best-fit model image and residuals are shown in Figure \ref{fig: skinny}.
 The skinny model results in a significantly poorer fit to the data than the fiducial model with variable aspect ratio, with the best fits differing at the $3.9 \sigma$ level according to the AICc and by a value of 7.5 on the BIC.
 
@@ -463,10 +464,10 @@ Here we compare the results of our analysis with previous studies of AU Mic's de
 The geometric properties of the disk inferred from our modeling agree well with the literature. 
 Our median inclination of $\ang[angle-symbol-over-decimal]{88.6}^{+0.4}_{-0.3}$ is consistent with previous estimates of the disk's inclination within uncertainties \citep{metchev05,krist05}.
 The median PA of $\ang[angle-symbol-over-decimal]{128.49} \pm 0.07$ falls within uncertainties of measurements by \cite{macgregor13} and \cite{krist05}; however, the limb-averaged PA interior to \SI{50}{au} from \cite{metchev05} is $\ang[angle-symbol-over-decimal]{129.8} \pm 0.2$, and \cite{schneider14} report an optical-wavelength PA of $\ang[angle-symbol-over-decimal]{127.8} \pm 0.2$ between \SIrange{50}{100}{au}.
-The preferred dust mass (\SI{0.01}{M_\earth}) is identical to the value derived from resolved \SI{1.3}{mm} imaging by \cite{macgregor13} and from low-resolution \SI{850}{\mu m} imaging by \cite{matthews15}; the latter quote a 20\% uncertainty.
-Similarly, \cite{liu04} report \SI{0.011}{M_\earth} from unresolved \SI{850}{\mu m} observations.
+The preferred dust mass (\SI{0.01}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived from resolved \SI{1.3}{mm} imaging by \cite{macgregor13}, who assume an opacity of \SI{2.7}{cm^2.g^{-1}}, and from low-resolution \SI{850}{\mu m} imaging by \cite{matthews15}, who assume an opacity of \SI{1.7}{cm^2.g^{-1}} and quote a 20\% uncertainty.
+\cite{liu04} also take the opacity to be \SI{1.7}{cm^2.g^{-1}}, and report \SI{0.011}{M_\earth} from unresolved \SI{850}{\mu m} observations.
 \cite{strubbe&chiang06} calculate \SI{0.01}{M_\earth} by deriving a steady-state collisional cascade grain size distribution and fitting the disk's surface brightness and thermal spectrum to $V$- and $H$-band HST observations.
-As discussed in \S \ref{section: results}, even a large gas excitation temperature of \SI{250}{K} implies a $3 \sigma$ upper limit on the total gas mass of only \SI{9.06e-7}{M_\earth}; combined with our preferred dust mass, this mass corresponds to an upper limit on the gas-to-dust ratio of $\sim 10^{-4}$.
+As discussed in \S \ref{section: results}, even a large gas excitation temperature of \SI{250}{K} implies a $3 \sigma$ upper limit on the $^{12}$CO mass of only \SI{9.06e-7}{M_\earth}; combined with our preferred dust mass, this mass corresponds to an upper limit on the gas-to-dust ratio of $\sim 10^{-4}$.
 Such a low dust-to-gas ratio excludes the possibility of gas influencing the millimeter grain kinematics, and thus our measurement of the scale height.
 
 Our analysis indicates with high confidence that AU Mic exhibited long-term millimeter variability over the $\sim \SI{1.5}{yr}$ observation period. 
@@ -485,7 +486,7 @@ Regardless of the origin of AU Mic's short- and long-term variability, we emphas
 \begin{figure}
   \includegraphics[width=\linewidth]{../figures/surface_density}
   \caption{
-    Comparison between the best-fit surface density profiles obtained in \cite{macgregor13} (solid red line) and this work (dashed blue line).
+    Comparison between the best-fit surface density profiles obtained in \cite{macgregor13} (dashed red line) and this work (solid blue line).
     Also included is the best-fit surface density profile associated with the lower-likelihood family of solutions (dotted black line).
     The vertical extent of the shaded regions marks $1\sigma$ confidence intervals on the surface density. 
     The points designate the best-fit inner and outer radii for each model, and the horizontal extent of the more transparent shaded regions show $1 \sigma$ confidence intervals on the inner and outer radii.
@@ -514,7 +515,7 @@ No matching surface brightness enhancement is observed on the NW side of the dis
 On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a distance of $\sim \SI{45}{au}$ from the star.
 They note that these features may share a common cause, and posit that dust orbits in the inner disk are non-coplanar with those found at larger separations.
 
-Near-infrared GPI obsevations presented in \cite{wang15} further corroborate the presence of a `bump' to the SE, characterized by a FWHM roughly triple the FWHM at an equivalent separation on the NW side of the disk. 
+Near-infrared GPI observations presented in \cite{wang15} further corroborate the presence of a `bump' to the SE, characterized by a FWHM roughly triple the FWHM at an equivalent separation on the NW side of the disk. 
 No features are detected at a corresponding separation to the NW.
 Figure 4 of \cite{wang15} shows a composite map of the bump as seen by GPI, STIS, and ALMA; the common location of the bump in both scattered light and mm observations would indicate that the mm- and micron-sized grains are cospatial.
 The micron-sized grains traced by scattered light, and all larger bodies ranging up to the cm-to-m sizes characterizing the top of the collisional cascade, are thought to originate from a narrow `birth ring' at $\sim \SI{40}{au}$ \citep{strubbe&chiang06}. 
@@ -595,15 +596,6 @@ To relate the observed disk scale height to the total mass of bodies stirring th
 Assuming a scale height of \SI{1.2}{au} at \SI{40}{au}, a stellar mass of \SI{0.5}{M_\sun}, and a dust mass of \SI{0.01}{M_\earth}, these models indicate a dynamical mass of $\sim\SI{1.5}{M_\earth}$.
 If all of the \SI{1.5}{M_\earth} were locked up in a single body, it would have a radius of $\sim \SI{1.1}{R_\earth}$ assuming a mean density of \SI{5.5}{\g.\cm^{-3}} characteristic of Earth.
 
-\begin{figure}
-    \includegraphics[width=\linewidth]{../../band6/plots/current/perturber_plot.png}
-    \caption{An illustration of the relationship between the  mass, separation, and eccentricity of for a single stirring body. 
-    The colormap shows the minimum stirring mass for a given orbital separation and eccentricity. 
-    Colormap values range from \SI{5e-5}{M_\earth} (the lower limit placed on the perturber mass $m_{big}$) to \SI{15}{M_\earth} (slightly less than the mass of Neptune).
-    The lightest shade of blue covers the entire range of perturber masses predicted by our calculations.}
-    \label{fig: perturber}
-\end{figure}
-
 In sum, the largest bodies in the AU Mic disk cannot be smaller than \SI{340 \pm 60}{km} or they would not be able to stir the dust grains to the collisional velocities inferred from the measured scale height.
 Conversely, the largest body stirring the disk cannot be larger than $\sim \SI{1.5}{M_\earth}$ or the scale height would exceed the value measured in this work.
 It should also be noted that because the scale height measured at the outer edge of the disk is comparable to the spatial resolution of the data, and since scale height decreases with decreasing radius, the observations are only sensitive to the scale height near the $\sim \SI{40}{au}$ outer disk radius. 
@@ -672,6 +664,7 @@ throughout the Galaxy.
 C.D. is sponsored by a NASA CT Space Grant Undergraduate Research Fellowship and Wesleyan University's Research in the Sciences Fellowship.  
 C.D., A.M.H., E.C., and K.F. gratefully acknowledge support from NSF grant AST-1412647.  
 E.I.C. acknowledges support from the National Science Foundation.
+J.M.C. acknowledges support from the National Aeronautics and Space Administration under grant No. 15XRP15_20140 issued through the Exoplanets Research Program.
 This paper makes use of the following ALMA data:  ADS/JAO.ALMA\#2012.1.00198.S.  
 ALMA is a partnership of ESO (representing its member states), NSF (USA) and NINS (Japan), together with NRC (Canada), MOST and ASIAA (Taiwan), and KASI (Republic of Korea), in cooperation with the Republic of Chile.  
 The Joint ALMA Observatory is operated by ESO, AUI/NRAO and NAOJ.  
