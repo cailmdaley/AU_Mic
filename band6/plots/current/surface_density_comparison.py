@@ -124,7 +124,7 @@ for i in range(1, -1, -1):
     ax.plot(r_au[i, end], sigma[0, i, end].n, 'o', c=colors[i], markersize=4)
 ax.semilogy(r_au[2], unp.nominal_values(sigma[0,2]), label=labels[2], ls=ls[2], c=colors[2])
 plt.xlabel('$r$ (au)'); plt.ylabel(r'Surface density (g/cm$^2$)')
-plt.legend(loc=4); sns.despine(); plt.savefig('figures/surface_density', dpi=1000)
+plt.legend(loc=4); sns.despine(); plt.savefig('../../../writing/figures/surface_density', dpi=1000)
 plt.show()
 
 # ax1.fill_between(ra_range, SE_amps-rms, SE_amps+rms, alpha=0.4)
