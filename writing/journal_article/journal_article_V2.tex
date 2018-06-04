@@ -58,6 +58,8 @@
 \affiliation{Department of Earth and Space Sciences, University of California, Los Angeles, CA 90095, USA}
 \affiliation{Department of Earth, Atmospheric and Planetary Sciences, Massachusetts Institute of Technology, Cambridge, MA 02139, USA}
 
+% \author{Mark Wyatt}
+
 \author{Others}
 \noaffiliation
 
@@ -198,8 +200,7 @@ Imaging was performed using standard Fourier inversion methods as implemented in
 Two weighting schemes were used: (i) natural weighting with no taper to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines to bring out the disk emission on larger spatial scales. 
 In scheme (i) the rms noise $\sigma$ was \SI{15}{\mu Jy / beam} and the restoring beam was $\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$ with a position angle (PA) of \ang[angle-symbol-over-decimal]{77.9}. 
 In scheme (ii), the corresponding values are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and \ang[angle-symbol-over-decimal]{80.8}.
-Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file (with a common pointing center) before cleaning in order to account for the offset in phase center between datasets. 
-This was done using the task \texttt{concat}, which combines datasets with pointing centers aligned so long as their pointing centers do not differ by a value greater than the parameter \texttt{dirtol}.
+Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets when converting several visibility datasets into an image, it was necessary to combine the data into a single file before cleaning with the task \texttt{concat} in order to account for the offset in phase center between datasets. 
 
 \section{Results}
 \label{section: results}
@@ -221,10 +222,11 @@ Using the \texttt{MIRIAD} task \texttt{cgcurs}, we measure an integrated flux of
 Note that this value represents the combined emission from the disk \textit{and} the star. 
 Faithfully disentangling the two components proved difficult, both because stellar and disk emission are blurred together in the central beam and because the stellar flux varied significantly across the three nights of observation (Table \ref{tab: params}).
 Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux of \SI{4.80 \pm 0.17}{mJy}.
+
 The ansa to the NW exhibits a maximum flux density of \SI{330 \pm 15}{\mu Jy/beam} at a separation of \SI{24.8 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.2} \pm 0.4$, while the ansa to the SE exhibits a maximum flux density of \SI{340 \pm 15}{\mu Jy} at a separation of \SI{29.0 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.7} \pm 0.4$. 
+The discrepancy in position angle between the two peaks falls within the estimated uncertainties and so we are not able to confirm the scattered light PA offset observed by \cite{boccaletti15}. 
 The peak flux densities of the ansae differ by less than the rms noise, indicating that there is no significant difference in brightness between the two limbs of the disk.
 Indeed, the apparent flux asymmetry in these data is in the opposite direction of the apparent flux asymmetry in \cite{macgregor13}, providing further circumstantial evidence that there is no significant flux asymmetry at millimeter wavelengths. 
-Additionally, the discrepancy in position angle between the two peaks falls within the estimated uncertainties and so we are not able to confirm the scattered light PA offset observed by \cite{boccaletti15}. 
 
 \begin{figure}
   \centering
@@ -242,25 +244,28 @@ Additionally, the discrepancy in position angle between the two peaks falls with
 %       I think the last sentence just needs to be reworded --- to acknowledge that the vertical beam
 %       is technically larger than what is plotted, but that this is OK for various reasons discussed in
 %       the main text under section 4.3. I gave it a stab.
-%  The fact that the image-domain vertical height of the disk is in excess of the beam contribution implies that our data spatially resolve the vertical structure of the disk.
-Although the last panel indicates a vertical disk FWHM that is technically smaller than the vertical FWHM of the beam,
-it still represents a significant detection of vertical structure, for reasons explained in 
-\S \ref{subsection: vertical analysis}.} 
+%  The fact that the image-domain vertical height of the disk is consistently in excess of the beam contribution in regions of high signal-to-noise implies that our data spatially resolve the vertical structure of the disk.
+Because the disk is viewed edge-on and a wide range of stellocentric separations contribute to the FWHM at a given projected separation, the apparent FHWM in the bottom pane has no radial dependence.
+Although the last panel indicates a vertical disk FWHM that is technically smaller than the vertical FWHM of the beam, it still represents a significant detection of vertical structure, for reasons explained in \S \ref{subsection: vertical analysis}.} 
   \label{fig: boccaletti}
 \end{figure}
 
-The vertical and radial structure of AU Mic's disk is traced in Figure \ref{fig: boccaletti}. 
-At each radial location along the disk major axis, a one-dimensional Gaussian was fit to the vertical surface brightness profile.
+While comparison of the ansae peak flux densities suggests that the AU Mic disk does not exhibit severe asymmetry, a more detailed analysis can be conducted by extracting surface brightness and vertical structure profiles from the naturally weighted image in Figure \ref{fig: aumic_imaged}.
+These profiles, shown in Figure \ref{fig: boccaletti}, were created by fitting a one-dimensional Gaussian to the disk vertical surface brightness profile at a series of stellocentric separations along the disk major axis.
 The top, center, and bottom panes correspond respectively to the amplitude, centroid, and beam-subtracted FWHM of the Gaussian fits. 
 Broadening effects of the synthesized beam in the vertical direction have been removed by subtracting in quadrature the Gaussian beam FWHM from the Gaussian fit FWHM.
 In more physical terms, the three panes represent the intensity at the location of the disk ``spine,'' the spine's elevation from the midplane, and the disk FWHM.
+
+As seen in the top pane of Figure \ref{fig: boccaletti}, the surface brightness profiles of the two ansae generally mirror each other.
+However, we note the presence of slightly asymmetric local intensity maxima in the inner regions of the disk, one $\sim$\SI{10.5}{au} to the SE of the star and one $\sim$\SI{7.3}{au} to the NW. 
+It is unclear whether these are real features of the disk are artifacts of the rms noise or cleaning process; we examine the significance of these features in \S \ref{section: analysis}.
+Three-$\sigma$ emission as determined from the surface brightness profile extends to a radial distance of $\sim$\SI{43}{au} on the NW side and $\sim$\SI{46}{au} on the SE side. 
+Thus, the disk is resolved across $\sim$17 beams along the major axis. 
+Cursory analysis indicates the disk is marginally resolved perpendicular to the major axis as well, exhibiting a vertical FWHM  of $\sim$$\SI{3}{au} \approx 2/3$ beam after taking into account the broadening effects of the beam (see Figure \ref{fig: boccaletti}, bottom pane).
+Our ability to resolve the vertical structure of the AU Mic debris disk is discussed in greater detail in \S \ref{subsection: vertical discussion}.
 We were unable to detect (in either the combined dataset or the three individual epochs) the intensity variations or excursions of the disk spine from the midplane that characterize the fast-moving features observed by \cite{boccaletti15,boccaletti18}.
 This is not entirely surprising, as both \cite{sezestre17} and \cite{chiang&fung17} suggest that the clouds are composed of sub-micron-sized grains which do not emit efficiently in the millimeter.
 
-The disk is resolved across $\sim 17$ beams along the major axis, and cursory image-domain analysis indicates the disk is marginally resolved perpendicular to the major axis as well (vertical FWHM $\sim \SI{3}{au} \sim 1$ beam across; see Figure \ref{fig: boccaletti}, bottom pane).
-$3\sigma$ emission as determined from the surface brightness profile in Figure \ref{fig: boccaletti} extends to a radial distance of $\sim \SI{43}{au}$ on the NW side and $\sim \SI{46}{au}$ on the SE side. 
-We note the presence of local intensity maxima, nearly symmetric about the star at a distance of $\sim \SI{10}{au}$; it is unclear if these are real features of the disk or are artifacts of the rms noise or cleaning process. 
-We examine the significance of these features in \S \ref{section: analysis}.
 
 There is no evidence that the AU Mic system harbors a significant reservoir of molecular gas.
 We set a $3 \sigma$ upper limit of \SI{0.07}{Jy.km.s^{-1}} on the CO~$\mathrm{J}=2-1$ integrated flux.
@@ -606,9 +611,9 @@ That being said, a planet is capable of stirring the disk at a distance of rough
 \end{align}
 Thus if the mass were concentrated within a single \SI{1.5}{M_\earth} body, it could be located as far as \SI{3}{au} interior or exterior to the debris belt. 
 Similarly, our measurement of the scale height excludes Uranus or Neptune analogs of mass $\sim \SI{15}{M_\earth}$ within \SI{6}{au} of the parent body belt. 
-Figure \ref{fig: perturber} shows the relationship between the eccentricity, orbital separation, and mass of a single perturbing body.
+% Figure \ref{fig: perturber} shows the relationship between the eccentricity, orbital separation, and mass of a single perturbing body.
 
-The properties of the perturbers estimated in this work are consistent with those inferred by \citet{chiang&fung17} on independent grounds using the time-variable infrared observations by \citet{boccaletii15,boccaletti18}. 
+The properties of the perturbers estimated in this work are consistent with those inferred by \citet{chiang&fung17} on independent grounds using the time-variable infrared observations by \citet{boccaletti15,boccaletti18}. 
 Our lower limit on the perturbing body size of $\sim \SI{340}{km}$ fits with the $\sim \SI{400}{km}$ radius for their Varuna-like progenitor (for reference, Varuna is among the larger objects in the Kuiper belt). 
 Moreover, there should be on the order of $10^3$ such objects according to their scenario (the argument is as follows: since the lifetime of the debris left from the catastrophic disruption of a Varuna-sized progenitor is $\sim$$3 \times 10^4$ yr \citep[][their equation 21]{chiang&fung17}, and since the age of the AU Mic system is $\sim \SI{20}{Myr}$, there must have been \SI{20}{Myr} / $ \SI{3e4}{yr} \sim 700$ such progenitors over the system lifetime. 
 A population on the order of $10^3$ bodies then yields an order-unity probability for observing the aftermath of a single catastrophic collision today). 
@@ -664,7 +669,7 @@ throughout the Galaxy.
 C.D. is sponsored by a NASA CT Space Grant Undergraduate Research Fellowship and Wesleyan University's Research in the Sciences Fellowship.  
 C.D., A.M.H., E.C., and K.F. gratefully acknowledge support from NSF grant AST-1412647.  
 E.I.C. acknowledges support from the National Science Foundation.
-J.M.C. acknowledges support from the National Aeronautics and Space Administration under grant No. 15XRP15_20140 issued through the Exoplanets Research Program.
+J.M.C. acknowledges support from the National Aeronautics and Space Administration under grant No. 15XRP15\_20140 issued through the Exoplanets Research Program.
 This paper makes use of the following ALMA data:  ADS/JAO.ALMA\#2012.1.00198.S.  
 ALMA is a partnership of ESO (representing its member states), NSF (USA) and NINS (Japan), together with NRC (Canada), MOST and ASIAA (Taiwan), and KASI (Republic of Korea), in cooperation with the Republic of Chile.  
 The Joint ALMA Observatory is operated by ESO, AUI/NRAO and NAOJ.  
