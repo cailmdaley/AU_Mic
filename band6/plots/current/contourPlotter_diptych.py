@@ -16,6 +16,7 @@ sns.set_style("ticks",
                "ytick.direction": "in"})
 sns.set_context("talk")
 cpal = jesse_reds
+dist = 9.725
 
 
 class Observation:
@@ -187,7 +188,7 @@ class Observation:
         x = -3.015
         y = -4.7
         self.ax.plot(
-            [x, x - 1],
+            [x, x - 10/dist],
             [y, y],
             '-', linewidth=2, color='k')
         self.ax.text(
@@ -232,11 +233,11 @@ all_natural = Observation('../../cleans/current/band6_star_all.natural_clean.fit
     text=[[4.6, 4.0, 'AU Mic ALMA 1.4 mm'],
           [4.6, 3.0, 'natural weighting']])
           
-all_200klambda = Observation('../../cleans/current/band6_star_all.200klambda_clean.fits',
+all_200klam = Observation('../../cleans/current/band6_star_all.200klambda_clean.fits',
     1.91655869923e-05 , fig=fig, pos=(1, num),
     text=[
         [4.6, 4.0, 'AU Mic ALMA 1.4mm'],
         [4.6, 3.0, r'$200 k\lambda$ taper']])
           
-plt.savefig('aumic_diptych_all.pdf', dpi=700)
+plt.savefig("../../../writing/figures/aumic_imaged.pdf", dpi=1000)
 # plt.show(block=False)

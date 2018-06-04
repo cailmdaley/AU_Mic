@@ -2,26 +2,10 @@
 
 ------------------------------------------------------------
 
-#### 3/31/18: New Runs: Gaia Distance & Galario 
+#### 3/31/18: Local Intensity Maxima Offset
 
-- new distance is 9.725+/-0.005
-- Galario seems to convolve the model & visibilities differently than uvmodel, leading to different $\chi^2$ values.
-    - standard parameters for aumic:
-        - `uvmodel: 631239`
-        - `Galario: 636357`  
- 
-    this implies a discrepancy of one part in 0.8%
-    
-    - changing the log dust mass to -6 instead of ~ -7.5:
-        - `uvmodel: 9840571`
-        - `Galario: 9717760`  
-
-    this implies a discrepancy of 4 parts in 1.2% *in the other direction*...  
-    put another way, the ratio of their changes $(Galario_{bad}-Galario_{good})/(uvmodel_{bad}-uvmodel_{good}) = 0.986$.    
-
-these discrepancies seem insignificant so i'm moving forward with the run. it's 22% faster (24.7 s vs 31.6 s for one model/12 convolutions)
-
-
+- NW: 7.3
+- SE: 10.5
 
 ------------------------------------------------------------
 

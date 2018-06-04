@@ -10,6 +10,7 @@ sns.set_context("talk")
 
 # Important parameters
 angleSE = 128.2 - 90
+sigma_to_FWHM = 2.35482004503
 
 image = '../../cleans/current/band6_star_all.natural_clean'
 
@@ -31,12 +32,13 @@ ydelt = head['CDELT2']
 # Convert from degrees to arcsecs
 ra = ((np.arange(nx) - xpix + 1) * xdelt) * 3600
 dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
+distance = 9.725
 
 # Define y extent of gaussian
 SE_xpix_range = np.where((ra >  0) & (ra <= 5))[0][::-1]
 NW_xpix_range = np.where((ra <= 0) & (ra >= -5))[0]
-ra_range = ra[SE_xpix_range] * 10 #au
-ypix_range = np.where(abs(dec) < 1)[0]
+ra_range = ra[SE_xpix_range] * distance #au
+ypix_range = np.where(abs(dec) < 10/distance)[0]
 
 
 
@@ -78,20 +80,18 @@ b_FWHM_y = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta))**2 +
             (bmaj * np.sin(theta))**2)
 b_FWHM_x = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta + np.pi/4))**2 +
             (bmaj * np.sin(theta + np.pi/4))**2)
-b_sigma_x = b_FWHM_x/2.35482004503
+b_sigma_x = b_FWHM_x/sigma_to_FWHM
             
-SE_disk_FWHM = np.sqrt((2.35482004503 * SE_sigmas)**2 - b_FWHM_y**2)
-NW_disk_FWHM = np.sqrt((2.35482004503 * NW_sigmas)**2 - b_FWHM_y**2)
+SE_disk_FWHM = np.sqrt((sigma_to_FWHM * SE_sigmas)**2 - b_FWHM_y**2)
+NW_disk_FWHM = np.sqrt((sigma_to_FWHM * NW_sigmas)**2 - b_FWHM_y**2)
 
 fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(8, 10), sharex=True)
 color = 'crimson'
-# ax1.set_title("Midplane intensity")
 # ax1.set_ylabel(r"Surface brightness ($\mu$Jy/beam)")
 # ax1.set_ylim(-50, 350)
 # ax1.plot(xaxis, SE_midplane_intensity, label='SE')
 # ax1.plot(xaxis, NW_midplane_intensity, '--', label='NW')
 # legend1 = ax1.legend()
-ax1.set_title("Spine intensity")
 ax1.set_ylabel(r"Surface brightness ($\mu$Jy/beam)")
 
 SE = ax1.plot(ra_range, SE_amps, label='SE')
@@ -115,10 +115,9 @@ ax1.set_xlim(0, 4.5*10)
 ax1.set_xticks(np.array([0,1,2,3,4])*10)
 legend1 = ax1.legend(loc='upper right')
 
-ax2.set_title("Spine deviation from midplane")
 ax2.set_ylabel("Elevation (au)")
-ax2.plot(ra_range, SE_mus*10, label='SE')
-ax2.plot(ra_range, NW_mus[:-1]*10, '--', label='NW', color=color)
+ax2.plot(ra_range, SE_mus*distance, label='SE')
+ax2.plot(ra_range, NW_mus[:-1]*distance, '--', label='NW', color=color)
 # ax2.axvline(1.02, ls=':', color='m')
 # ax2.axvline(1.70, ls=':', color='m')
 # ax2.axvline(2.96, ls=':', color='m')
@@ -127,12 +126,13 @@ ax2.set_ylim(-0.15*10, 0.15*10)
 # legend3 = ax2.legend(loc='upper left')
 
 ax3.set_xlabel("Projected separation from star (au)")
-ax3.set_title("Disk FWHM")
 ax3.set_ylabel(r'Beam-subtracted FWHM (au)')
-ax3.plot(ra_range, SE_disk_FWHM * 10, label='SE')
-ax3.plot(ra_range, NW_disk_FWHM[:-1] * 10, '--', label='NW', color=color)
-# ax3.plot(xaxis, SE_sigmas * 2.3548200450, label='SE')
-# ax3.plot(xaxis, NW_sigmas * 2.3548200450, '--', label='NW')
+ax3.plot(ra_range, SE_disk_FWHM * distance, label='SE')
+ax3.plot(ra_range, NW_disk_FWHM[:-1] * distance, '--', label='NW', color=color)
+# ax3.plot(ra_range, SE_sigmas * sigma_to_FWHM * distance, ':', label='SE unsubtracted')
+# ax3.plot(ra_range, NW_sigmas[:-1] * sigma_to_FWHM * distance, '-.', label='NW unsubtracted', color=color)
+
+# legend3 = ax3.legend(loc='upper right')
 ax3.set_ylim(0, 0.7*10)
 ax3.set_yticklabels([0, 2, 4, 6])
 # legend4 = ax3.legend(loc='upper left')
@@ -145,8 +145,8 @@ for ax in [ax1,ax2,ax3]:
     ax.yaxis.label.set_position((ylabel_x, ylabel_y))
     ax.yaxis._autolabelpos=False
 
-fig.savefig("boccaletti_plots_all.pdf", dpi=700)
-# plt.show()
+fig.savefig("../../../writing/figures/boccaletti_plots.pdf", dpi=1000)
+plt.show()
 
 #Check if slice profile is Gaussian
 # xpix = np.where((ra >= 2) & (ra <= 2.03))[0]
@@ -157,3 +157,12 @@ fig.savefig("boccaletti_plots_all.pdf", dpi=700)
 # plt.plot(dec[ypix_range], im[ypix_range, xpix])
 # plt.plot(dec[ypix_range], gauss_fit(dec[ypix_range]))
 # plt.show()
+
+# find offset of two (inner) local intensity maxima
+# slice_indices = (5 < ra_range) & (ra_range < 12)
+# slice_range =  ra_range[slice_indices]
+# slice_range[SE_amps[slice_indices].argmax()]
+# slice_range[NW_amps[:-1][slice_indices].argmax()]
+
+b_FWHM_x
+b_FWHM_y
