@@ -2,6 +2,54 @@
 
 ------------------------------------------------------------
 
+#### 4/14/18: Plavchan Luminosity Recalculation
+
+From Plavchan et al. (2009):
+> PHOENIX NextGen models are used to fit the observed optical and near-IR photometry rather than a blackbody, since the stellar SEDs are very different from that of a blackbody at optical and near-IR wavelengths (Hauschildt et al. 1999a, 1999b; Gray 1992; Mullan et al. 1989).
+> To fit the NextGen spectra to the available photometry, we compute a χ2 minimization as a function of effective temperature and normalization. We integrate model photospheres as a function of wavelength across effective bandpasses to compare to observed photometry for a given band.
+> Radii are fitted to the nearest 0.5% and the uncertainty is dominated by the uncertainty in the trigonometric parallax.
+
+- I don't think calculating $R_\star$ from a magnitude will work, due to the first sentence above..
+
+$$L = 4 \pi R_\star^2 \sigma T_{eff}^4$$
+$$f = \frac{L}{4 \pi d^2} \implies L = f \cdot 4 \pi d^2$$
+
+- Plavchan recalculations:
+``` python
+import numpy as np
+from uncertainties import ufloat
+import astropy.units as u
+import astropy.constants as c
+
+R_plav = 0.84*u.Rsun
+L_plav = 0.09*u.Lsun
+T_plav = ufloat(3500, 100) * (1*u.K) # K
+L_calc_plav = (4 * np.pi * R_plav.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T_plav**4); L_calc_plav
+```
+Recalculating Plavchan's luminosity (and propagating errors on $T_{eff}$) yields a consistent result, when rounded ($0.094895 \pm 0.010$ instead of 0.09)
+
+- Accounting for new Gaia distance by simply scaling Plavchan's result:
+```python
+dist_old = ufloat(9.9, 0.10) * (1*u.pc)
+gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943) 
+dist_gaia = 1000. / gaia_parallax * (1*u.pc); #9.724836365496536+/-0.004592563162732345
+
+L_gaia = L_plav * (dist_gaia / dist_old)**2; L_gaia
+```
+
+- By scaling recalculated Plavchan Luminosity:
+``` python
+L_gaia_scaled_L = L_calc_plav * (dist_gaia / dist_old)**2; L_gaia_scaled_L
+```
+
+- By scaling Plavchan's radius, then calculating:
+```python
+R_gaia = R_plav * (dist_gaia / dist_old)**2; R_gaia
+L_gaia_scaled_R = (4 * np.pi * R_gaia.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T_plav**4); L_gaia_scaled_R
+```
+
+------------------------------------------------------------
+
 #### 3/31/18: Local Intensity Maxima Offset
 
 - NW: 7.3
@@ -83,21 +131,6 @@ http://iopscience.iop.org/article/10.1088/1674-4527/17/10/105/meta
 
 paper about variability in debris disks
 http://iopscience.iop.org/article/10.1088/2041-8205/765/2/L44/pdf
-
-------------------------------------------------------------
-
-#### 4/14/18: Plavchan Luminosity uncertainty
-``` python
-import numpy as np
-from uncertainties import ufloat
-import astropy.units as u
-import astropy.constants as c
-R = 0.84*u.Rsun
-L = 0.09*u.Lsun
-T = ufloat(3500, 100) * (1*u.K) # K
-L_calc = (4 * np.pi * R.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T**4)
-print(L_calc) # 0.095+/-0.011 solLum
-```
 
 ------------------------------------------------------------
 
