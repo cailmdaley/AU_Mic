@@ -91,7 +91,7 @@ sigma = our_surface_density()
 sigma[:, 1] = macgregor_surface_density(1000)
 
 fig, ax = plt.subplots()
-labels = ['This work', 'Macgregor et al. (2013)', r'$r \leq 15$ au best fit']
+labels = ['This work', 'MacGregor et al. (2013)', r'$r_{min} \leq 15$ au best fit']
 ls = ['-', '--', ':']
 colors = [sns.color_palette()[0], 'crimson', 'k']
 for i in range(1, -1, -1):
