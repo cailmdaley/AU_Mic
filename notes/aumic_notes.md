@@ -9,7 +9,7 @@ From Plavchan et al. (2009):
 > To fit the NextGen spectra to the available photometry, we compute a χ2 minimization as a function of effective temperature and normalization. We integrate model photospheres as a function of wavelength across effective bandpasses to compare to observed photometry for a given band.
 > Radii are fitted to the nearest 0.5% and the uncertainty is dominated by the uncertainty in the trigonometric parallax.
 
-- I don't think calculating $R_\star$ from a magnitude will work, due to the first sentence above..
+I don't think calculating $R_\star$ from a magnitude will work, due to the first sentence above..
 
 $$L = 4 \pi R_\star^2 \sigma T_{eff}^4$$
 $$f = \frac{L}{4 \pi d^2} \implies L = f \cdot 4 \pi d^2$$
@@ -24,29 +24,30 @@ import astropy.constants as c
 R_plav = 0.84*u.Rsun
 L_plav = 0.09*u.Lsun
 T_plav = ufloat(3500, 100) * (1*u.K) # K
-L_calc_plav = (4 * np.pi * R_plav.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T_plav**4); L_calc_plav
+L_calc_plav = (4 * np.pi * R_plav.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T_plav**4);
+L_calc_plav #0.09489585020444333+/-0.010845240023364951
 ```
-Recalculating Plavchan's luminosity (and propagating errors on $T_{eff}$) yields a consistent result, when rounded ($0.094895 \pm 0.010$ instead of 0.09)
+Recalculating Plavchan's luminosity (and propagating errors on $T_{eff}$) yields a consistent result, when rounded.
 
-- Accounting for new Gaia distance by simply scaling Plavchan's result:
+- Accounting for new Gaia distance by simply scaling Plavchan's quoted result:
 ```python
 dist_old = ufloat(9.9, 0.10) * (1*u.pc)
 gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943) 
 dist_gaia = 1000. / gaia_parallax * (1*u.pc); #9.724836365496536+/-0.004592563162732345
 
-L_gaia = L_plav * (dist_gaia / dist_old)**2; L_gaia
+L_gaia = L_plav * (dist_gaia / dist_old)**2; L_gaia #0.08684338139181255+/-0.0017563281201353898
 ```
 
 - By scaling recalculated Plavchan Luminosity:
 ``` python
-L_gaia_scaled_L = L_calc_plav * (dist_gaia / dist_old)**2; L_gaia_scaled_L
+L_gaia_scaled_L = L_calc_plav * (dist_gaia / dist_old)**2; L_gaia_scaled_L #0.09156751679783094+/-0.010627450100927275
 ```
 
-- By scaling Plavchan's radius, then calculating:
-```python
-R_gaia = R_plav * (dist_gaia / dist_old)**2; R_gaia
-L_gaia_scaled_R = (4 * np.pi * R_gaia.si**2 * c.sigma_sb.to(u.Lsun / (u.m**2 * u.K**4)) * T_plav**4); L_gaia_scaled_R
-```
+In sum, when the quoted luminosity of 0.09 is scaled by the new Gaia distance, we find a new luminosity of 0.0868. Rounding to one sig fig, this doesn't change anything.
+Furthermore, I think Plavchan calculated a luminosity of 0.0948 but rounded it to 0.09 in the table.
+Scaling the recalculated luminosity of 0.0948 by the new Gaia distance yields 0.0916, which is actually still larger than the quoted value of 0.09.
+So on both accounts, I think we are justified in keeping the model stellar luminosity at 0.09.
+
 
 ------------------------------------------------------------
 
