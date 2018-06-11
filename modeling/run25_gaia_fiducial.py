@@ -249,7 +249,7 @@ def make_best_fits(run, concise=False):
                 [[4.6, 4.0, 'Residuals']]
                 ],
             title=None, #r'Run 6 Global Best Fit Model & Residuals',
-            savefile=run.name+'/' + run.name + '_bestfit_concise.pdf',
+            savefile='../writing/figures/fiducial_best_fit.pdf',
             show=True)
     else:
         fig = plotting.Figure(layout=(4,3),
@@ -266,46 +266,6 @@ def make_best_fits(run, concise=False):
            title= run.name + r'Global Best Fit Model & Residuals',
           savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
           
-
-def sample_disk_flux(run, best_fit = False):
-    if best_fit:
-        subset_df = run.main#[run.main['r_in'] < 15]
-        model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
-    else:
-        model_params = run.main.sample()
-    
-    for param in model_params.columns[:-1]:
-        param_dict[param] = model_params[param].values
-
-
-    param_dict['m_disk'] = 10**param_dict['m_disk']
-    param_dict['d_r'] += param_dict['r_in']
-
-    disk_params = param_dict.values()[:-3]
-    starfluxes = param_dict.values()[-3:]
-
-    # intialize model and make fits image
-    model = fitting.Model(observations=aumic_fitting.band6_observations,
-        root=run.name + '/model_files/',
-        name=run.name + '_bestfit')
-    make_fits(model, disk_params)
-
-    model_im = fits.open(model.path + '.fits')[0].data[0]
-    disk_flux = model_im.sum()
-    print(disk_flux)
-    return disk_flux
-    
-def disk_flux_stats(n_samples):
-    run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=-2000)
-    
-    disk_fluxes = [sample_disk_flux(run) for i in range(n_samples)]
-    print(disk_fluxes)
-    
-    bf = sample_disk_flux(run, best_fit = True)
-    print('Best-fit disk flux: {}'.format(bf))
-    print('Standard deviation of {} samples: {}'.format(n_samples, np.std(disk_fluxes)))
-    
-
 if __name__ == '__main__':
     main()
     

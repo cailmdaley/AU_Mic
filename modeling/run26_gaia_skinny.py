@@ -11,7 +11,7 @@ from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run65'
+run_name='run26'
 def main():
     parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run26, which has 50 walkers and varies the following parameters:
     1)  disk mass
@@ -247,7 +247,7 @@ def make_best_fits(run, concise=False):
                 [[4.6, 4.0, 'Residuals']]
                 ],
             title=None, #r'Run 6 Global Best Fit Model & Residuals',
-            savefile=run.name+'/' + run.name + '_bestfit_concise.pdf',
+            savefile='../writing/figures/skinny_best_fit.pdf',
             show=True)
     else:
         fig = plotting.Figure(layout=(4,3),
