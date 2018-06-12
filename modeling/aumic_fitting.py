@@ -23,7 +23,7 @@ band6_rms_values = np.array([
 2.58940304301e-05,
 2.70553631515e-05,
 2.09217450873e-05,
-1.47444691066e-05])
+1.5e-05])
 
 band6_fits_images = [
     '../band6/cleans/current/band6_star_mar_allspws.natural_clean.fits', 

@@ -14,11 +14,14 @@ nvis = np.sum([fits.open(uvf)[0].data.shape[0] for uvf in uvfs])
 
 
 # get get run directories and names
-runs = []
-for i in range(6,100):
-    try: runs.append(glob('run{}'.format(i))[0])
-    except IndexError: pass
-run_names = [glob(run + '_*')[0][:-3] for run in runs]
+# runs = []
+# for i in range(6,100):
+#     try: runs.append(glob('run{}_gaia*'.format(i))[0])
+#     except IndexError: pass
+# run_names = [glob(run + '_*')[0][:-3] for run in runs]
+
+run_names = [run_name[:-3] for run_name in glob('*gaia*')]
+runs = [run_name[:5] for run_name in run_names]
 
 # pull nsamples, number of free params, and min chi^2 from each chain
 
@@ -39,7 +42,7 @@ run_info.AICc = AIC + (2*run_info.k * (run_info.k + 1)) / (nvis - run_info.k - 1
 # AICc differs from AIC by only 0.001, but what the hell let's use it.
 
 # calculate model relative liklehood, converto to guassian sigma
-rel_like = np.exp((run_info.AICc['run19_fiducial'] - run_info.AICc)/2.)
+rel_like = np.exp((run_info.AICc['run25_gaia_fiducial'] - run_info.AICc)/2.)
 # rel_like = np.exp((run_info.AICc.min() - run_info.AICc)/2.)
 gauss = scipy.stats.norm()
 for row in run_info.index:
@@ -50,7 +53,7 @@ for row in run_info.index:
 
 # calculate delta BIC
 run_info.d_BIC = np.log(nvis)*run_info.k - 2 * run_info.lnprob
-run_info.d_BIC -= run_info.d_BIC['run19_fiducial']
+run_info.d_BIC -= run_info.d_BIC['run25_gaia_fiducial']
 # run_info.d_BIC -= run_info.d_BIC.min()
 
 print(run_info.sort_values('AIC_sigma', ascending=True).round(3))

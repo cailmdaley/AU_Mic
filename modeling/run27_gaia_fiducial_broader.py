@@ -11,7 +11,7 @@ from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run25'
+run_name='run27'
 def main():
     parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run25, which has 50 walkers and varies the following parameters:
     1)  disk mass
@@ -24,7 +24,7 @@ def main():
     8)  march starflux
     9)  august starflux
     10) june starflux
-This run is a redo of the previous fiducial model run19. This run uses the new Gaia distance to AU Mic and a new gridding resolution.''')
+This run is a redo of the previous fiducial model run25, but with a broader range of inital positions. This run uses the new Gaia distance to AU Mic and a new gridding resolution.''')
 
     parser.add_argument('-r', '--run', action='store_true',
         help='begin or resume eemcee run.')
@@ -51,12 +51,12 @@ This run is a redo of the previous fiducial model run19. This run uses the new G
         mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.54,        0.06,      (-np.inf, np.inf)),
-            ('sb_law',            1,            0.5,         (-np.inf, np.inf)),
-            ('scale_factor',      0.031,        0.005,      (0,       np.inf)),
-            ('r_in',              18,           5,         (0,       np.inf)),
+            ('sb_law',            1.5,          1.5,       (-np.inf, np.inf)),
+            ('scale_factor',      0.031,        0.005,     (0,       np.inf)),
+            ('r_in',              12,           10,        (0,       np.inf)),
             ('d_r',               24.3,         5,         (0,       np.inf)),
             ('inc',               88.6,         0.4,       (0,       90.)),
-            ('pa',                128.49,       0.07,       (0,       360)),
+            ('pa',                128.49,       0.07,      (0,       360)),
             ('mar_starflux',      3.9e-4,       0.2e-4,    (0,       np.inf)),
             ('aug_starflux',      1.5e-4,       0.2e-4,    (0,       np.inf)),
             ('jun_starflux',      2.2e-4,       0.2e-4,    (0,       np.inf))])
@@ -249,8 +249,7 @@ def make_best_fits(run, concise=False):
                 [[4.6, 4.0, 'Residuals']]
                 ],
             title=None, #r'Run 6 Global Best Fit Model & Residuals',
-            savefile='../writing/figures/fiducial_best_fit.pdf',
-            # savefile=run.name+'/' + run.name + '_bestfit_global.pdf',
+            savefile=run.name+'/' + run.name + '_bestfit_concise.pdf',
             show=True)
     else:
         fig = plotting.Figure(layout=(4,3),
@@ -267,6 +266,46 @@ def make_best_fits(run, concise=False):
            title= run.name + r'Global Best Fit Model & Residuals',
           savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
           
+
+def sample_disk_flux(run, best_fit = False):
+    if best_fit:
+        subset_df = run.main#[run.main['r_in'] < 15]
+        model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
+    else:
+        model_params = run.main.sample()
+    
+    for param in model_params.columns[:-1]:
+        param_dict[param] = model_params[param].values
+
+
+    param_dict['m_disk'] = 10**param_dict['m_disk']
+    param_dict['d_r'] += param_dict['r_in']
+
+    disk_params = param_dict.values()[:-3]
+    starfluxes = param_dict.values()[-3:]
+
+    # intialize model and make fits image
+    model = fitting.Model(observations=aumic_fitting.band6_observations,
+        root=run.name + '/model_files/',
+        name=run.name + '_bestfit')
+    make_fits(model, disk_params)
+
+    model_im = fits.open(model.path + '.fits')[0].data[0]
+    disk_flux = model_im.sum()
+    print(disk_flux)
+    return disk_flux
+    
+def disk_flux_stats(n_samples):
+    run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=-2000)
+    
+    disk_fluxes = [sample_disk_flux(run) for i in range(n_samples)]
+    print(disk_fluxes)
+    
+    bf = sample_disk_flux(run, best_fit = True)
+    print('Best-fit disk flux: {}'.format(bf))
+    print('Standard deviation of {} samples: {}'.format(n_samples, np.std(disk_fluxes)))
+    
+
 if __name__ == '__main__':
     main()
     

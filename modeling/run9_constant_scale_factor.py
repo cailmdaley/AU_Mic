@@ -9,6 +9,7 @@ from disk_model import debris_disk, raytrace
 from aumic_fitting import band6_rms_values, band6_fits_images, band6_rms_values, band6_observations
 import aumic_fitting
 
+run_name='run9'
 def main():
     parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run8, which has 50 walkers and varies the following parameters:
     1)  disk mass
@@ -22,45 +23,57 @@ def main():
     9)  june starflux
 This run implements a constant-with-radius scale factor in order to explore which scale height prescription (linear or constant) better fits the data.''')
     
-    parser.add_argument('-r', '--run', action='store_true', 
+    parser.add_argument('-r', '--run', action='store_true',
         help='begin or resume eemcee run.')
-        
-    parser.add_argument('-a', '--analyze', action='store_true', 
+
+    parser.add_argument('-a', '--analyze', action='store_true',
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
-    parser.add_argument('-b', '--burn_in', default=0, type=int, 
+    parser.add_argument('-b', '--burn_in', default=0, type=int,
         help='number of steps \'burn in\' steps to exclude')
-    parser.add_argument('-bf', '--best_fit', action='store_true', 
+    parser.add_argument('-bf', '--best_fit', action='store_true',
         help='generate best fit model images and residuals')
-    parser.add_argument('-c', '--corner', action='store_true', 
+    parser.add_argument('-con', '--concise', action='store_true',
+        help='concise best fit')
+    parser.add_argument('-c', '--corner', action='store_true',
         help='generate corner plot')
-    parser.add_argument('-e', '--evolution', action='store_true', 
+    parser.add_argument('-cvars', '--corner_vars', default=None, nargs='+',
+        help='concise best fit')
+    parser.add_argument('-e', '--evolution', action='store_true',
         help='generate walker evolution plot.')
-    parser.add_argument('-kde', '--kernel_density', action='store_true', 
+    parser.add_argument('-kde', '--kernel_density', action='store_true',
         help='generate kernel density estimate (kde) of posterior distribution')
     args=parser.parse_args()
-    
-    
+
     if args.run:
-        mcmc.run_emcee(run_name='run9', nsteps=10000, nwalkers=50,
+        mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
             lnprob = lnprob, to_vary = [
-            ('m_disk',            -7.55,        0.05,      (-np.inf, np.inf)),
-            ('sb_law',            1.5,          1.5,       (-5.,     10.)),
-            ('scale_factor',      0.2,          0.2,       (0,       np.inf)),
-            ('r_in',              10,           10,        (0,       np.inf)),
-            ('d_r',               31.5,         10,        (0,       np.inf)),
-            ('inc',               89,           1,         (0,       90)),
-            ('pa',                128.48,       0.1,       (1,       360)),
-            ('mar_starflux',      3.94e-4,      5e-5,      (0,       np.inf)),
-            ('aug_starflux',      1.50e-4,      1e-5,      (0,       np.inf)),
-            ('jun_starflux',      2.30e-4,      1e-5,      (0,       np.inf))])
+            ('m_disk',            -7.54,        0.06,      (-np.inf, np.inf)),
+            ('sb_law',            1,            0.5,         (-np.inf, np.inf)),
+            ('scale_factor',      0.031,        0.005,      (0,       np.inf)),
+            ('r_in',              18,           5,         (0,       np.inf)),
+            ('d_r',               24.3,         5,         (0,       np.inf)),
+            ('inc',               88.6,         0.4,       (0,       90.)),
+            ('pa',                128.49,       0.07,       (0,       360)),
+            ('mar_starflux',      3.9e-4,       0.2e-4,    (0,       np.inf)),
+            ('aug_starflux',      1.5e-4,       0.2e-4,    (0,       np.inf)),
+            ('jun_starflux',      2.2e-4,       0.2e-4,    (0,       np.inf))])
     else:
-        run = mcmc.MCMCrun('run9', nwalkers=50, burn_in=args.burn_in)
+        run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
+        # old_nsamples = run.groomed.shape[0]
+        # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
+        # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
         
-        if args.analyze or args.best_fit: make_best_fits(run)
+        if args.corner_vars:
+            cols = list(run.groomed.columns)
+            col_indices = [cols.index(col) for col in args.corner_vars]
+
+        if args.analyze or args.best_fit: make_best_fits(run, concise=args.concise)
         aumic_fitting.label_fix(run)
+        if args.corner_vars: args.corner_vars = run.groomed.columns[col_indices]
+        
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
-        if args.analyze or args.corner: run.corner()
+        if args.analyze or args.corner: run.corner(variables=args.corner_vars)
     
 
 # default parameter dict:
@@ -87,7 +100,7 @@ param_dict = OrderedDict([
     ('mar_starflux',      2.50e-4),
     ('aug_starflux',      2.50e-4),
     ('jun_starflux',      2.50e-4)])
-
+    
 def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
     PA = disk_params[-1]
@@ -103,7 +116,7 @@ def make_fits(model, disk_params):
         nchans=1, # continum
         isgas=False, # continuum!
         includeDust=True, #continuuum!!
-        extra=0.0, # ?
+        extra=0, # ?
         modfile = model.root + model.name)
 
 def fix_fits(model, obs, starflux):

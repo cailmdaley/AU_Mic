@@ -40,9 +40,13 @@ ax1.plot(rs, np.linspace(2.5,3.5,100) / 2,  ls='-.', label='Krist et al. (2005),
 rs = np.linspace(20, 40, 4)
 ax1.plot(rs, np.linspace(2.5,4.2,4)/2,  ls=':', label='Metchev et al. (2005)')
 
-ax1.set_xlim(0,50); ax2.set_xlim(0,50)
-ax1.legend(bbox_to_anchor=(0, -0.05, 0.9, -0.05)); ax2.legend(bbox_to_anchor=(0, -0.05, 1, -0.05))
-ax2.tick_params(axis='y', labelright=True)
+ax1.set_xlim(0,50); 
 ax1.invert_xaxis()
+ax1.legend(bbox_to_anchor=(0, -0.05, 0.9, -0.05)); 
+
+ax2.set_xlim(0,50)
+ax2.legend(bbox_to_anchor=(0, -0.05, 1, -0.05))
+ax2.tick_params(axis='y', labelright=True)
+
 plt.subplots_adjust(wspace=0)
 plt.show()

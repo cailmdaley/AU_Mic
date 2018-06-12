@@ -1,12 +1,62 @@
-#  AU Mic Research Notes
+---
+title : AU Mic Research Notes
+author: Cail Daley
+date : \today
+urlcolor : cyan
+---
 
 ------------------------------------------------------------
 
-#### 4/14/18: Plavchan Luminosity Recalculation
+#### 6/8/18: scaling values in the literature by Gaia distance
+
+```python 
+from uncertainties import ufloat
+dist_old = ufloat(9.9, 0.10)
+gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943) 
+dist_gaia = 1000. / gaia_parallax
+scaling_factor = (dist_gaia / dist_old)**2
+
+M_dust = 0.010*scaling_factor; print(M_dust)# 0.00965+/-0.00020
+M_dust_Liu = 0.011*scaling_factor; print(M_dust_Liu) # 0.01061+/-0.00021
+
+macgregor_stellar_flux = ufloat(320, 60) * scaling_factor
+print(macgregor_stellar_flux) # 310+/-60 
+
+macgregor_r_in_lower = ufloat(8.8, 1) * scaling_factor 
+macgregor_r_in_upper = ufloat(8.8, 11) * scaling_factor 
+print(macgregor_r_in_lower, macgregor_r_in_upper) # 8.5 +11.0/-1.0
+macgregor_r_in_3sigma = 21 * scaling_factor; print(macgregor_r_in_3sigma)
+
+
+macgregor_r_out = ufloat(40.3, 0.4) * scaling_factor
+print(macgregor_r_out) # 38.9+/-0.9
+
+```
+
+------------------------------------------------------------
+
+#### 6/7/18: Notes on Eugene's Email
+
+[Quillen (2006):](http://articles.adsabs.harvard.edu/pdf/2006MNRAS.372L..14Q)  
+
+> We denote the free eccentricity dispersion, $u_e^2 = \langle e_{proper}^2 \rangle$. 
+> The slope of Fomalhaut’s disc edge $h_r / r \leq 0.026$ so the free eccentricities in the disc edge are $u_e \leq 0.026$.
+
+this seems to contradict Quillen (2007), where $e = 2i = 2\sqrt{2}h$...
+
+
+[Quillen & Faber (2006)](https://arxiv.org/pdf/astro-ph/0608059.pdf)
+has eccentricity dependence
+
+
+------------------------------------------------------------
+
+#### 6/5/18: Plavchan Luminosity Recalculation
 
 From Plavchan et al. (2009):
+
 > PHOENIX NextGen models are used to fit the observed optical and near-IR photometry rather than a blackbody, since the stellar SEDs are very different from that of a blackbody at optical and near-IR wavelengths (Hauschildt et al. 1999a, 1999b; Gray 1992; Mullan et al. 1989).
-> To fit the NextGen spectra to the available photometry, we compute a χ2 minimization as a function of effective temperature and normalization. We integrate model photospheres as a function of wavelength across effective bandpasses to compare to observed photometry for a given band.
+> To fit the NextGen spectra to the available photometry, we compute a $\chi^2$ minimization as a function of effective temperature and normalization. We integrate model photospheres as a function of wavelength across effective bandpasses to compare to observed photometry for a given band.
 > Radii are fitted to the nearest 0.5% and the uncertainty is dominated by the uncertainty in the trigonometric parallax.
 
 I don't think calculating $R_\star$ from a magnitude will work, due to the first sentence above..
@@ -92,8 +142,8 @@ import astropy.units as u
 longest_baseline= 1320.*u.m / (1.4*u.mm)
 
 angular_scale = np.degrees(1 / longest_baseline.decompose().value)*3600
-angular_scale
 angular_scale # 0.21876570359540523
+spatial_scale = angular_scale * 9.725; spatial_scale # 2.1274964674653156
 ```
 
 ------------------------------------------------------------
@@ -443,18 +493,16 @@ Total flux = Sum / (Npts/BeamArea) = 34.341mJy?
     - $\Delta \delta = 1.535''$  
  
   ``` python
-  
-  from uncertainties import ufloat, unumpy
-  import numpy as np
-  flux_density = ufloat(3.291588e-04, 1.5e-05)
-  # uncertainty in position is beam size / SNR
-  sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
-  sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
-  delta_ra = ufloat(1.95, sigma_ra); delta_dec = ufloat(1.535, sigma_dec)
-  sep_au_NW = (delta_ra**2 + delta_dec**2)**(1/2) * 10
-  pa_NW = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
-  sep_au = 24.81677859835962+/-0.20689604650955343
-  pa_NW = 128.20909555997156+/-0.429533385284153
+from uncertainties import ufloat, unumpy
+import numpy as np
+flux_density = ufloat(3.291588e-04, 1.5e-05)
+# uncertainty in position is beam size / SNR
+sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
+sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
+delta_ra = ufloat(1.95, sigma_ra); delta_dec = ufloat(1.535, sigma_dec)
+sep_au_NW = (delta_ra**2 + delta_dec**2)**(1/2) * 9.725
+pa_NW = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
+print(sep_au_NW, pa_NW) # 24.13+/-0.20, 128.2+/-0.4 
   ```
     
 - SE ansa:
@@ -466,19 +514,17 @@ Total flux = Sum / (Npts/BeamArea) = 34.341mJy?
     - PA = 128.69
     - 2.896" separation  
  
-  ``` python
-  
-  flux_density = ufloat(3.440531e-04, 1.5e-05)
-  # uncertainty in position is beam size / SNR
-  sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
-  sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
-  delta_ra = ufloat(-2.26, sigma_ra); delta_dec = ufloat(-1.81, sigma_dec)
-  sep_au_SE = (delta_ra**2 + delta_dec**2)**(1/2) * 10
-  pa_SE = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
-  sep_au_SE = 28.954619665953132+/-0.19727787660646948
-  pa_SE = 128.69071212353822+/-0.35366250858778997
-  pa_SE - pa_NW = 0.4816165635666607+/-0.5563956317713802
-  ```
+``` python
+flux_density = ufloat(3.440531e-04, 1.5e-05)
+# uncertainty in position is beam size / SNR
+sigma_ra = 0.52 / (flux_density.n / flux_density.std_dev)
+sigma_dec = 0.32 / (flux_density.n / flux_density.std_dev)
+delta_ra = ufloat(-2.26, sigma_ra); delta_dec = ufloat(-1.81, sigma_dec)
+sep_au_SE = (delta_ra**2 + delta_dec**2)**(1/2) * 10
+pa_SE = - unumpy.arctan(delta_ra / delta_dec) * 180 / np.pi + 180
+print(sep_au_SE, pa_SE) # 28.95+/-0.20, 128.69+/-0.35 
+print(pa_SE - pa_NW) # 0.5+/-0.6
+```
   
 ------------------------------------------------------------
 
@@ -741,10 +787,9 @@ d_ra_arcsec = 15 * (
   - ra_noflare * unp.cos( unp.radians( dec_noflare ) ) )
 d_dec_arcsec = 60**2 * (dec_flare - dec_noflare)
 
-angular_sep = unp.sqrt( d_ra_arcsec**2 + d_dec_arcsec**2 )
-print(angular_sep)
-# angular_sep = array(0.07096964818969821+/-0.0018333986944531894, dtype=object)
-print(angular_sep*10)
+angular_sep = unp.sqrt( d_ra_arcsec**2 + d_dec_arcsec**2 );
+print(angular_sep) # 0.0710+/-0.0018
+print(angular_sep*9.725) # 0.690+/-0.018
 
 ```
 
