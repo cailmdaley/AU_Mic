@@ -250,6 +250,7 @@ def make_best_fits(run, concise=False):
                 ],
             title=None, #r'Run 6 Global Best Fit Model & Residuals',
             savefile='../writing/figures/fiducial_best_fit.pdf',
+            # savefile=run.name+'/' + run.name + '_bestfit_global.pdf',
             show=True)
     else:
         fig = plotting.Figure(layout=(4,3),
