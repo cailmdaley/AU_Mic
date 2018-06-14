@@ -179,7 +179,7 @@ In addition to these standard procedures, the weights of the visibilities were r
 
 
 During the last segment of the June observation (04:23:38-04:29:58 UT), the host star flared. 
-To determine the flux of the flare as a function of time, we binned the data into one-minute intervals using the \texttt{CASA} task \texttt{split} and fit a point source in each bin to baselines between \SI{100}{\kilo \lambda} and \SI{1400}{\kilo \lambda} with \texttt{uvmodelfit}. 
+To determine the flux density of the flare as a function of time, we binned the data into one-minute intervals using the \texttt{CASA} task \texttt{split} and fit a point source in each bin to baselines between \SI{100}{\kilo \lambda} and \SI{1400}{\kilo \lambda} with \texttt{uvmodelfit}. 
 The resulting point-source fits can be found in Table \ref{tab:flare fluxes}. 
 We exclude from our analysis of the disk emission the seven minutes during which the flare occurred, as it proved difficult to separate the stellar emission from the disk emission while it was changing so rapidly.
 
@@ -187,7 +187,7 @@ We exclude from our analysis of the disk emission the seven minutes during which
   \centering
   \begin{tabular}{lr}
     \toprule
-    Time (UTC) & Point-source Flux (\si{mJy}) \\
+    Time (UTC) & Point-source Flux Density (\si{mJy}) \\
     \midrule
     03:45:0--04:20:0 (no flare) & $0.41 \pm 0.02$\\
   	4:23:38--4:24:00 & $0.92 \pm 0.17$ \\
@@ -199,7 +199,7 @@ We exclude from our analysis of the disk emission the seven minutes during which
   	4:29:00--4:29:58 & $0.52 \pm 0.10$\\
     \bottomrule
   \end{tabular}
-	\caption{Central point source flux before and during the June 24 flare}
+	\caption{Central point source flux densities before and during the June 24 flare}
   \label{tab:flare fluxes}
 \end{table}
 
@@ -234,10 +234,11 @@ Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets
 
 Figure \ref{fig: aumic_imaged} shows the combined dust continuum emission from all three observations at \SI{1.3}{mm}; chromospheric emission from the M star is visible as a point source at the center of the image \citep{cranmer13}. 
 The peak signal-to-noise ratio of dust emission is $\sim 23$.
-Using the \texttt{MIRIAD} task \texttt{cgcurs} \citep{sault95}, we measure an integrated flux of \SI{4.97 \pm 0.08}{\milli Jy} enclosed within the $3\sigma$ contours of the naturally weighted image.  
+Using the \texttt{MIRIAD} task \texttt{cgcurs} \citep{sault95}, we measure an integrated flux density of \SI{4.97 \pm 0.08}{\milli Jy} enclosed within the $3\sigma$ contours of the naturally weighted image.  
 We note that this value represents the combined emission from the disk \textit{and} the star. 
 Faithfully disentangling the two components proved difficult, both because the stellar flux varied significantly across the three nights of observation (Table \ref{tab: params}) and because emission from the star and edge-on disk overlap in the sky plane.
-Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux of \SI{4.80 \pm 0.17}{mJy}.
+Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux density of \SI{4.80 \pm 0.17}{mJy}.
+This value is significantly smaller than the best-fit \SI{1.28}{mm} disk flux density of $7.14^{+0.12}_{-0.25}~\si{mJy}$ reported by \cite{macgregor13} (equivalent to $6.46^{+0.11}_{-0.23}~\si{mJy}$ when scaled to our observing wavelength of \SI{1.35}{mm} assuming a blackbody temperature of \SI{25}{K}).
 
 The ansa to the NW exhibits a maximum flux density of \SI{330 \pm 15}{\mu Jy/beam} at a separation of \SI{24.1 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.2} \pm 0.4$, while the ansa to the SE exhibits a maximum flux density of \SI{340 \pm 15}{\mu Jy} at a separation of \SI{29.0 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.7} \pm 0.4$. 
 Here PA is measured counterclockwise with respect to the north celestial pole.
@@ -279,7 +280,7 @@ This is not entirely surprising, as both \cite{sezestre17} and \cite{chiang&fung
 \label{subsection: gas}
 
 There is no evidence that the AU Mic system harbors a significant reservoir of molecular gas.
-We set a $3 \sigma$ upper limit of \SI{0.07}{Jy.km.s^{-1}} on the CO~$\mathrm{J}=2-1$ integrated flux, obtained by integrating the flux in an $\SI{8}{\arcsecond} \times \SI{8}{\arcsecond}$ box around the star between $V_{LSRK}$ velocities of $-10$ and \SI{10}{km.s^{-1}}.
+We set a $3 \sigma$ upper limit of \SI{0.07}{Jy.km.s^{-1}} on the CO~$\mathrm{J}=2-1$ integrated flux, obtained by integrating the flux density in an $\SI{8}{\arcsecond} \times \SI{8}{\arcsecond}$ box around the star between $V_{LSRK}$ velocities of $-10$ and \SI{10}{km.s^{-1}}.
 For a given excitation temperature, an upper limit on the total gas mass can be inferred from the upper limit on integrated flux.
 Assuming local thermal equilibrium (LTE) and that the gas is cospatial with the dust disk, we find the upper limit on the total gas mass to range between \SIrange[range-phrase=\ and\ ]{1.79e-7}{9.06e-7}{M_\earth} for excitation temperatures between \SIrange[range-phrase=\ and\ ]{10}{250}{K}.
 
@@ -325,8 +326,8 @@ $\Sigma_c$ normalizes the surface density structure for a given total dust mass 
 
 The observed disk PA and inclination $i$ are free parameters.
 We adopt a stellar luminosity of \SI{0.09}{L_\sun} \citep{plavchan09} and a distance to the star of \SI{9.725 \pm 0.005}{pc}
-\citep{gaia_DR2}; the observed \SI{1.3}{mm} stellar flux $F_\star$ is left as a free parameter for each observation date.
-We note that the uncertainty in the stellar distance could affect the modeled disk mass and disk radial extent, while the 10\% systematic flux uncertainty could affect the modeled disk mass and stellar flux.
+\citep{gaia_DR2}; the observed \SI{1.3}{mm} stellar flux density $F_\star$ is left as a free parameter for each observation date.
+We note that the uncertainty in the stellar distance could affect the modeled disk mass and disk radial extent, while the 10\% systematic flux uncertainty could affect the modeled disk mass and stellar flux density.
 The disk center was set by by the celestial coordinates of the star, which were obtained in \ref{section: observations}.
 The spatial resolution of the resulting model sky image is set to \SI{0.3}{au} per pixel, chosen to be $\sim \SI{10}{\percent}$ of the spatial scale sampled by the longest baseline in the data. 
 After the model image is generated by the ray tracing code, it is Fourier transformed into the visibility domain and sampled at the same spatial frequencies as the ALMA data with the \texttt{MIRIAD} task \texttt{uvmodel}.
@@ -339,7 +340,7 @@ A log-likelihood metric $\ln \mathcal{L} = -\chi^2 / 2$ is used to assess the qu
 
 We assume uniform priors for all parameters; the dust mass was sampled in logarithmic space, formally equivalent to assuming a log uniform prior.
 Bounds placed on the logarithm of the dust mass were chosen to be large enough to so as not to impose any prior assumptions.
-Priors placed on the stellar flux and disk inner radius, width, power law exponent, and aspect ratio ensured that these parameters were always greater than zero.
+Priors placed on the stellar flux density and disk inner radius, width, power law exponent, and aspect ratio ensured that these parameters were always greater than zero.
 The position angle was confined to the range $\ang{1} < \text{PA} < \ang{360}$, and the inclination to $\ang{0} < i < \ang{90}$.
 Because AU Mic is so close to edge-on, the preferred inclination falls very close to the \ang{90} prior upper bound. 
 To ensure that the proximity of the solution to the edge of parameter space does not affect the posterior distribution, we investigated the effect of allowing the inclination to vary above \ang{90}. 
@@ -357,11 +358,11 @@ All runs used 50 walkers, and $10^5$ samples were drawn from each run to allow a
   \label{fig: kde}
 \end{figure}
 
-Initially we varied ten parameters: the logarithm of the disk dust mass ($\log M_{dust}$), the disk inner radius ($r_{in}$), width ($\Delta r$), power law exponent ($p$), scale height aspect ratio ($h$), inclination ($i$), position angle (PA), and finally a separate stellar flux ($F_\star$) for each of the three observation dates. 
+Initially we varied ten parameters: the logarithm of the disk dust mass ($\log M_{dust}$), the disk inner radius ($r_{in}$), width ($\Delta r$), power law exponent ($p$), scale height aspect ratio ($h$), inclination ($i$), position angle (PA), and finally a separate stellar flux density ($F_\star$) for each of the three observation dates. 
 After the fact, the posterior distribution for $\Delta r$ was replaced by the outer radius posterior $r_{out} = r_{in} + \Delta r$ to allow for easier interpretation.
 This model formalism resulted in a best-fit $\chi^2$ value of 626163.598 (reduced $\chi^2=2.053$), and we treat this parameterization as our fiducial model.
 The reduced $\chi^2$ value indicates that our best-fit model is not a perfect fit to the data, perhaps due to the 3-sigma residuals discussed in Section \ref{subsection: radial analysis}.  
-The statistical weights are likely not responsible, due to our recalculation of the weights according to the observed variance within each grid point in the $u-v$ plane; these were checked to ensure that the distribution was indeed Gaussian.
+The statistical weights are likely not responsible, due to our recalculation of the weights according to the observed variance within each grid point in the $u$\nobreakdash--$v$ plane; these were checked to ensure that the distribution was indeed Gaussian.
 
 \begin{figure}
   \centering
@@ -430,7 +431,7 @@ The best-fit ring model is preferred to the fiducial model with $3.7 \sigma$ con
 As such, we are not able to conclusively confirm the presence of an additional ring of mm dust grains in the AU Mic disk.
 
 A model with a single $F_\star$ across all three dates was also investigated, but did not reproduce the data to the same degree of accuracy as the fiducial model.
-Significant residuals were visible at the location of the star, and  a stellar flux varying by more than a factor of 2 over a period of months to years is preferred with $7.3 \sigma$ confidence by the AICc and with $\Delta \text{BIC} = 36.7$.
+Significant residuals were visible at the location of the star, and  a stellar flux density varying by more than a factor of 2 over a period of months to years is preferred with $7.3 \sigma$ confidence by the AICc and with $\Delta \text{BIC} = 36.7$.
 
 \begin{table}
   \centering
@@ -479,7 +480,7 @@ The skinny model results in a significantly poorer fit to the data than the fidu
 The preferred disk FWHM is only $\sim 2/3$ the size of the combined-data beam projected onto the vertical axis of the disk.
 While it may seem improbable that we measure a scale height below the image-domain spatial resolution of the combined data, our results can be explained by the following observations.
 First, the beam size of the naturally weighted combined image ($\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$) is not wholly representative of the longest baselines in the data. 
-The smallest naturally weighted beam FHWM from the three individual observations is \SI{0.30}{\arcsecond} ($\sim$\SI{3}{au}; Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is \SI{0.22}{\arcsecond} ($\sim$\SI{2.2}{au}).
+The smallest naturally weighted beam FHWM from the three individual observations is $\SI{0.30}{\arcsecond} = \SI{2.9}{au}$ (Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is $\SI{0.22}{\arcsecond} = \SI{2.1}{au}$.
 Second, the scale height $H$ refers to the disk height as measured from the midplane; the observable quantity that must be resolved in order to measure the scale height is actually the total vertical thickness $2H$.
 Third, the scale height represents the standard deviation of a Gaussian distribution of dust particles that in fact reaches well beyond the extent of the scale height.
 For example, considering that the peak SNR of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.38}{\arcsecond} (\SI{3.8}{au}). 
@@ -519,8 +520,9 @@ Such a low dust-to-gas ratio excludes the possibility of gas influencing the mil
 \subsection{Stellar Activity}
 \label{subsection: stellar activity}
 
-Our analysis indicates with high confidence that AU Mic exhibited long-term millimeter variability over the $\sim \SI{1.5}{yr}$ observation period. 
-The stellar fluxes preferred by our modeling vary by more than a factor of two from one observation to the next, and are comparable to the best-fit flux of \SI{320 \pm 60}{\mu Jy} from \cite{macgregor13}.
+Our analysis indicates with high confidence that AU Mic exhibited long-term millimeter variability over the $\sim \SI{1.5}{yr}$ observation period, with stellar
+flux densities preferred by our modeling varying by more than a factor of two ($150^{+20}_{-30}~\si{\mu Jy}$ to \SI{390 \pm 20}{\mu Jy}) from one observation to the next.
+Our values are comparable to the best-fit \SI{1.28}{mm} flux density of \SI{320 \pm 60}{\mu Jy} from \cite{macgregor13}, which is equivalent to \SI{290 \pm 50}{\mu Jy} when scaled to our observing wavelength of \SI{1.35}{mm} assuming an effective stellar temperature of \SI{3500 \pm 100}{K} from \cite{plavchan09}.
 It seems likely that this variability is distinct from the \SI{6}{minute} flare spanning two orders of magnitude that occurred during the June observations. 
 That being said, we cannot rule out the possibility that the observations caught the star in varying states of flare decay, especially as \cite{white96} note that shorter-wavelength radio flares tend to have slower decay timescales.
 Simulations of radio emission from low-mass stars allow for variability of more than a factor of two over the entire longitudinal extent of a star \citep{llama18}; it is also possible that different longitudinal regions of AU Mic were facing Earth during the three observations.
@@ -556,7 +558,7 @@ The latter family, which has a lower likelihood, is probably associated with the
 Our exploratory modeling of these features raises the possibility of an annulus of dust interior to the main disk---if such an annulus does exist, the $\sim 2$ times lower resolution observations from \cite{macgregor13} would probably not have been able to distinguish the annulus emission from that of the main disk.
 In fact, an unresolved annulus would likely bias the inner radius preferred by the authors' modeling towards smaller values and could account for the differences in our characterization of the radial structure.
 
-While the annulus model provides only a marginally significantly improved fit to the data, previous observations spanning a wide range of wavelengths have recovered surface brightness enhancements at the same projected stellocentric separation ($\sim~\SI{10}{au}$) as the hypothetical annulus.
+While the annulus model provides only a marginally significantly improved fit to the data, previous observations spanning a wide range of wavelengths have recovered surface brightness enhancements at the same projected stellocentric separation ($\sim \SI{10}{au}$) as the hypothetical annulus.
 A local maximum is present to the SE of the star at this separation in lower-resolution ALMA observations by \cite{macgregor13}, and there is a suggestive peak in the noise on the opposite side of the star as well.
 Although these surface brightness enhancements do not attain $3 \sigma$ significance after subtraction of an axisymmetric model, the independent detection of these features in both data sets suggests that they may be real.  
 \cite{schneider14} also observe an optical-wavelength `bump' $\sim \SI{13}{au}$ SE of the star and slightly elevated from the disk midplane (i.e. to the NE).
@@ -677,7 +679,7 @@ Furthermore, the disk vertical FWHM derived from parametric modeling corresponds
 By comparing our measurement of the scale height to the steady-state collisional modeling of \cite{pan&schlichting12} we are able to place constraints on the mass and size of bodies stirring AU Mic's disk.
 In the lower-limit case where collisional velocity damping is inefficient, the stirring bodies would have a radius of \SI{340 \pm 60}{km}, corresponding to a characteristic mass $\sim 50$ times less than that of Pluto.
 On the other hand, velocity damping may balance stirring; this condition allows us to place an upper limit of $\sim \SI{1.5}{M_\earth}$ on the mass of stirring bodies.
-This is a dynamical mass, distinct from the lunar mass of dust grains inferred from the millimeter flux of the disk.
+This is a dynamical mass, distinct from the lunar mass of dust grains inferred from the millimeter flux density of the disk.
 These results therefore rule out the presence of a gas giant or Neptune analog in the outer disk, but are suggestive of a significant 
 %EIC: begin
 population of large asteroids 

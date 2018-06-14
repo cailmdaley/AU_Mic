@@ -148,17 +148,49 @@ spatial_scale = angular_scale * 9.725; spatial_scale # 2.1274964674653156
 
 ------------------------------------------------------------
 
+#### 4/14/18: Macgregor flux density comparison
 
-#### 4/14/18: Propagating error of Macgregor flux density
 ``` python
-from uncertainties import ufloat
-lower = ufloat(7.14,0.25) + ufloat(0.32, 0.06)
-upper = ufloat(7.14,0.12) + ufloat(0.32, 0.06)
-print(lower) # 7.46+/-0.26
-print(upper) # 7.46+/-0.13
+from uncertainties import ufloat, umath
+import astropy.units as u; import astropy.constants as c
 
-#package seems to stop reporting an extra digit at 0.35 not 0.2??
-print(ufloat(1000,0.35))
+# calculate scaling factor
+mac_mean_freq = 235e9 * u.Hz
+mac_mean_wav = np.round((c.c / mac_mean_freq).to(u.mm), 2);
+mac_mean_wav.value # 1.28 mm
+
+our_mean_freq = 222.1e9 * u.Hz
+our_mean_wav = np.round((c.c / our_mean_freq).to(u.mm), 3)
+our_mean_wav.value # 1.350 mm
+
+# have to pick a temperature for scaling factor; MacGregor uses 25 K ("for 35-45
+# au") when calculating a dust mass. by my calculations, T(37 au) ~ 25 K
+T = 25*u.K 
+peak_wav = (c.b_wien / T).to(u.mm) # 0.115910916 mm
+# because peak wavelength is smaller than observing wavelength by a factor of ten,
+# the scaling factor between MacGregor's 1.28mm flux and our value of 1.350 mm 
+# flux should be < 1. 
+
+scaling_factor = (our_mean_freq / mac_mean_freq)**3 \
+    * (np.exp( c.h * mac_mean_freq / (c.k_B * T) ) - 1) \
+    / (np.exp( c.h * our_mean_freq / (c.k_B * T) ) - 1) # 0.9051713845664854
+
+# scale disk flux
+mac_disk_flux_lower = ufloat(7.14,0.25) * (1*u.mJy)
+mac_disk_flux_upper = ufloat(7.14,0.12) * (1*u.mJy)
+print(scaling_factor*mac_disk_flux_lower) # 6.46+/-0.23 mJy
+print(scaling_factor*mac_disk_flux_upper) # 6.46+/-0.11 mJy 
+# compare to our value of 4.80 +/- 0.17 mJy
+
+# scale star flux using Plavchan's effective temperature
+T_plav = ufloat(3500, 100) * (1*u.K) # K
+scaling_factor = (our_mean_freq / mac_mean_freq)**3 \
+    * (umath.exp( (c.h * mac_mean_freq / (c.k_B * T_plav)).value ) - 1) \
+    / (umath.exp( (c.h * our_mean_freq / (c.k_B * T_plav)).value ) - 1) 
+    # 0.8933051+/-0.0000023
+    
+mac_star_flux = ufloat(0.32, 0.06) * (1*u.mJy)
+print(mac_star_flux*scaling_factor) # 0.29+/-0.05 mJy
 ```
 ------------------------------------------------------------
 
@@ -219,15 +251,12 @@ Calculating number of bodes of size 340 km:
 
 ```python
 import numpy as np; import matplotlib.pyplot as plt
-xs = np.arange(-3,3,0.01)
-sigma = 1.2
-gauss = 23 * np.exp(-1. * (xs / sigma)**2)
-SNR_3_sep = np.abs(xs[np.where(gauss < 2)]).min() # separation in sigmas
-SNR_3_sep = 1.5699999999999026
-
-H = 1.2 # au; sigma = H
-SNR_3_sep_au = SNR_3_sep * H # turn into 3 sigma 'scale height' in au
-SNR_3_sep_au = 1.8839999999998831
+H = .12 #arcsec
+arcsecs = np.arange(-3,3,0.01)
+gauss = 23 * np.exp(-1. * (arcsecs / H)**2)
+SNR_3_FW_arcsec = np.abs(arcsecs[np.where(gauss < 3)]).min() * 2 # 
+SNR_3_FW_arcsec # 0.35999999999986443 full width of >3 sigma emission
+SNR_3_FW_au = SNR_3_FW_arcsec * 9.725 # 3.5009999999986814
 ```
 ------------------------------------------------------------
 
