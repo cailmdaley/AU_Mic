@@ -2,6 +2,7 @@
 \usepackage{
   % NECESSARY PACKAGES
   amsmath,       % better math formatting
+  afterpage,     % joined figures and tables
   amssymb,       % better math formatting
   booktabs,      % pretty tables
   geometry,      % defines page layout
@@ -10,7 +11,7 @@
   natbib,        % allows for the citations and Bibtex
   physics
   }
-
+\usepackage[caption=false]{subfig}
 \usepackage{savesym}
 \savesymbol{tablenum}
 \usepackage[
@@ -19,16 +20,6 @@
   bracket-numbers=false]{siunitx}
 \restoresymbol{SIX}{tablenum}
 
-\usepackage[caption=false]{subfig}
-% % redefine deluxetable for compatibility with the array package.
-% \let\oldenddeluxetable\enddeluxetable
-% \let\olddeluxetable\deluxetable
-% \makeatletter
-% \renewenvironment{deluxetable}[1]{
-% \olddeluxetable{[#1]}
-% \def\pt@format{#1}%
-% }{\oldenddeluxetable}
-% \makeatother
 
 \newcommand{\wes}{Department of Astronomy, Van Vleck Observatory, Wesleyan University, 96 Foss Hill Drive, Middletown, CT 06459, USA}
 
@@ -222,7 +213,7 @@ Because the \texttt{CASA} task \texttt{tclean} preserves pointing center offsets
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{../figures/aumic_imaged}
+    \includegraphics[width=0.8\linewidth]{../figures/aumic_imaged}
     \caption{The AU Mic system imaged by ALMA at a wavelength of \SI{1.3}{mm}, using natural weighting with and without a Gaussian taper on the long baselines. 
     For the untapered weighting, the rms noise is \SI{15}{\mu Jy / beam} and the restoring beam has dimensions $\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$ with a PA of \ang[angle-symbol-over-decimal]{77.9}.
     The corresponding values for the tapered weighting are \SI{20}{\mu Jy / beam}, $\SI{0.87}{\arcsecond} \times \SI{0.71}{\arcsecond}$, and \ang[angle-symbol-over-decimal]{80.8}. 
@@ -248,7 +239,7 @@ Indeed, the apparent flux asymmetry in these data is in the opposite direction o
 
 \begin{figure}
     \centering
-    \includegraphics[width=.75\linewidth]{../figures/boccaletti_plots}
+    \includegraphics[width=.6\linewidth]{../figures/boccaletti_plots}
     \caption{
     The AU Mic debris disk's radial and vertical structure, extracted from the naturally weighted image in Figure \ref{fig: aumic_imaged}. 
     The solid blue line shows the southeast limb of the disk, while the dashed red line shows the northeast limb.
@@ -506,9 +497,10 @@ The median PA of $\ang[angle-symbol-over-decimal]{128.49} \pm 0.07$ falls within
 \subsection{Dust Mass}
 \label{subsection: dust mass}
 
-The preferred dust mass (\SI{0.01}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived from resolved \SI{1.3}{mm} imaging by \cite{macgregor13}, who assume an opacity of \SI{2.7}{cm^2.g^{-1}}, and from low-resolution \SI{850}{\mu m} imaging by \cite{matthews15}, who assume an opacity of \SI{1.7}{cm^2.g^{-1}} and quote a 20\% uncertainty.
-\cite{liu04} also take the opacity to be \SI{1.7}{cm^2.g^{-1}}, and report \SI{0.011}{M_\earth} from unresolved \SI{850}{\mu m} observations.
-\cite{strubbe&chiang06} calculate \SI{0.01}{M_\earth} by deriving a steady-state collisional cascade grain size distribution and fitting the disk's surface brightness and thermal spectrum to $V$- and $H$-band HST observations.
+The preferred dust mass (\SI{0.01}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived by \cite{macgregor13} from a \SI{1.3}{mm} disk flux density of $7.14^{+0.12}_{-0.25} \si{mJy}$ and an opacity of \SI{2.7}{cm^2.g^{-1}}.
+\cite{matthews15} also report a mass of \SI{0.01}{M_\earth} with 20\% uncertainty from a \SI{850}{\mu m} disk flux density of \SI{12.5 \pm 1.5}{mJy} and an opacity of \SI{1.7}{cm^2.g^{-1}}.
+\cite{liu04} also take the opacity to be \SI{1.7}{cm^2.g^{-1}}, and report \SI{0.011}{M_\earth} from a disk flux density of \SI{14.4 \pm 1.8}{mJy} at \SI{850}{\mu m}.
+Finally, \cite{strubbe&chiang06} calculate \SI{0.01}{M_\earth} by deriving a steady-state collisional cascade grain size distribution and fitting the disk's surface brightness and thermal spectrum to $V$- and $H$-band HST observations.
 
 
 \subsection{Gas Mass}
@@ -570,13 +562,50 @@ Near-infrared GPI observations presented in \cite{wang15} further corroborate th
 No features are detected at a corresponding separation to the NW.
 Figure 4 of \cite{wang15} shows a composite map of the bump as seen by GPI, STIS, and ALMA; the common location of the bump in both scattered light and mm observations would indicate that the mm- and micron-sized grains are cospatial.
 The micron-sized grains traced by scattered light, and all larger bodies ranging up to the cm-to-m sizes characterizing the top of the collisional cascade, are thought to originate from a narrow `birth ring' at $\sim \SI{40}{au}$ \citep{strubbe&chiang06}. 
-Thus it is possible that the millimeter bump visible in this work and in \cite{macgregor13}
-are actually cospatial with the scattered light bump and that all features are located at a true
-stellocentric separation of $\sim \SI{40}{au}$ (the apparent stellocentric separation
-of $\sim \SI{10}{au}$ would be due to projection).
+Thus it is possible that the millimeter bump visible in this work and in \cite{macgregor13} are actually cospatial with the scattered light bump and that all features are located at a true stellocentric separation of $\sim \SI{40}{au}$ (the apparent stellocentric separation of $\sim \SI{10}{au}$ would be due to projection).
+In principle, the true stellocentric separation could be constrained by the range of temperatures allowed by AU Mic's SED. 
+However such an analysis would be subject to assumptions about the grain size distribution and is beyond the scope of this vertical structure-oriented work.
+
+Thus the presence of a ring remains uncertain. 
+%EIC: begin
+%EIC: maybe "obvious" to you, but not obvious to me. How is a ring at 10 AU "explained" by a planet?
+%       I deleted the speculation, but left intact the reference to Peter Plavchan.
+%If a secondary ring of dust does exist in the AU Mic debris disk, planets are of course an obvious explanation; 
+P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate interior to \SI{1}{au}, but AU Mic's stellar activity make it difficult to confirm the radial velocity detection.
+%Even if the candidate is confirmed, it is unlikely that a planet so close to the star would be responsible for a ring at \SI{10}{au}.
+%EIC: Sorry, I disagree strongly with the last sentence. Perhaps you can explain to me why a confirmed
+%       detection of a planet (particularly one interior to 1 AU) would explain AU Mic's fast-moving features?
+%       I am happy to discuss why I do not think such an explanation is viable, if you would like (skype/phone/email).
+%That being said, a confirmed detection could provide a promising origin for AU Mic's fast-moving features.
+%EIC: end
 
 \subsection{Vertical Structure}
 \label{subsection: vertical discussion}
+
+\afterpage{%    % defer execution until the next page break occurs anyway
+  \begin{figure}[t!] % not "pt"
+    \centering
+    \caption{HWHMs}
+    \label{fig: scale height comparison}
+    \includegraphics[width=\linewidth]{../figures/scale_height_comparison}
+  \end{figure}
+  \begin{table}[h!] % not t or b or p
+    \centering
+    \begin{tabular}{lcccl}
+      \toprule
+      Label & Reference & Wavelength & HWHM at \SI{40}{au} & Methodology \\
+      \midrule
+      1a & \cite{schuppler17} & $ < \SI{70}{\mu m}$  & \SI{2}{au} & Collisional modeling \\
+      1b & --- & \SI{0.445}{\mu m}--\SI{1.3}{mm}     & \SI{0.6}{au} & Collisional modeling \\
+      1b & --- & $> \SI{100}{\mu m}$                 & \SI{0.2}{au} & Collisional modeling \\
+      2a & \cite{metchev05}   & \SI{1.63}{\mu m}     & \SI{2}{au} & Apparent FWHM \\
+      2b & --- & \SI{.0647}{\mu m}--\SI{1.63}{\mu m} & \SI{0.8}{au} & Model \\
+      \bottomrule
+    \end{tabular}
+    \caption{MCMC Fitting Results}
+    \label{tab: scale height comparison}
+  \end{table}
+} % end of argument of `\afterpage` command
 
 As discussed in \S \ref{subsection: vertical analysis}, our MCMC analysis yields a median aspect ratio of $h~=~\num{0.031 \pm 0.005}$; at a reference point of \SI{40}{au}, this translates to a vertical scale height $H = \SI{1.2 \pm 0.2}{au}$.
 This measurement is marginally consistent with values cited in the literature, ranging from roughly \SIrange{0.6}{2}{au} and derived from observations spanning the optical to the sub-millimeter.
@@ -585,8 +614,8 @@ This measurement is marginally consistent with values cited in the literature, r
 \cite{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the FWHM interior to \SI{50}{au} to fall between \SIlist{2.5;3.5}{au}.
 
 Because the measurements quoted above are determined from the observed vertical thickness of AU Mic's disk, they can be affected by the radial structure and viewing geometry of the disk as well as scattering effects. 
-As such, parametric modeling provides a more reliable way to assess AU Mic's vertical structure.
-\cite{krist05} report a FWHM between \SIlist{1.73;1.74}{au} at a separation of \SI{20}{au} from three-dimensional scattering models.
+As such, parametric modeling provides a more reliable way to assess AU Mic’s vertical structure, and must be taken into account in any comparison of our results with values in the literature.  
+For example, \cite{krist05} report a FWHM between \SIlist{1.73;1.74}{au} at a separation of \SI{20}{au} from three-dimensional scattering models.
 Collisional modeling can also be used to learn about AU Mic's vertical structure: collisional velocities---and thus dust production---are affected by the maximum eccentricity $e_{max}$ of planetesimal orbits, which in turn can be related to the disk vertical stucture (see \S \ref{inferring mass} below). 
 \cite{schuppler17} perform such modeling constrained by photometric observations spanning visible to millimeter wavelengths and quote a reference model opening angle of \SI{0.015}{rad}.
 The authors go on to note that an opening angle of \SI{0.005}{rad} better reproduces the disk spectral energy distribution (SED) in the long-wavelength regime beyond \SI{100}{\mu m}, but is unable to reproduce flux measurements for $\lambda \leq \SI{70}{\mu m}$.
@@ -672,6 +701,8 @@ An ensemble of $\sim 10^3$ bodies each with a mass of $4\pi/3 \cdot \SI{2.5}{g.c
 
 We have presented new \SI{1.3}{mm} ALMA observations of thermal dust emission from the debris disk around AU Mic at nearly double the angular resolution of previous observations. 
 Both the vertical and radial structure of the disk are resolved.
+We see no indication of the fast-moving features detected by \cite{boccaletti15}, but the data are suggestive of an additional ring of dust at $\sim \SI{10}{au}$.
+Models with a ring interior to the main disk provide a better fit to the data, but measures of statistical significance remain equivocal as to whether such models minimize the information lost in the modeling process.
 MCMC analysis prefers an aspect ratio $h = 0.031$, corresponding to a vertical scale height $H = \SI{1.2}{au}$ in the outer regions of the disk.
 Our analysis suggests that this is not an upper limit; a model with vertically resolved structure provides a statistically improved fit to the data over a model with unresolved vertical structure at a $4 \sigma$ confidence level.
 Furthermore, the disk vertical FWHM derived from parametric modeling corresponds well with image-domain estimates of the beam-subtracted FWHM of the emission perpendicular to the disk plane.
@@ -686,21 +717,6 @@ population of large asteroids
 having a combined mass of less than one Earth. Such a population has been inferred on independent
 grounds using time-variable infrared observations \citep{chiang&fung17}.
 %or perhaps an Earth-mass planet stirring the dust distribution.  
-%EIC: end
-
-We see no indication of the fast-moving features detected by \cite{boccaletti15}, but the data are suggestive of an additional ring of dust at $\sim \SI{10}{au}$.
-Models with a ring interior to the main disk provide a better fit to the data, but measures of statistical significance remain equivocal as to whether such models minimize the information lost in the modeling process.
-Thus the presence of a ring remains uncertain. 
-%EIC: begin
-%EIC: maybe "obvious" to you, but not obvious to me. How is a ring at 10 AU "explained" by a planet?
-%       I deleted the speculation, but left intact the reference to Peter Plavchan.
-%If a secondary ring of dust does exist in the AU Mic debris disk, planets are of course an obvious explanation; 
-P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate interior to \SI{1}{au}, but AU Mic's stellar activity make it difficult to confirm the radial velocity detection.
-%Even if the candidate is confirmed, it is unlikely that a planet so close to the star would be responsible for a ring at \SI{10}{au}.
-%EIC: Sorry, I disagree strongly with the last sentence. Perhaps you can explain to me why a confirmed
-%       detection of a planet (particularly one interior to 1 AU) would explain AU Mic's fast-moving features?
-%       I am happy to discuss why I do not think such an explanation is viable, if you would like (skype/phone/email).
-%That being said, a confirmed detection could provide a promising origin for AU Mic's fast-moving features.
 %EIC: end
 
 Looking forward, the scale height measurement presented in this work could be combined with other measurements of AU Mic's scale height at widely-separated (sub)millimeter wavelengths.
@@ -743,6 +759,7 @@ Funding for the DPAC has been provided by national institutions, in particular t
 %===============================================================================
 % BIBLIOGRAPHY:
 \clearpage
-\bibliography{/Users/cdaley/Documents/Research/AU_Mic/writing/AU_Mic_bibliography.bib}
+% \bibliography{/Users/cdaley/Documents/Research/AU_Mic/writing/AU_Mic_bibliography.bib}
+\bibliography{../AU_Mic_bibliography.bib}
 %===============================================================================
 \end{document} 
