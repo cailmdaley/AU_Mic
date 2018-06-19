@@ -6,13 +6,14 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt; plt.switch_backend('agg')
 import copy
 
+
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
-run_name='run27'
+run_name='run28'
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run27, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run28, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  scale factor, multiplied by radius to get scale height
@@ -20,10 +21,8 @@ def main():
     5)  outer radius (really inner radius + dr)
     6)  inclination
     7)  position angle
-    8)  march starflux
-    9)  august starflux
-    10) june starflux
-This run is a redo of the previous fiducial model run25, but with a broader range of inital positions. This run uses the new Gaia distance to AU Mic and a new gridding resolution.''')
+    8)  starflux
+This run is a redo of the previous single starflux model (run7), but uses the new Gaia distance to AU Mic and a new gridding resolution.''')
 
     parser.add_argument('-r', '--run', action='store_true',
         help='begin or resume eemcee run.')
@@ -56,9 +55,7 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
             ('d_r',               24.3,         5,         (0,       np.inf)),
             ('inc',               88.6,         0.4,       (0,       90.)),
             ('pa',                128.49,       0.07,      (0,       360)),
-            ('mar_starflux',      3.9e-4,       0.2e-4,    (0,       np.inf)),
-            ('aug_starflux',      1.5e-4,       0.2e-4,    (0,       np.inf)),
-            ('jun_starflux',      2.2e-4,       0.2e-4,    (0,       np.inf))])
+            ('starflux',          2.2e-4,       1.e-4,     (0,       np.inf))])
     else:
         run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=args.burn_in)
         # old_nsamples = run.groomed.shape[0]
@@ -98,9 +95,7 @@ param_dict = OrderedDict([
     ('l_star',            0.09),
     ('scale_factor',      0.031),
     ('pa',                128.49),
-    ('mar_starflux',      3.90e-4),
-    ('aug_starflux',      1.50e-4),
-    ('jun_starflux',      2.20e-4)])
+    ('starflux',          2.20e-4)])
 
 def make_fits(model, disk_params):
     structure_params = disk_params[:-1]
@@ -157,15 +152,15 @@ def lnprob(theta, run_name, to_vary):
     param_dict_copy['m_disk'] = 10**param_dict_copy['m_disk']
     param_dict_copy['d_r'] += param_dict_copy['r_in']
 
-    disk_params = param_dict_copy.values()[:-3]
-    starfluxes = param_dict_copy.values()[-3:]
+    disk_params = param_dict_copy.values()[:-1]
+    starflux = param_dict_copy.values()[-1]
 
     # intialize model and make fits image
     model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run_name + '/model_files/',
         name='model' + str(np.random.randint(1e10)))
     make_fits(model, disk_params)
-    for pointing, starflux in zip(model.observations, starfluxes):
+    for pointing in model.observations:
         for obs in pointing:
             fix_fits(model, obs, starflux)
             model.obs_sample(obs)
@@ -190,8 +185,8 @@ def make_best_fits(run, concise=False):
     param_dict['m_disk'] = 10**param_dict['m_disk']
     param_dict['d_r'] += param_dict['r_in']
 
-    disk_params = param_dict.values()[:-3]
-    starfluxes = param_dict.values()[-3:]
+    disk_params = param_dict.values()[:-1]
+    starflux = param_dict.values()[-1]
 
     # intialize model and make fits image
     print('Making model...')
@@ -202,7 +197,7 @@ def make_best_fits(run, concise=False):
 
     print('Sampling and cleaning...')
     paths = []
-    for pointing, rms, starflux in zip(model.observations, aumic_fitting.band6_rms_values[:-1], starfluxes):
+    for pointing, rms in zip(model.observations, aumic_fitting.band6_rms_values[:-1]):
         ids = []
         for obs in pointing:
             fix_fits(model, obs, starflux)

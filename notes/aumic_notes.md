@@ -7,6 +7,30 @@ urlcolor : cyan
 
 ------------------------------------------------------------
 
+#### 6/18/18: Flare analysis  
+
+I've created a new folder called `stellar_analysis` in the `band6` directory.
+`flare_scripts` contains all the code, from creating measurement sets to extracting imfit fluxes and positions.
+
+1. Flare position:
+```python 
+import numpy as np
+from uncertainties import ufloat, umath
+# imfit positions in arcseconds:
+noflare_ra  = ufloat(-0.8501300574337373 * 180/np.pi * 3600, 0.021112856077985704) 
+noflare_dec = ufloat(-0.5470290568647891 * 180/np.pi * 3600, 0.013264360833506577)
+flare_ra    = ufloat(-0.8501304925293767 * 180/np.pi * 3600, 0.003768824116591783)
+flare_dec   = ufloat(-0.5470294252558661 * 180/np.pi * 3600, 0.0023169999050442177)
+
+sep_ra = noflare_ra - flare_ra
+sep_dec = noflare_dec - flare_dec
+sep_tot = umath.sqrt( sep_ra**2 + sep_dec**2) # 0.118+/-0.019 arcsec
+```
+2. 
+
+
+------------------------------------------------------------
+
 #### 6/8/18: scaling values in the literature by Gaia distance
 
 ```python 
@@ -251,12 +275,12 @@ Calculating number of bodes of size 340 km:
 
 ```python
 import numpy as np; import matplotlib.pyplot as plt
-H = .12 #arcsec
-arcsecs = np.arange(-3,3,0.01)
-gauss = 23 * np.exp(-1. * (arcsecs / H)**2)
-SNR_3_FW_arcsec = np.abs(arcsecs[np.where(gauss < 3)]).min() * 2 # 
-SNR_3_FW_arcsec # 0.35999999999986443 full width of >3 sigma emission
-SNR_3_FW_au = SNR_3_FW_arcsec * 9.725 # 3.5009999999986814
+H = 1.2 # au
+au_s = np.arange(-3,3,0.01)
+gauss = 23 * np.exp(-1. * (au_s / H)**2)
+SNR_3_FW_au = np.abs(au_s[np.where(gauss < 3)]).min() * 2 # 
+SNR_3_FW_au # 3.4399999999997988 full width of >3 sigma emission
+SNR_3_FW_arcsec = SNR_3_FW_au / 9.725 # 0.35372750642671452
 ```
 ------------------------------------------------------------
 
