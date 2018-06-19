@@ -6,14 +6,13 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt; plt.switch_backend('agg')
 import copy
 
-
 from astrocail import fitting, plotting, mcmc
 from disk_model import debris_disk, raytrace
 import aumic_fitting
 
 run_name='run27'
 def main():
-    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run25, which has 50 walkers and varies the following parameters:
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter, description= '''Python commands associated with emcee run27, which has 50 walkers and varies the following parameters:
     1)  disk mass
     2)  surface brightness power law exponent
     3)  scale factor, multiplied by radius to get scale height

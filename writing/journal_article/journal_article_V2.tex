@@ -474,7 +474,7 @@ First, the beam size of the naturally weighted combined image ($\SI{0.52}{\arcse
 The smallest naturally weighted beam FHWM from the three individual observations is $\SI{0.30}{\arcsecond} = \SI{2.9}{au}$ (Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is $\SI{0.22}{\arcsecond} = \SI{2.1}{au}$.
 Second, the scale height $H$ refers to the disk height as measured from the midplane; the observable quantity that must be resolved in order to measure the scale height is actually the total vertical thickness $2H$.
 Third, the scale height represents the standard deviation of a Gaussian distribution of dust particles that in fact reaches well beyond the extent of the scale height.
-For example, considering that the peak SNR of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.38}{\arcsecond} (\SI{3.8}{au}). 
+For example, considering that the peak SNR of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.35}{\arcsecond} (\SI{3.4}{au}). 
 The combination of these factors indicates that it is plausible that we are able to detect a scale height smaller than the resolution of the image-domain data.
 
 
@@ -564,7 +564,7 @@ Figure 4 of \cite{wang15} shows a composite map of the bump as seen by GPI, STIS
 The micron-sized grains traced by scattered light, and all larger bodies ranging up to the cm-to-m sizes characterizing the top of the collisional cascade, are thought to originate from a narrow `birth ring' at $\sim \SI{40}{au}$ \citep{strubbe&chiang06}. 
 Thus it is possible that the millimeter bump visible in this work and in \cite{macgregor13} are actually cospatial with the scattered light bump and that all features are located at a true stellocentric separation of $\sim \SI{40}{au}$ (the apparent stellocentric separation of $\sim \SI{10}{au}$ would be due to projection).
 In principle, the true stellocentric separation could be constrained by the range of temperatures allowed by AU Mic's SED. 
-However such an analysis would be subject to assumptions about the grain size distribution and is beyond the scope of this vertical structure-oriented work.
+However such an analysis would be complicated by the relatively small mass contribution of the feature, the need to incorporate constraints on the small grains from scattered light imaging, and subject to assumptions about the grain size distribution and is beyond the scope of this work.
 
 Thus the presence of a ring remains uncertain. 
 %EIC: begin
@@ -595,11 +595,16 @@ P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate in
       \toprule
       Label & Reference & Wavelength & HWHM at \SI{40}{au} & Methodology \\
       \midrule
-      1a & \cite{schuppler17} & $ < \SI{70}{\mu m}$  & \SI{2}{au} & Collisional modeling \\
-      1b & --- & \SI{0.445}{\mu m}--\SI{1.3}{mm}     & \SI{0.6}{au} & Collisional modeling \\
-      1b & --- & $> \SI{100}{\mu m}$                 & \SI{0.2}{au} & Collisional modeling \\
-      2a & \cite{metchev05}   & \SI{1.63}{\mu m}     & \SI{2}{au} & Apparent FWHM \\
-      2b & --- & \SI{.0647}{\mu m}--\SI{1.63}{\mu m} & \SI{0.8}{au} & Model \\
+      1a & \cite{schuppler17} & $ < \SI{70}{\mu m}$  & \SI{2}{au}    & Collisional modeling \\
+      1b & --- & \SI{0.445}{\mu m}--\SI{1.3}{mm}     & \SI{0.6}{au}  & Collisional modeling \\
+      1b & --- & $> \SI{100}{\mu m}$                 & \SI{0.2}{au}  & Collisional modeling \\
+      2a & \cite{metchev05}   & \SI{1.63}{\mu m}     & \SI{2}{au}    & Apparent FWHM \\
+      2b & --- & \SI{.0647}{\mu m}--\SI{1.63}{\mu m} & \SI{0.8}{au}  & Model \\
+      3a & \cite{krist05}     & \SI{.0430}{\mu m}--\SI{0.0833}{\mu m} & \SI{1.5}{au} & Apparent \\
+      3a &     ---            &         ---           & \SI{0.9}{au}  & Modeled \\
+      4 & \cite{schneider14}  & \SI{.2}{\mu m}--\SI{1.05}{\mu m} & \SI{1.2}{au} & Apparent \\
+      5 & \cite{macgregor13}  & \SI{1.28}{mm} & $\leq \SI{2}{au}$     & Apparent \\
+      6 & This work           & \SI{1.35}{mm} & \SI{1.4 \pm 0.2}{au} & Apparent \\
       \bottomrule
     \end{tabular}
     \caption{MCMC Fitting Results}

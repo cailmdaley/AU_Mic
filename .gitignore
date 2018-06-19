@@ -23,6 +23,7 @@ uid*
 band6
 !band6/cleans/current
 !band6/plots/current
+!band6/stellar_analysis/
 
 band9
 !band9/**/*.fits
