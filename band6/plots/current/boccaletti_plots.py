@@ -5,7 +5,7 @@ from mpl_toolkits.axes_grid.inset_locator import zoomed_inset_axes
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-sns.set_style("whitegrid")
+sns.set_style("ticks")
 sns.set_context("talk")
 
 # Important parameters
@@ -19,6 +19,7 @@ head = fits.getheader(image + ".fits")
 # Read in images and rotate so that disk is horizontal
 im = rotate(fits.getdata(image + ".fits").squeeze(), angleSE, 
     reshape=False) * 1e6
+plt.imshow(im, origin='lower')
 
 # Generate x and y axes: offset position in arcsec
 nx = head['NAXIS1']
@@ -38,7 +39,10 @@ distance = 9.725
 bmin = head['bmin'] * 3600. / 2
 bmaj = head['bmaj'] * 3600. / 2
 bpa = head['bpa']; bpa
-theta = (-bpa + angleSE) * np.pi/180
+theta = -(-bpa + angleSE) * np.pi/180
+
+(-bpa + angleSE)
+(bpa - angleSE)
 
 b_FWHM_y = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta))**2 +
             (bmaj * np.sin(theta))**2)
@@ -46,6 +50,9 @@ b_FWHM_x = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta + np.pi/4))**2 +
             (bmaj * np.sin(theta + np.pi/4))**2)
 b_sigma_x = b_FWHM_x/sigma_to_FWHM
 b_sigma_y = b_FWHM_y/sigma_to_FWHM
+
+b_FWHM_x
+b_FWHM_y
 
 # Define y extent of gaussian
 SE_xpix_range = np.where((ra >  0) & (ra <= 5))[0][::-1]
@@ -145,7 +152,7 @@ ax1.set_xticklabels([]); ax2.set_xticklabels([])
 inset_height = 1/4
 inset = zoomed_inset_axes(ax1, zoom = 1, loc=3)
 xs = np.arange(-7, 7, 0.1)
-gauss = ax1.get_ylim()[1]*inset_height*np.exp(-xs**2/(2*(b_sigma_x*9.725)**2))
+gauss = ax1.get_ylim()[1]*inset_height*np.exp(-xs**2/(2*(b_sigma_y*9.725)**2))
 gauss_inset = inset.plot(xs, gauss, 'k:', lw=0.7)
 inset.set_axis_off()
 
@@ -154,13 +161,13 @@ inset2 = zoomed_inset_axes(ax3, zoom = 1, loc=3)
 dec_inds = np.abs(dec) * distance < 7
 xs = dec[dec_inds] * distance
 A = ax3.get_ylim()[1] * inset_height
-gauss = A*np.exp(-xs**2/(2*(b_sigma_y*distance)**2))
+gauss = A*np.exp(-xs**2/(2*(b_sigma_x*distance)**2))
 
 inds = np.where(np.abs(ra)*distance < 20)
 for i in inds[0]:
     # i = np.random.randint(0, len(inds[0]))
     profile = im[dec_inds, i]
-    profile *= A/im.max()
+    profile *= A/profile.max()
     inset2.plot(xs, profile, 'k:', lw=0.7, alpha=0.7)
 inset2.plot(xs, gauss, 'r-', lw=1)
 inset2.set_axis_off()
