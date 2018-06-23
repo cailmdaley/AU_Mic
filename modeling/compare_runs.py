@@ -42,7 +42,7 @@ run_info.AICc = AIC + (2*run_info.k * (run_info.k + 1)) / (nvis - run_info.k - 1
 # AICc differs from AIC by only 0.001, but what the hell let's use it.
 
 # calculate model relative liklehood, converto to guassian sigma
-rel_like = np.exp((run_info.AICc['run25_gaia_fiducial'] - run_info.AICc)/2.)
+rel_like = np.exp((run_info.AICc['run27_gaia_fiducial_broader'] - run_info.AICc)/2.)
 # rel_like = np.exp((run_info.AICc.min() - run_info.AICc)/2.)
 gauss = scipy.stats.norm()
 for row in run_info.index:
@@ -53,7 +53,7 @@ for row in run_info.index:
 
 # calculate delta BIC
 run_info.d_BIC = np.log(nvis)*run_info.k - 2 * run_info.lnprob
-run_info.d_BIC -= run_info.d_BIC['run25_gaia_fiducial']
+run_info.d_BIC -= run_info.d_BIC['run27_gaia_fiducial_broader']
 # run_info.d_BIC -= run_info.d_BIC.min()
 
 print(run_info.sort_values('AIC_sigma', ascending=True).round(3))

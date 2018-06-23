@@ -297,7 +297,7 @@ def disk_flux_stats(n_samples):
     run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=-2000)
     
     disk_fluxes = [sample_disk_flux(run) for i in range(n_samples)]
-    print(disk_fluxes)
+    np.savetxt(run_name + '/disk_flux_samples.txt', [1])
     
     bf = sample_disk_flux(run, best_fit = True)
     print('Best-fit disk flux: {}'.format(bf))
@@ -306,4 +306,3 @@ def disk_flux_stats(n_samples):
 
 if __name__ == '__main__':
     main()
-    

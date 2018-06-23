@@ -7,6 +7,34 @@ urlcolor : cyan
 
 ------------------------------------------------------------
 
+#### 6/22/18: Dust mass uncertainty propagation
+
+```python
+from uncertainties import ufloat, umath
+import astropy.units as u
+log_M_dust = ufloat(-7.564297, 0.006)
+M_dust = 10**log_M_dust * u.Msun.to(u.M_earth)
+print(M_dust) # 0.00908+/-0.00013
+
+old_log_M_dust = ufloat(-7.540, 0.006)
+old_M_dust = 10**old_log_M_dust * u.Msun.to(u.M_earth)
+print(old_M_dust) # 0.00960+/-0.00013
+scaling_factor.n * old_M_dust
+```
+
+------------------------------------------------------------
+
+#### 6/20/18: Phase noise notes
+
+- August 
+  - Test quasar beam : 0.33 arcsec, 0.29 arcsec, 63.6 deg 
+  - imfit gives 0.39 x 0.31, 83.16
+- June
+  - test quasar beam: 0.48 x .31, 75.5 deg
+  - imfit gives 0.54 x 0.32, 71.7 deg
+
+------------------------------------------------------------
+
 #### 6/18/18: Flare analysis  
 
 I've created a new folder called `stellar_analysis` in the `band6` directory.
@@ -17,14 +45,29 @@ I've created a new folder called `stellar_analysis` in the `band6` directory.
 import numpy as np
 from uncertainties import ufloat, umath
 # imfit positions in arcseconds:
-noflare_ra  = ufloat(-0.8501300574337373 * 180/np.pi * 3600, 0.021112856077985704) 
-noflare_dec = ufloat(-0.5470290568647891 * 180/np.pi * 3600, 0.013264360833506577)
-flare_ra    = ufloat(-0.8501304925293767 * 180/np.pi * 3600, 0.003768824116591783)
-flare_dec   = ufloat(-0.5470294252558661 * 180/np.pi * 3600, 0.0023169999050442177)
+noflare_ra  = ufloat(-0.8501300867444864 * 180/np.pi * 3600, 0.021112856077985704) 
+noflare_dec = ufloat(-0.5470290355107761 * 180/np.pi * 3600, 0.013264360833506577)
+flare_ra    = ufloat(-0.8501304916334924 * 180/np.pi * 3600, 0.003768824116591783)
+flare_dec   = ufloat(-0.5470294258139349 * 180/np.pi * 3600, 0.0023169999050442177)
+noflare_ra2  = ufloat(-0.85013027 * 180/np.pi * 3600, 0.021112856077985704) 
 
 sep_ra = noflare_ra - flare_ra
 sep_dec = noflare_dec - flare_dec
 sep_tot = umath.sqrt( sep_ra**2 + sep_dec**2) # 0.118+/-0.019 arcsec
+print(sep_tot * 9.725) # 1.13+/-0.18 au
+print(sep_tot.n / (0.5 * (0.31 + 0.47))) # 29.74 % of beam
+
+noflare_pos_uncertainty = 0.5 * (0.31 + 0.47) / (0.0009263625278999798 / 2.09217450873e-05)
+flare_pos_uncertainty   = 0.5 * (0.31 + 0.47) / (0.014884268480064874 / 4.47719756884e-05)
+alt_noflare_ra  = ufloat(-0.8501300574337373 * 180/np.pi * 3600, noflare_pos_uncertainty) 
+alt_noflare_dec = ufloat(-0.5470290568647891 * 180/np.pi * 3600, noflare_pos_uncertainty)
+alt_flare_ra    = ufloat(-0.8501304925293767 * 180/np.pi * 3600, flare_pos_uncertainty)
+alt_flare_dec   = ufloat(-0.5470294252558661 * 180/np.pi * 3600, flare_pos_uncertainty)
+
+alt_sep_ra = alt_noflare_ra - alt_flare_ra
+alt_sep_dec = alt_noflare_dec - alt_flare_dec
+alt_sep_tot = umath.sqrt( alt_sep_ra**2 + alt_sep_dec**2) # 0.118+/-0.0088 arcsec
+alt_sep_tot
 ```
 2. 
 

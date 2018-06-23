@@ -18,10 +18,10 @@ ax1.plot(rs, HWHMs,  ls='-', color=c[2],
 ax1.annotate(s='1a', xy=(rs[-1]-1, HWHMs[-1]-0.03), color=c[2], fontsize=fontsize)
 
 ## Metchev, apparent
-rs = np.linspace(10, 50, 4)
+r = 40
 # HWHMs = np.linspace(2.5,4.2,4)/2
-HWHMs = np.linspace(2,2,4)
-ax1.plot(rs, HWHMs,  ls=':', label='Metchev et al. (2005)', color=c[1])
+HWHM = 2 
+ax1.plot(r, HWHM,  ls=':', label='Metchev et al. (2005)', color=c[1])
 ax1.annotate(s='2a', xy=(rs[-1]-1, HWHMs[-1]+0.06), color=c[1], fontsize=fontsize)
 
 ## Krist, apparent
@@ -95,4 +95,4 @@ plt.subplots_adjust(wspace=0, bottom=0.18)
 
 # plt.savefig('scale_height_comparison.png', dpi=1000)
 # plt.savefig('../../../writing/figures/scale_height_comparison.png', dpi=1000)
-# plt.show()
+plt.show()

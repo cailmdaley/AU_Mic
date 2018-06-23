@@ -180,27 +180,25 @@ We exclude from our analysis of the disk emission the seven minutes during which
     \toprule
     Time (UTC) & Point-source Flux Density (\si{mJy}) \\
     \midrule
-    03:45:0--04:20:0 (no flare) & $0.41 \pm 0.02$\\
-  	4:23:38--4:24:00 & $0.92 \pm 0.17$ \\
-  	4:24:00--4:25:00 & $11.46 \pm 0.10$ \\
-  	4:25:00--4:26:00 & $3.59 \pm 0.10$ \\
-  	4:26:00--4:27:00 & $1.58 \pm 0.10$ \\
-  	4:27:00--4:28:00 & $0.45 \pm 0.10$ \\
-  	4:28:00--4:29:00 & $0.46 \pm 0.10$ \\
-  	4:29:00--4:29:58 & $0.52 \pm 0.10$\\
+    03:45:0--04:20:0 (no flare) & $0.26 \pm 0.02$\\
+  	4:23:38--4:24:00 & $0.84  \pm 0.15$ \\
+  	4:24:00--4:25:00 & $11.10 \pm 0.12$ \\
+  	4:25:00--4:26:00 & $3.46  \pm 0.10$ \\
+  	4:26:00--4:27:00 & $1.40  \pm 0.10$ \\
+  	4:27:00--4:28:00 & $0.48  \pm 0.11$ \\
+  	4:28:00--4:29:00 & $0.40  \pm 0.10$ \\
+  	4:29:00--4:29:58 & $0.33  \pm 0.10$\\
     \bottomrule
   \end{tabular}
 	\caption{Central point source flux densities before and during the June 24 flare}
   \label{tab:flare fluxes}
 \end{table}
 
-
 Since AU Mic is a high proper motion system, its equatorial coordinates changed significantly over the 1.5 years between first and last observations.  
 We were able to obtain a more precise alignment of the datasets from the bright chromospheric emission of the central star than from the measured proper motion.
 We fit an image-domain elliptical Gaussian to a small region around the star on each date with the task \texttt{imfit}, and used the centroid of the Gaussian fit to define the star position.
 Each dataset was then phase-shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
-We note that the exclusion of the flare changed the centroid of the Gaussian fit for the June observations by \SI{0.690 \pm 0.018}{au} (18\% of the synthesized beam) although the errors reported here, derived from the \texttt{imfit} uncertainties, are a factor of five smaller than those given by the ratio of beam size to SNR.
-This change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
+We note that the centroid of the Gaussian fit for the June observations changes by \SI{1.13 \pm 0.18}{au} (30\% of the synthesized beam) between the flare and non-flare segments of the data; this change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
 
 Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines to bring out the disk emission on larger spatial scales. 
@@ -228,7 +226,7 @@ The peak signal-to-noise ratio of dust emission is $\sim 23$.
 Using the \texttt{MIRIAD} task \texttt{cgcurs} \citep{sault95}, we measure an integrated flux density of \SI{4.97 \pm 0.08}{\milli Jy} enclosed within the $3\sigma$ contours of the naturally weighted image.  
 We note that this value represents the combined emission from the disk \textit{and} the star. 
 Faithfully disentangling the two components proved difficult, both because the stellar flux varied significantly across the three nights of observation (Table \ref{tab: params}) and because emission from the star and edge-on disk overlap in the sky plane.
-Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux density of \SI{4.80 \pm 0.17}{mJy}.
+Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux density of $4.81 ^{+0.04} _{-0.05} \si{mJy}$.
 This value is significantly smaller than the best-fit \SI{1.28}{mm} disk flux density of $7.14^{+0.12}_{-0.25}~\si{mJy}$ reported by \cite{macgregor13} (equivalent to $6.46^{+0.11}_{-0.23}~\si{mJy}$ when scaled to our observing wavelength of \SI{1.35}{mm} assuming a blackbody temperature of \SI{25}{K}).
 
 The ansa to the NW exhibits a maximum flux density of \SI{330 \pm 15}{\mu Jy/beam} at a separation of \SI{24.1 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.2} \pm 0.4$, while the ansa to the SE exhibits a maximum flux density of \SI{340 \pm 15}{\mu Jy} at a separation of \SI{29.0 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.7} \pm 0.4$. 
@@ -435,19 +433,19 @@ Significant residuals were visible at the location of the star, and  a stellar f
     \cmidrule(lr){2-3} \cmidrule(lr){4-5} 
     & Median & Best Fit & Median & Best Fit \\
   \midrule
-    $\log M$ (\si{M_\sun})     & $ -7.540 _{-0.006} ^{+0.006}$ & $-7.540$  & $-7.548  _{-0.007} ^{+0.007}$ & $-7.545$ \\
+    $\log M$ (\si{M_\sun})     & $ -7.561 _{-0.006} ^{+0.006}$ & $-7.561$  & $-7.548  _{-0.007} ^{+0.007}$ & $-7.545$ \\
     $p$                        & $0.9     _{-0.4}   ^{+0.5}$   & $0.8$     & $0.8     _{-0.4}   ^{+0.6}$   & $0.9$     \\
-    $h$                        & $0.031   _{-0.005} ^{+0.005}$ & $0.032$   & $0.027   _{-0.005} ^{+0.004}$ & $0.028$   \\
-    $r_{in}$ (\si{au})         & $23.8    _{-0.9}   ^{ +0.6}$  & $24.0$    & $24.1    _{-0.9}   ^{+0.6}$   & $23.9$    \\
-    $r_{out}$(\si{au})         & $42.3    _{-0.5}   ^{ +0.4}$  & $42.3$    & $42.3    _{-0.5}   ^{+0.4}$   & $42.4$    \\
-    $i$ (\si{\degree})         & $88.6    _{-0.3}   ^{ +0.4}$  & $88.7$    & $88.27   _{-0.16}  ^{+0.22}$  & $88.3$    \\
+    $h$                        & $0.032   _{-0.005} ^{+0.005}$ & $0.029$   & $0.027   _{-0.005} ^{+0.004}$ & $0.028$   \\
+    $r_{in}$ (\si{au})         & $23.3    _{-1.0}   ^{ +0.6}$  & $23.4$    & $24.1    _{-0.9}   ^{+0.6}$   & $23.9$    \\
+    $r_{out}$(\si{au})         & $41.5    _{-0.6}   ^{ +0.4}$  & $41.5$    & $42.3    _{-0.5}   ^{+0.4}$   & $42.4$    \\
+    $i$ (\si{\degree})         & $88.6    _{-0.3}   ^{ +0.4}$  & $88.5$    & $88.27   _{-0.16}  ^{+0.22}$  & $88.3$    \\
     PA  (\si{\degree})         & $128.49  _{-0.07}  ^{+0.07}$  & $128.50$  & $128.50  _{-0.07}  ^{+0.07}$  & $128.48$  \\
-    March $F_*$ (\si{\mu Jy})  & $390     _{-20}    ^{+20}$    & $390$     & $370     _{-20}    ^{+20}$    & $370$     \\
-    August $F_*$ (\si{\mu Jy}) & $150     _{-30}    ^{+20}$    & $160$     & $150     _{-30}    ^{+20}$    & $140$     \\
-    June $F_*$ (\si{\mu Jy})   & $220     _{-20}    ^{+20}$    & $220$     & $220     _{-20}    ^{+20}$    & $210$     \\
+    March $F_*$ (\si{\mu Jy})  & $390     _{-20}    ^{+20}$    & $390$     & $390     _{-20}    ^{+20}$    & $370$     \\
+    August $F_*$ (\si{\mu Jy}) & $150     _{-30}    ^{+30}$    & $150$     & $150     _{-30}    ^{+20}$    & $140$     \\
+    June $F_*$ (\si{\mu Jy})   & $230     _{-20}    ^{+20}$    & $230$     & $220     _{-20}    ^{+20}$    & $210$     \\
     $r_{ring}$ (\si{au})       &                               &           & $11.9    _{-1.8}   ^{+1.7}$   & $10.8$      \\
     $M_{ring}$ ($\si{M_\earth} \times 10^{-4})$  &             &           & $1.8     _{-0.7}   ^{+0.5}$   & $1.7$     \\
-    $\ln \mathcal{L}$          & $-313087 _{-4}     ^{+2}$     & $-313082$ & $-313077 _{-5}     ^{+2}$     & $-313072$ \\
+    $\ln \mathcal{L}$          & $-313083 _{-4}     ^{+2}$     & $-313078$ & $-313077 _{-5}     ^{+2}$     & $-313072$ \\
   \bottomrule
   \end{tabular}
 \end{table}
@@ -497,7 +495,7 @@ The median PA of $\ang[angle-symbol-over-decimal]{128.49} \pm 0.07$ falls within
 \subsection{Dust Mass}
 \label{subsection: dust mass}
 
-The preferred dust mass (\SI{0.01}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived by \cite{macgregor13} from a \SI{1.3}{mm} disk flux density of $7.14^{+0.12}_{-0.25} \si{mJy}$ and an opacity of \SI{2.7}{cm^2.g^{-1}}.
+The preferred dust mass (\SI{9.08e-3 \pm 0.13}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived by \cite{macgregor13} from a \SI{1.3}{mm} disk flux density of $7.14^{+0.12}_{-0.25} \si{mJy}$ and an opacity of \SI{2.7}{cm^2.g^{-1}}.
 \cite{matthews15} also report a mass of \SI{0.01}{M_\earth} with 20\% uncertainty from a \SI{850}{\mu m} disk flux density of \SI{12.5 \pm 1.5}{mJy} and an opacity of \SI{1.7}{cm^2.g^{-1}}.
 \cite{liu04} also take the opacity to be \SI{1.7}{cm^2.g^{-1}}, and report \SI{0.011}{M_\earth} from a disk flux density of \SI{14.4 \pm 1.8}{mJy} at \SI{850}{\mu m}.
 Finally, \cite{strubbe&chiang06} calculate \SI{0.01}{M_\earth} by deriving a steady-state collisional cascade grain size distribution and fitting the disk's surface brightness and thermal spectrum to $V$- and $H$-band HST observations.
@@ -540,9 +538,9 @@ Regardless of the origin of AU Mic's short- and long-term variability, we emphas
 
 Modeling of the radial structure discussed in \S \ref{subsection: radial analysis} is broadly consistent with the previous analysis of millimeter wavelength emission from the disk performed by \cite{macgregor13} as can be seen in Figure \ref{fig surface_density}. 
 However, the factor of $\sim 2$ increase in spatial resolution introduces additional interpretive complexities when comparing the results.
-While our outer radius is only \SI{2}{au} larger than the previously reported Gaia-corrected value of \SI{40.3}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
+While our outer radius is only \SI{2}{au} larger than the previously reported Gaia-corrected value of \SI{38.9}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
 In contrast to $r_{in} = 23.8_{-0.9}^{ +0.6}$ \si{au} preferred by our MCMC analysis, \cite{macgregor13} report a Gaia-corrected $r_{in} = 8.5_{-1.0} ^{+11.0}$ \si{au}.
-Neither value of the inner radius is well constrained: the authors report a Gaia-corrected $3 \sigma$ upper limit of \SI{20}{au}, whereas conversely we find a $2 \sigma$ lower limit of $\sim \SI{1}{au}$.
+Neither value of the inner radius is well constrained: the authors report a Gaia-corrected $3 \sigma$ upper limit of $\sim$\SI{20}{au}, whereas conversely we find a $2 \sigma$ lower limit of $\sim \SI{1}{au}$.
 Similar discrepancies arise in the posterior distribution for $p$, which is degenerate with $r_{in}$.
 While \cite{macgregor13} finds $p=2.32_{-0.31}^{+0.21}$, we recover a median value of $p=0.9_{-0.4}^{+0.5}$.
 In our analysis, the uncertainties in these two parameters arise from the existence of two families of solutions: one at $r_{in} \sim \SI{23}{au},\ r_{out} \sim \SI{42}{au},\ p \sim 0.8$ and another at $r_{in} \sim \SI{5}{au},\ r_{out} \sim \SI{41}{au},\ p \sim 2.8$ (Figure \ref{fig surface_density}).
@@ -555,7 +553,7 @@ A local maximum is present to the SE of the star at this separation in lower-res
 Although these surface brightness enhancements do not attain $3 \sigma$ significance after subtraction of an axisymmetric model, the independent detection of these features in both data sets suggests that they may be real.  
 \cite{schneider14} also observe an optical-wavelength `bump' $\sim \SI{13}{au}$ SE of the star and slightly elevated from the disk midplane (i.e. to the NE).
 No matching surface brightness enhancement is observed on the NW side of the disk, which is obscured by the STIS occulting wedge for $r \lesssim \SI{12}{au}$.
-On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a distance of $\sim \SI{45}{au}$ from the star.
+On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a Gaia-corrected distance of $\sim \SI{43}{au}$ from the star.
 They note that these features may share a common cause, and posit that dust orbits in the inner disk are non-coplanar with those found at larger separations.
 
 Near-infrared GPI observations presented in \cite{wang15} further corroborate the presence of a `bump' to the SE, characterized by a FWHM roughly triple the FWHM at an equivalent separation on the NW side of the disk. 
@@ -614,9 +612,9 @@ P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate in
 
 As discussed in \S \ref{subsection: vertical analysis}, our MCMC analysis yields a median aspect ratio of $h~=~\num{0.031 \pm 0.005}$; at a reference point of \SI{40}{au}, this translates to a vertical scale height $H = \SI{1.2 \pm 0.2}{au}$.
 This measurement is marginally consistent with values cited in the literature, ranging from roughly \SIrange{0.6}{2}{au} and derived from observations spanning the optical to the sub-millimeter.
-\cite{schuppler17} place an upper limit of \SI{0.05}{rad} on the \SI{1.3}{mm} opening angle (equivalent to the aspect ratio for small angles) by extracting the image-domain vertical profile from vertically unresolved ALMA observations presented in \cite{macgregor13}, and estimate a visible-wavelength opening angle of \SI{0.03}{rad} by reading off the vertical scale height from STIS observations of the disk in \cite{schneider14}.
+\cite{schuppler17} place an upper limit of \SI{0.05}{\rad} on the \SI{1.3}{mm} opening angle (equivalent to the aspect ratio for small angles) by extracting the image-domain vertical profile from vertically unresolved ALMA observations presented in \cite{macgregor13}, and estimate a visible-wavelength opening angle of \SI{0.03}{\rad} by reading off the vertical scale height from STIS observations of the disk in \cite{schneider14}.
 \cite{metchev05} approximate a $H$-band Keck FWHM of $\sim \SI{4}{au}$ at a separation of \SI{40}{au};
-\cite{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the FWHM interior to \SI{50}{au} to fall between \SIlist{2.5;3.5}{au}.
+\cite{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the Gaia-corrected FWHM interior to \SI{50}{au} to fall between \SIlist{2.4;3.4}{au}.
 
 Because the measurements quoted above are determined from the observed vertical thickness of AU Mic's disk, they can be affected by the radial structure and viewing geometry of the disk as well as scattering effects. 
 As such, parametric modeling provides a more reliable way to assess AU Mic’s vertical structure, and must be taken into account in any comparison of our results with values in the literature.  
