@@ -3,7 +3,8 @@ import argparse
 import subprocess as sp; import os
 from astropy.io import fits
 from collections import OrderedDict
-import matplotlib.pyplot as plt; plt.switch_backend('agg')
+import matplotlib.pyplot as plt; 
+plt.switch_backend('agg')
 import copy
 
 from astrocail import fitting, plotting, mcmc
@@ -31,7 +32,7 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
     parser.add_argument('-a', '--analyze', action='store_true',
         help='analyze sampler chain, producing an evolution plot, corner plot, and image domain figure.')
     parser.add_argument('-b', '--burn_in', default=0, type=int,
-        help='number of steps \'burn in\' steps to exclude')
+        help='number of \'burn in\' steps to exclude')
     parser.add_argument('-bf', '--best_fit', action='store_true',
         help='generate best fit model images and residuals')
     parser.add_argument('-con', '--concise', action='store_true',
@@ -44,6 +45,9 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
         help='generate walker evolution plot.')
     parser.add_argument('-kde', '--kernel_density', action='store_true',
         help='generate kernel density estimate (kde) of posterior distribution')
+        
+    parser.add_argument('-dfs', '--disk_flux_samples', default=0, type=int,
+        help='draw a given number of disk flux samples from the MCMC chain')
     args=parser.parse_args()
 
     if args.run:
@@ -64,6 +68,9 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
         # old_nsamples = run.groomed.shape[0]
         # run.groomed = run.groomed[run.groomed['r_in'] + run.groomed['d_r'] > 20]
         # print('{} samples removed.'.format(old_nsamples - run.groomed.shape[0]))
+        if args.disk_flux_samples != 0:
+            disk_flux_stats(args.disk_flux_samples)
+            return
         
         if args.corner_vars:
             cols = list(run.groomed.columns)
@@ -76,6 +83,7 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
         if args.analyze or args.evolution: run.evolution()
         if args.analyze or args.kernel_density: run.kde()
         if args.analyze or args.corner: run.corner(variables=args.corner_vars)
+        
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -192,6 +200,7 @@ def make_best_fits(run, concise=False):
 
     disk_params = param_dict.values()[:-3]
     starfluxes = param_dict.values()[-3:]
+    starfluxes = [0,0,0]
 
     # intialize model and make fits image
     print('Making model...')
@@ -266,8 +275,8 @@ def make_best_fits(run, concise=False):
           savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
           
 
-def sample_disk_flux(run, best_fit = False):
-    if best_fit:
+def sample_disk_flux(run, sample):
+    if sample == 'best fit':
         subset_df = run.main#[run.main['r_in'] < 15]
         model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     else:
@@ -286,24 +295,33 @@ def sample_disk_flux(run, best_fit = False):
     # intialize model and make fits image
     model = fitting.Model(observations=aumic_fitting.band6_observations,
         root=run.name + '/model_files/',
-        name=run.name + '_bestfit')
+        name=run.name + '_disk_flux_sample')
     make_fits(model, disk_params)
 
     model_im = fits.open(model.path + '.fits')[0].data[0]
     disk_flux = model_im.sum()
-    print(disk_flux)
+    print('Sample {}: {}'.format(sample, disk_flux))
     return disk_flux
     
 def disk_flux_stats(n_samples):
     run = mcmc.MCMCrun(run_name, nwalkers=50, burn_in=-2000)
     
-    disk_fluxes = [sample_disk_flux(run) for i in range(n_samples)]
-    print(disk_fluxes)
+    disk_fluxes = [sample_disk_flux(run, i) for i in range(n_samples)]
+    np.savetxt(run_name + '/disk_flux_samples.txt', disk_fluxes)
     
-    bf = sample_disk_flux(run, best_fit = True)
-    print('Best-fit disk flux: {}'.format(bf))
+    bf = sample_disk_flux(run, 'best fit')
+    print('\nBest-fit disk flux: {}'.format(bf))
     print('Standard deviation of {} samples: {}'.format(n_samples, np.std(disk_fluxes)))
     
+# import pandas as pd
+# df = pd.read_table('run27/disk_flux_samples.txt', names=['flux'])
+# df.plot(kind='kde')
+# plt.axvline(df.median()[0])
+# plt.axvline(0.00480706744496, ls=':') # best fit
+# plt.show()
+# 
+# df.describe()*1e3 # mJy
+# (df.describe() - df.median()[0]) * 1e3
 
 if __name__ == '__main__':
     main()

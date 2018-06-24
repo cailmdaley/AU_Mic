@@ -177,26 +177,25 @@ We exclude from our analysis of the disk emission the seven minutes during which
     \toprule
     Time (UTC) & Point-source Flux Density (\si{mJy}) \\
     \midrule
-    03:45:0--04:20:0 (no flare) & $0.41 \pm 0.02$\\
-  	4:23:38--4:24:00 & $0.92 \pm 0.17$ \\
-  	4:24:00--4:25:00 & $11.46 \pm 0.10$ \\
-  	4:25:00--4:26:00 & $3.59 \pm 0.10$ \\
-  	4:26:00--4:27:00 & $1.58 \pm 0.10$ \\
-  	4:27:00--4:28:00 & $0.45 \pm 0.10$ \\
-  	4:28:00--4:29:00 & $0.46 \pm 0.10$ \\
-  	4:29:00--4:29:58 & $0.52 \pm 0.10$\\
+    03:45:0--04:20:0 (no flare) & $0.26 \pm 0.02$\\
+  	4:23:38--4:24:00 & $0.84  \pm 0.15$ \\
+  	4:24:00--4:25:00 & $11.10 \pm 0.12$ \\
+  	4:25:00--4:26:00 & $3.46  \pm 0.10$ \\
+  	4:26:00--4:27:00 & $1.40  \pm 0.10$ \\
+  	4:27:00--4:28:00 & $0.48  \pm 0.11$ \\
+  	4:28:00--4:29:00 & $0.40  \pm 0.10$ \\
+  	4:29:00--4:29:58 & $0.33  \pm 0.10$\\
     \bottomrule
   \end{tabular}
 	\caption{Central point source flux densities before and during the June 24 flare}
   \label{tab:flare fluxes}
 \end{table}
 
-
 Since AU Mic is a high proper motion system, its equatorial coordinates changed significantly over the 1.5 years between first and last observations.  
 We were able to obtain a more precise alignment of the datasets from the bright chromospheric emission of the central star than from the measured proper motion.
 We fit an image-domain elliptical Gaussian to a small region around the star on each date with the task \texttt{imfit}, and used the centroid of the Gaussian fit to define the star position.
 Each dataset was then phase-shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
-We note that the centroid of the Gaussian fit for the June observations changes by \SI{1.14 \pm 0.18}{au} (30\% of the synthesized beam) between the flare and non-flare segments of the data; this change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
+We note that the centroid of the Gaussian fit for the June observations changes by \SI{1.13 \pm 0.18}{au} (30\% of the synthesized beam) between the flare and non-flare segments of the data; this change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
 
 Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines to bring out the disk emission on larger spatial scales. 
@@ -224,7 +223,7 @@ The peak signal-to-noise ratio of dust emission is $\sim 23$.
 Using the \texttt{MIRIAD} task \texttt{cgcurs} \citep{sault95}, we measure an integrated flux density of \SI{4.97 \pm 0.08}{\milli Jy} enclosed within the $3\sigma$ contours of the naturally weighted image.  
 We note that this value represents the combined emission from the disk \textit{and} the star. 
 Faithfully disentangling the two components proved difficult, both because the stellar flux varied significantly across the three nights of observation (Table \ref{tab: params}) and because emission from the star and edge-on disk overlap in the sky plane.
-Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux density of \SI{4.80 \pm 0.17}{mJy}.
+Consequently, the most accurate way to isolate the disk flux from the stellar contribution is through parametric modeling (see \S \ref{section: analysis}) where the two components can be specified separately; our modeling yields a disk flux density of $4.81 ^{+0.04} _{-0.05} \si{mJy}$.
 This value is significantly smaller than the best-fit \SI{1.28}{mm} disk flux density of $7.14^{+0.12}_{-0.25}~\si{mJy}$ reported by \cite{macgregor13} (equivalent to $6.46^{+0.11}_{-0.23}~\si{mJy}$ when scaled to our observing wavelength of \SI{1.35}{mm} assuming a blackbody temperature of \SI{25}{K}).
 
 The ansa to the NW exhibits a maximum flux density of \SI{330 \pm 15}{\mu Jy/beam} at a separation of \SI{24.1 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.2} \pm 0.4$, while the ansa to the SE exhibits a maximum flux density of \SI{340 \pm 15}{\mu Jy} at a separation of \SI{29.0 \pm 0.2}{au} and PA of $\ang[angle-symbol-over-decimal]{128.7} \pm 0.4$. 
@@ -493,7 +492,7 @@ The median PA of $\ang[angle-symbol-over-decimal]{128.49} \pm 0.07$ falls within
 \subsection{Dust Mass}
 \label{subsection: dust mass}
 
-The preferred dust mass (\SI{0.01}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived by \cite{macgregor13} from a \SI{1.3}{mm} disk flux density of $7.14^{+0.12}_{-0.25} \si{mJy}$ and an opacity of \SI{2.7}{cm^2.g^{-1}}.
+The preferred dust mass (\SI{9.08e-3 \pm 0.13}{M_\earth} assuming an opacity of \SI{2.3}{cm^2.g^{-1}}) is identical to the value derived by \cite{macgregor13} from a \SI{1.3}{mm} disk flux density of $7.14^{+0.12}_{-0.25} \si{mJy}$ and an opacity of \SI{2.7}{cm^2.g^{-1}}.
 \cite{matthews15} also report a mass of \SI{0.01}{M_\earth} with 20\% uncertainty from a \SI{850}{\mu m} disk flux density of \SI{12.5 \pm 1.5}{mJy} and an opacity of \SI{1.7}{cm^2.g^{-1}}.
 \cite{liu04} also take the opacity to be \SI{1.7}{cm^2.g^{-1}}, and report \SI{0.011}{M_\earth} from a disk flux density of \SI{14.4 \pm 1.8}{mJy} at \SI{850}{\mu m}.
 Finally, \cite{strubbe&chiang06} calculate \SI{0.01}{M_\earth} by deriving a steady-state collisional cascade grain size distribution and fitting the disk's surface brightness and thermal spectrum to $V$- and $H$-band HST observations.
