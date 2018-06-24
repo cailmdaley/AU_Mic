@@ -49,14 +49,14 @@
 \affiliation{Department of Earth and Space Sciences, University of California, Los Angeles, CA 90095, USA}
 \affiliation{Department of Earth, Atmospheric and Planetary Sciences, Massachusetts Institute of Technology, Cambridge, MA 02139, USA}
 
-\author{Mark Wyatt}
-\affiliation{Institute of Astronomy, University of Cambridge, Madingley Road, Cambridge CB3 0HA, United Kingdom}
-
 \author{Eugene Chiang}
 \affiliation{Department of Astronomy, University of California at Berke-
 ley, Campbell Hall, Berkeley, CA 94720-3411}
 \affiliation{Department of Earth and Planetary Science, University of
 California at Berkeley, McCone Hall, Berkeley, CA 94720-3411}
+
+\author{Mark Wyatt}
+\affiliation{Institute of Astronomy, University of Cambridge, Madingley Road, Cambridge CB3 0HA, United Kingdom}
 
 \author{David Wilner}
 \affiliation{Harvard-Smithsonian Center for Astrophysics, 60 Garden Street, Cambridge, MA, 02138, USA}
@@ -66,9 +66,6 @@ California at Berkeley, McCone Hall, Berkeley, CA 94720-3411}
 
 \author{John Carpenter}
 \affiliation{Joint ALMA Observatory (JAO), Alonso de Cordova 3107 Vitacura-—Santiago de Chile, Chile}
-
-
-% \maketitle      
 
 \begin{abstract}
 The vertical distribution of dust in debris disks is particularly sensitive to the total mass of planetary bodies stirring the disk, and is therefore well suited for constraining the prevalence of otherwise unobservable Uranus and Neptune analogs. 
@@ -199,8 +196,7 @@ Since AU Mic is a high proper motion system, its equatorial coordinates changed 
 We were able to obtain a more precise alignment of the datasets from the bright chromospheric emission of the central star than from the measured proper motion.
 We fit an image-domain elliptical Gaussian to a small region around the star on each date with the task \texttt{imfit}, and used the centroid of the Gaussian fit to define the star position.
 Each dataset was then phase-shifted using the task \texttt{fixvis} so that the pointing center of the data was the same as the fitted star position.
-We note that the exclusion of the flare changed the centroid of the Gaussian fit for the June observations by \SI{0.690 \pm 0.018}{au} (18\% of the synthesized beam) although the errors reported here, derived from the \texttt{imfit} uncertainties, are a factor of five smaller than those given by the ratio of beam size to SNR.
-This change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
+We note that the centroid of the Gaussian fit for the June observations changes by \SI{1.14 \pm 0.18}{au} (30\% of the synthesized beam) between the flare and non-flare segments of the data; this change in the fit stellar location could be explained if the flare were not symmetric with respect to the star.
 
 Imaging was performed using standard Fourier inversion methods as implemented in the \texttt{CASA} task \texttt{tclean}. 
 Two weighting schemes were used: (i) natural weighting with no taper to trace the small-scale disk structure and (ii) natural weighting with a \SI{200}{k\lambda} Gaussian taper applied to long baselines to bring out the disk emission on larger spatial scales. 
@@ -273,7 +269,7 @@ This is not entirely surprising, as both \cite{sezestre17} and \cite{chiang&fung
 There is no evidence that the AU Mic system harbors a significant reservoir of molecular gas.
 We set a $3 \sigma$ upper limit of \SI{0.07}{Jy.km.s^{-1}} on the CO~$\mathrm{J}=2-1$ integrated flux, obtained by integrating the flux density in an $\SI{8}{\arcsecond} \times \SI{8}{\arcsecond}$ box around the star between $V_{LSRK}$ velocities of $-10$ and \SI{10}{km.s^{-1}}.
 For a given excitation temperature, an upper limit on the total gas mass can be inferred from the upper limit on integrated flux.
-Assuming local thermal equilibrium (LTE) and that the gas is cospatial with the dust disk, we find the upper limit on the total gas mass to range between \SIrange[range-phrase=\ and\ ]{1.79e-7}{9.06e-7}{M_\earth} for excitation temperatures between \SIrange[range-phrase=\ and\ ]{10}{250}{K}.
+Assuming local thermal equilibrium (LTE) and that the gas is cospatial with the dust disk, we find the upper limit on the total gas mass to range between \SIrange[range-phrase=\ and\ ]{1.7e-7}{8.7e-7}{M_\earth} for excitation temperatures between \SIrange[range-phrase=\ and\ ]{10}{250}{K}.
 
 
 
@@ -310,7 +306,7 @@ where $L_{\star}$ is the bolometric luminosity of the star and $\sigma$ is the S
   \end{cases}
 \end{align}
 where $p$ is the power law exponent, and $r_{in}$ and $r_{out}$ are the disk inner and outer radius. 
-$\Sigma_c$ normalizes the surface density structure for a given total dust mass $M_{dust}$:
+The critical surface density $\Sigma_c$ normalizes the surface density structure for a given total dust mass $M_{dust}$:
 \begin{align}
 \Sigma_c &= \frac{M_{dust} \left(p + 2 \right)}{2 \pi \left[ r_{out}^{(p+2)} - r_{in}^{(p+2)} \right]}.
 \end{align}
@@ -370,7 +366,7 @@ The statistical weights are likely not responsible, due to our recalculation of 
 Marginalized posterior probability distributions for the fiducial model parameters are shown in Figure \ref{fig: kde}.
 While the majority of the distributions are Gaussian, the three parameters that determine the radial structure of the disk ($p$, $r_{in}$, and $r_{out}$) exhibit slight bimodality. 
 All three parameters are degenerate as can be seen from the `corner' plot in Figure \ref{fig: degeneracies}; in fact, the bimodality of the three parameters is a result of the existence of two distinct families of solutions in parameter space.
-While the fiducial best-fit model has $p=0.8$, $r_{in}=\SI{24.0}{au}$, and $r_{out}=\SI{42.3}{au}$, a lower-likelihood family of solutions can clearly be seen in Figure \ref{fig: degeneracies}. The highest-likelihood model associated with this family has $p = 2.8$, $r_{in} = \SI{5.2}{au}$, and $r_{out} = \SI{41.0}{au}$.
+While the fiducial best-fit model has $p=0.9$, $r_{in}=\SI{23.3}{au}$, and $r_{out}=\SI{41.5}{au}$, a lower-likelihood family of solutions can clearly be seen in Figure \ref{fig: degeneracies}. The highest-likelihood model associated with this family has $p = 2.8$, $r_{in} = \SI{6.1}{au}$, and $r_{out} = \SI{40.4}{au}$.
 More generally, mild degeneracies between the parameters determining vertical structure, radial  structure, and viewing geometry are visible, but the aspect ratio $h$ is correlated to a significant degree only with the inclination $i$.
 
 The fiducial best-fit model image and residuals found in Figure \ref{fig: fiducial} provide further information as to the cause of the bimodal posterior distribution.
@@ -435,19 +431,19 @@ Significant residuals were visible at the location of the star, and  a stellar f
     \cmidrule(lr){2-3} \cmidrule(lr){4-5} 
     & Median & Best Fit & Median & Best Fit \\
   \midrule
-    $\log M$ (\si{M_\sun})     & $ -7.540 _{-0.006} ^{+0.006}$ & $-7.540$  & $-7.548  _{-0.007} ^{+0.007}$ & $-7.545$ \\
+    $\log M$ (\si{M_\sun})     & $ -7.561 _{-0.006} ^{+0.006}$ & $-7.561$  & $-7.548  _{-0.007} ^{+0.007}$ & $-7.545$ \\
     $p$                        & $0.9     _{-0.4}   ^{+0.5}$   & $0.8$     & $0.8     _{-0.4}   ^{+0.6}$   & $0.9$     \\
-    $h$                        & $0.031   _{-0.005} ^{+0.005}$ & $0.032$   & $0.027   _{-0.005} ^{+0.004}$ & $0.028$   \\
-    $r_{in}$ (\si{au})         & $23.8    _{-0.9}   ^{ +0.6}$  & $24.0$    & $24.1    _{-0.9}   ^{+0.6}$   & $23.9$    \\
-    $r_{out}$(\si{au})         & $42.3    _{-0.5}   ^{ +0.4}$  & $42.3$    & $42.3    _{-0.5}   ^{+0.4}$   & $42.4$    \\
-    $i$ (\si{\degree})         & $88.6    _{-0.3}   ^{ +0.4}$  & $88.7$    & $88.27   _{-0.16}  ^{+0.22}$  & $88.3$    \\
+    $h$                        & $0.032   _{-0.005} ^{+0.005}$ & $0.029$   & $0.027   _{-0.005} ^{+0.004}$ & $0.028$   \\
+    $r_{in}$ (\si{au})         & $23.3    _{-1.0}   ^{ +0.6}$  & $23.4$    & $24.1    _{-0.9}   ^{+0.6}$   & $23.9$    \\
+    $r_{out}$(\si{au})         & $41.5    _{-0.6}   ^{ +0.4}$  & $41.5$    & $42.3    _{-0.5}   ^{+0.4}$   & $42.4$    \\
+    $i$ (\si{\degree})         & $88.6    _{-0.3}   ^{ +0.4}$  & $88.5$    & $88.27   _{-0.16}  ^{+0.22}$  & $88.3$    \\
     PA  (\si{\degree})         & $128.49  _{-0.07}  ^{+0.07}$  & $128.50$  & $128.50  _{-0.07}  ^{+0.07}$  & $128.48$  \\
-    March $F_*$ (\si{\mu Jy})  & $390     _{-20}    ^{+20}$    & $390$     & $370     _{-20}    ^{+20}$    & $370$     \\
-    August $F_*$ (\si{\mu Jy}) & $150     _{-30}    ^{+20}$    & $160$     & $150     _{-30}    ^{+20}$    & $140$     \\
-    June $F_*$ (\si{\mu Jy})   & $220     _{-20}    ^{+20}$    & $220$     & $220     _{-20}    ^{+20}$    & $210$     \\
+    March $F_*$ (\si{\mu Jy})  & $390     _{-20}    ^{+20}$    & $390$     & $390     _{-20}    ^{+20}$    & $370$     \\
+    August $F_*$ (\si{\mu Jy}) & $150     _{-30}    ^{+30}$    & $150$     & $150     _{-30}    ^{+20}$    & $140$     \\
+    June $F_*$ (\si{\mu Jy})   & $230     _{-20}    ^{+20}$    & $230$     & $220     _{-20}    ^{+20}$    & $210$     \\
     $r_{ring}$ (\si{au})       &                               &           & $11.9    _{-1.8}   ^{+1.7}$   & $10.8$      \\
     $M_{ring}$ ($\si{M_\earth} \times 10^{-4})$  &             &           & $1.8     _{-0.7}   ^{+0.5}$   & $1.7$     \\
-    $\ln \mathcal{L}$          & $-313087 _{-4}     ^{+2}$     & $-313082$ & $-313077 _{-5}     ^{+2}$     & $-313072$ \\
+    $\ln \mathcal{L}$          & $-313083 _{-4}     ^{+2}$     & $-313078$ & $-313077 _{-5}     ^{+2}$     & $-313072$ \\
   \bottomrule
   \end{tabular}
 \end{table}
@@ -466,7 +462,7 @@ The aspect ratio is fixed at a value of $0.003$, so that even at the outer edge 
 If the disk is in fact resolved by the observations, such a `skinny' disk model should perform significantly worse than the fiducial model.
 Hence, we can quantify the statistical significance of our detection of the scale height by comparing the best-fit skinny model to the best-fit fiducial model.
 The best-fit model image and residuals are shown in Figure \ref{fig: skinny}.
-The skinny model results in a significantly poorer fit to the data than the fiducial model with variable aspect ratio, with the best fits differing at the $3.9 \sigma$ level according to the AICc and by a value of 7.5 on the BIC.
+The skinny model results in a significantly poorer fit to the data than the fiducial model with variable aspect ratio, with the best fits differing at the $3.7 \sigma$ level according to the AICc and by a value of 7.3 on the BIC.
 
 The preferred disk FWHM is only $\sim 2/3$ the size of the combined-data beam projected onto the vertical axis of the disk.
 While it may seem improbable that we measure a scale height below the image-domain spatial resolution of the combined data, our results can be explained by the following observations.
@@ -474,7 +470,7 @@ First, the beam size of the naturally weighted combined image ($\SI{0.52}{\arcse
 The smallest naturally weighted beam FHWM from the three individual observations is $\SI{0.30}{\arcsecond} = \SI{2.9}{au}$ (Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is $\SI{0.22}{\arcsecond} = \SI{2.1}{au}$.
 Second, the scale height $H$ refers to the disk height as measured from the midplane; the observable quantity that must be resolved in order to measure the scale height is actually the total vertical thickness $2H$.
 Third, the scale height represents the standard deviation of a Gaussian distribution of dust particles that in fact reaches well beyond the extent of the scale height.
-For example, considering that the peak SNR of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.35}{\arcsecond} (\SI{3.4}{au}). 
+For example, considering that the peak signal-to-noise (SNR) of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.35}{\arcsecond} (\SI{3.4}{au}). 
 The combination of these factors indicates that it is plausible that we are able to detect a scale height smaller than the resolution of the image-domain data.
 
 
@@ -540,9 +536,9 @@ Regardless of the origin of AU Mic's short- and long-term variability, we emphas
 
 Modeling of the radial structure discussed in \S \ref{subsection: radial analysis} is broadly consistent with the previous analysis of millimeter wavelength emission from the disk performed by \cite{macgregor13} as can be seen in Figure \ref{fig surface_density}. 
 However, the factor of $\sim 2$ increase in spatial resolution introduces additional interpretive complexities when comparing the results.
-While our outer radius is only \SI{2}{au} larger than the previously reported Gaia-corrected value of \SI{40.3}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
+While our outer radius is only \SI{2}{au} larger than the previously reported Gaia-corrected value of \SI{38.9}{au} (confidence intervals are $\sim \SI{0.4}{au}$ for both measurements), things become more complicated when considering the inner radius $r_{in}$ and surface brightness power law index $p$.
 In contrast to $r_{in} = 23.8_{-0.9}^{ +0.6}$ \si{au} preferred by our MCMC analysis, \cite{macgregor13} report a Gaia-corrected $r_{in} = 8.5_{-1.0} ^{+11.0}$ \si{au}.
-Neither value of the inner radius is well constrained: the authors report a Gaia-corrected $3 \sigma$ upper limit of \SI{20}{au}, whereas conversely we find a $2 \sigma$ lower limit of $\sim \SI{1}{au}$.
+Neither value of the inner radius is well constrained: the authors report a Gaia-corrected $3 \sigma$ upper limit of $\sim$\SI{20}{au}, whereas conversely we find a $2 \sigma$ lower limit of $\sim \SI{1}{au}$.
 Similar discrepancies arise in the posterior distribution for $p$, which is degenerate with $r_{in}$.
 While \cite{macgregor13} finds $p=2.32_{-0.31}^{+0.21}$, we recover a median value of $p=0.9_{-0.4}^{+0.5}$.
 In our analysis, the uncertainties in these two parameters arise from the existence of two families of solutions: one at $r_{in} \sim \SI{23}{au},\ r_{out} \sim \SI{42}{au},\ p \sim 0.8$ and another at $r_{in} \sim \SI{5}{au},\ r_{out} \sim \SI{41}{au},\ p \sim 2.8$ (Figure \ref{fig surface_density}).
@@ -555,7 +551,7 @@ A local maximum is present to the SE of the star at this separation in lower-res
 Although these surface brightness enhancements do not attain $3 \sigma$ significance after subtraction of an axisymmetric model, the independent detection of these features in both data sets suggests that they may be real.  
 \cite{schneider14} also observe an optical-wavelength `bump' $\sim \SI{13}{au}$ SE of the star and slightly elevated from the disk midplane (i.e. to the NE).
 No matching surface brightness enhancement is observed on the NW side of the disk, which is obscured by the STIS occulting wedge for $r \lesssim \SI{12}{au}$.
-On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a distance of $\sim \SI{45}{au}$ from the star.
+On the other hand, the scattered light emission on the NW side is not symmetric about the midplane and the authors tentatively identify a warp below the midplane extending to a Gaia-corrected distance of $\sim \SI{43}{au}$ from the star.
 They note that these features may share a common cause, and posit that dust orbits in the inner disk are non-coplanar with those found at larger separations.
 
 Near-infrared GPI observations presented in \cite{wang15} further corroborate the presence of a `bump' to the SE, characterized by a FWHM roughly triple the FWHM at an equivalent separation on the NW side of the disk. 
@@ -614,9 +610,9 @@ P.~Plavchan et al.~(in preparation) propose a Jovian-mass exoplanet candidate in
 
 As discussed in \S \ref{subsection: vertical analysis}, our MCMC analysis yields a median aspect ratio of $h~=~\num{0.031 \pm 0.005}$; at a reference point of \SI{40}{au}, this translates to a vertical scale height $H = \SI{1.2 \pm 0.2}{au}$.
 This measurement is marginally consistent with values cited in the literature, ranging from roughly \SIrange{0.6}{2}{au} and derived from observations spanning the optical to the sub-millimeter.
-\cite{schuppler17} place an upper limit of \SI{0.05}{rad} on the \SI{1.3}{mm} opening angle (equivalent to the aspect ratio for small angles) by extracting the image-domain vertical profile from vertically unresolved ALMA observations presented in \cite{macgregor13}, and estimate a visible-wavelength opening angle of \SI{0.03}{rad} by reading off the vertical scale height from STIS observations of the disk in \cite{schneider14}.
+\cite{schuppler17} place an upper limit of \SI{0.05}{\rad} on the \SI{1.3}{mm} opening angle (equivalent to the aspect ratio for small angles) by extracting the image-domain vertical profile from vertically unresolved ALMA observations presented in \cite{macgregor13}, and estimate a visible-wavelength opening angle of \SI{0.03}{\rad} by reading off the vertical scale height from STIS observations of the disk in \cite{schneider14}.
 \cite{metchev05} approximate a $H$-band Keck FWHM of $\sim \SI{4}{au}$ at a separation of \SI{40}{au};
-\cite{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the FWHM interior to \SI{50}{au} to fall between \SIlist{2.5;3.5}{au}.
+\cite{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the Gaia-corrected FWHM interior to \SI{50}{au} to fall between \SIlist{2.4;3.4}{au}.
 
 Because the measurements quoted above are determined from the observed vertical thickness of AU Mic's disk, they can be affected by the radial structure and viewing geometry of the disk as well as scattering effects. 
 As such, parametric modeling provides a more reliable way to assess AU Mic’s vertical structure, and must be taken into account in any comparison of our results with values in the literature.  
@@ -639,8 +635,7 @@ The author also runs a collisional model tailored to the AU Mic system assuming 
 Although this scale height falls within the range of `natural' debris disk thicknesses, the author stresses that this does not amount to an assertion that the disk is dynamically cold due to the simplicity of their model and fitting process.
 
 In recent years, the vertical structure of several other debris disks has been tentatively resolved with ALMA.
-$\sim \SI{5.5}{au}$ spatial resolution observations of 
-CO~$\mathrm{J}=3-2$ and $2-1$ line emission from the edge-on $\beta$ Pic debris disk presented by \cite{matra17} suggest that the disk is resolved in the vertical direction.
+Observations of CO~$\mathrm{J}=3-2$ and $2-1$ line emission from the edge-on $\beta$ Pic debris disk at a spatial resolution of $\sim \SI{5.5}{au}$ presented by \cite{matra17} suggest that the disk is resolved in the vertical direction.
 The beam-subtracted apparent FWHM, determined in a similar manner as the bottom pane of Figure \ref{fig: boccaletti} in this work, ranges between $\sim$\SIrange[range-phrase=\ and\ ]{7}{12}{au} over the $\sim \SI{100}{au}$ radial extent of the disk.
 Assuming an Keplerian rotation and edge-on inclination, the authors report the following scale height-radius relation:
 \begin{align}
@@ -648,10 +643,14 @@ Assuming an Keplerian rotation and edge-on inclination, the authors report the f
 \end{align}
 where the scale height $H$ is the standard deviation of the Gaussian vertical density distribution.
 For reference to our work, this corresponds to a scale height of \SI{4}{au} at a separation of \SI{40}{au}.
-\cite{kennedy18} analyze $\SI{11.6}{au} \times \SI{13.1}{au}$ spatial resolution observations of the HR 4796A debris disk, reporting a marginal detection of the disk scale height.
+
+As pointed out in \S 4.9 of \cite{marino16}, the scale height of a narrow ring may be resolved even if the ring is not close to edge-on.
+The authors estimate that for $\sim \SI{0.25}{\arcsec}$ resolution observations of the low-inclination ($i \approx \ang{30}$) HD 181327 debris disk at a SNR of $\sim 50$, an aspect ratio of $h=0.083$ could be constrained to within $\pm 0.005$. 
+Furthermore, \cite{kennedy18} analyze $\SI{11.6}{au} \times \SI{13.1}{au}$ spatial resolution observations of the HR 4796A debris disk ($i \approx \ang{77}$), reporting a marginal detection of the disk scale height.
 The authors find that a vertically resolved ring (FWHM $= \SI{7 \pm 1}{au}$) is favored over a vertically unresolved ring (FWHM $< \SI{4}{au}$) with $\Delta BIC = 6.8$. 
 This FWHM corresponds to a Gaussian standard deviation $H \approx \SI{3.0 \pm 0.4}{au}$ and, at the $\sim \SI{80}{au}$ radial location of the ring, a scale factor of $h \approx 0.038 \pm 0.005$.
 Although the relative $BIC$ reported by the authors meets the condition for `strong' evidence of a statistically higher-quality fit ($\Delta BIC > 6$), the fact that the preferred FWHM is nearly a factor of two smaller than the spatial resolution of the data calls into question the certainty of the measurement.
+
 In sum, the vertical structure of debris disks is just beginning to be resolved in the millimeter thanks to the improvements in sensitivity and resolution provided by ALMA; to our knowledge, AU Mic exhibits the narrowest millimeter-wavelength scale height of any known debris disk.
 
 

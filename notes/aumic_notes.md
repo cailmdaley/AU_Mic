@@ -7,6 +7,36 @@ urlcolor : cyan
 
 ------------------------------------------------------------
 
+#### 6/20/18: Beam projections for Boccaletti plots
+
+```python 
+b_FWHM_maj = 0.5179142951964; b_semimaj = b_FWHM_maj / 2
+b_FWHM_min = 0.39400133490576; b_semimin = b_FWHM_min / 2
+b_PA = 77.9047088623
+
+# scipy rotate function rotates clockwise; we want the disk to be 
+# horizontal, so we need to rotate by the disk PA +/- 90
+disk_PA = 128.49
+rotate_angle = disk_PA - 90 
+# 38.49 degrees clockwise (negative in terms of PA)
+
+rotated_b_PA = b_PA - rotate_angle 
+# 39.4147 from north-- longer in vertical direction
+
+# rotate angle is defined counterclockwise to the semi-major axis
+# thus y component is just  -rotated_b_PA (negative to go counterclockwise to 
+# PA=0)
+# and x is -rotated_b_PA - 90  (rotates to PA = -90)
+b_FWHM_y = 2* b_semimin * b_semimaj / np.sqrt(
+    (b_semimin * np.cos( np.radians(-rotated_b_PA) ) )**2  +
+    (b_semimaj * np.sin( np.radians(-rotated_b_PA) ) )**2)# 0.455
+b_FWHM_x = 2* b_semimin * b_semimaj / np.sqrt(
+    (b_semimin * np.cos( np.radians(-rotated_b_PA - 90)))**2 +
+    (b_semimaj * np.sin( np.radians(-rotated_b_PA - 90) ) )**2) # 0.432
+```
+
+------------------------------------------------------------
+
 #### 6/18/18: Flare analysis  
 
 I've created a new folder called `stellar_analysis` in the `band6` directory.
@@ -35,26 +65,30 @@ sep_tot = umath.sqrt( sep_ra**2 + sep_dec**2) # 0.118+/-0.019 arcsec
 
 ```python 
 from uncertainties import ufloat
+import numpy as np
 dist_old = ufloat(9.9, 0.10)
 gaia_parallax = ufloat(102.82949372268861, 0.04856132557548943) 
 dist_gaia = 1000. / gaia_parallax
-scaling_factor = (dist_gaia / dist_old)**2
+scaling_factor = (dist_gaia / dist_old).n**2
 
-M_dust = 0.010*scaling_factor; print(M_dust)# 0.00965+/-0.00020
-M_dust_Liu = 0.011*scaling_factor; print(M_dust_Liu) # 0.01061+/-0.00021
+# Results
+M_gas = np.array([1.79e-7, 9.06e-7]) * scaling_factor; M_gas # 1.7e-07, 8.7e-07])
 
-macgregor_stellar_flux = ufloat(320, 60) * scaling_factor
-print(macgregor_stellar_flux) # 310+/-60 
+# Discussion
+M_dust = 0.010*scaling_factor; print(M_dust)# 0.009649264599090284
+M_dust_Liu = 0.011*scaling_factor; print(M_dust_Liu) # 0.010614191058999311
 
 macgregor_r_in_lower = ufloat(8.8, 1) * scaling_factor 
 macgregor_r_in_upper = ufloat(8.8, 11) * scaling_factor 
-print(macgregor_r_in_lower, macgregor_r_in_upper) # 8.5 +11.0/-1.0
+print(macgregor_r_in_lower, macgregor_r_in_upper) # 8.5+/-1.0 8+/-11
 macgregor_r_in_3sigma = 21 * scaling_factor; print(macgregor_r_in_3sigma)
+45*scaling_factor
 
-
+# Vertical Structure
 macgregor_r_out = ufloat(40.3, 0.4) * scaling_factor
-print(macgregor_r_out) # 38.9+/-0.9
+print(macgregor_r_out) # 38.9+/-0.4
 
+Krist_FWHM = np.array([2.5, 3.5]) * scaling_factor; Krist_FWHM # 2.4,  3.37
 ```
 
 ------------------------------------------------------------

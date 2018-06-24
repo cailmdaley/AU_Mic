@@ -177,7 +177,7 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run, concise=False):
-    subset_df = run.main#[run.main['r_in'] < 15]
+    subset_df = run.main[run.main['r_in'] < 15]
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].drop_duplicates() # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -247,7 +247,7 @@ def make_best_fits(run, concise=False):
                 [[4.6, 4.0, 'Model']],
                 [[4.6, 4.0, 'Residuals']]
                 ],
-            title=None, #r'Run 6 Global Best Fit Model & Residuals',
+            title=None, 
             savefile=run.name+'/' + run.name + '_bestfit_concise.pdf',
             show=True)
     else:

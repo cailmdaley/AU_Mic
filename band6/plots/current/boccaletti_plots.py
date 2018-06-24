@@ -5,21 +5,23 @@ from mpl_toolkits.axes_grid.inset_locator import zoomed_inset_axes
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import uncertainties.unumpy as unp
 sns.set_style("ticks")
 sns.set_context("talk")
 
-# Important parameters
-angleSE = 128.48 - 90
-sigma_to_FWHM = 2.35482004503
+# scipy rotate function rotates clockwise; we want the disk to be 
+# horizontal, so we need to rotate by the disk PA +/- 90
+disk_PA = 128.49
+rotate_angle = disk_PA - 90 
+# 38.49 degrees clockwise (negative in terms of PA)
 
 image = '../../cleans/current/band6_star_all.natural_clean'
 
 # Read the header from the observed FITS continuum image:
 head = fits.getheader(image + ".fits")
 # Read in images and rotate so that disk is horizontal
-im = rotate(fits.getdata(image + ".fits").squeeze(), angleSE, 
+im = rotate(fits.getdata(image + ".fits").squeeze(), rotate_angle, 
     reshape=False) * 1e6
-plt.imshow(im, origin='lower')
 
 # Generate x and y axes: offset position in arcsec
 nx = head['NAXIS1']
@@ -36,23 +38,26 @@ dec = ((np.arange(ny) - ypix + 1) * ydelt) * 3600
 distance = 9.725
 
 # Get beam FWHM
-bmin = head['bmin'] * 3600. / 2
-bmaj = head['bmaj'] * 3600. / 2
-bpa = head['bpa']; bpa
-theta = -(-bpa + angleSE) * np.pi/180
+b_FWHM_min = head['bmin'] * 3600.; b_semimin = b_FWHM_min / 2
+b_FWHM_maj = head['bmaj'] * 3600.; b_semimaj = b_FWHM_maj / 2
 
-(-bpa + angleSE)
-(bpa - angleSE)
+b_PA = head['bpa']
+rotated_b_PA = b_PA - rotate_angle 
+# 39.4147 from north-- longer in vertical direction
 
-b_FWHM_y = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta))**2 +
-            (bmaj * np.sin(theta))**2)
-b_FWHM_x = 2* bmin * bmaj / np.sqrt((bmin * np.cos(theta + np.pi/4))**2 +
-            (bmaj * np.sin(theta + np.pi/4))**2)
-b_sigma_x = b_FWHM_x/sigma_to_FWHM
-b_sigma_y = b_FWHM_y/sigma_to_FWHM
-
-b_FWHM_x
-b_FWHM_y
+# rotate angle is defined counterclockwise to the semi-major axis
+# thus y component is just -rotated_b_PA (negative to go counterclockwise to PA=0)
+# and x is -rotated_b_PA - 90  (rotates to PA = -90)
+b_FWHM_y = 2* b_semimin * b_semimaj / np.sqrt(
+    (b_semimin * np.cos( np.radians(-rotated_b_PA) ) )**2  +
+    (b_semimaj * np.sin( np.radians(-rotated_b_PA) ) )**2)# 0.455
+b_FWHM_x = 2* b_semimin * b_semimaj / np.sqrt(
+    (b_semimin * np.cos( np.radians(-rotated_b_PA - 90)))**2 +
+    (b_semimaj * np.sin( np.radians(-rotated_b_PA - 90) ) )**2) # 0.432
+    
+sigma_to_FWHM = 2.35482004503
+b_sigma_y = b_FWHM_y / sigma_to_FWHM
+b_sigma_x = b_FWHM_x / sigma_to_FWHM
 
 # Define y extent of gaussian
 SE_xpix_range = np.where((ra >  0) & (ra <= 5))[0][::-1]
@@ -85,7 +90,6 @@ for i in range(len(NW_xpix_range)):
 NW_fits = np.array([NW_fits_list[0], np.sqrt(NW_fits_list[1])])
 SE_fits = np.array([SE_fits_list[0], np.sqrt(SE_fits_list[1])])
             
-import uncertainties.unumpy as unp
 # Remove beam component
 SE_square_difference = (sigma_to_FWHM * unp.uarray(*SE_fits[:,:,2]) )**2 - (b_FWHM_y*distance)**2
 SE_square_difference[SE_square_difference < 0] = np.nan
@@ -151,25 +155,32 @@ ax1.set_xticklabels([]); ax2.set_xticklabels([])
 # radial inset
 inset_height = 1/4
 inset = zoomed_inset_axes(ax1, zoom = 1, loc=3)
-xs = np.arange(-7, 7, 0.1)
+xs = np.arange(-6, 6, 0.1)
 gauss = ax1.get_ylim()[1]*inset_height*np.exp(-xs**2/(2*(b_sigma_y*9.725)**2))
-gauss_inset = inset.plot(xs, gauss, 'k:', lw=0.7)
+gauss_inset = inset.plot(xs, gauss, 'k', lw=1)
 inset.set_axis_off()
 
 # vertical inset
 inset2 = zoomed_inset_axes(ax3, zoom = 1, loc=3)
-dec_inds = np.abs(dec) * distance < 7
-xs = dec[dec_inds] * distance
+xs_gauss = np.arange(-6, 6, 0.001)
 A = ax3.get_ylim()[1] * inset_height
-gauss = A*np.exp(-xs**2/(2*(b_sigma_x*distance)**2))
+gauss = A*np.exp(-xs_gauss**2/(2*(b_sigma_x*distance)**2))
 
-inds = np.where(np.abs(ra)*distance < 20)
-for i in inds[0]:
-    # i = np.random.randint(0, len(inds[0]))
+dec_inds = np.abs(dec) * distance < 6
+xs_slice = dec[dec_inds] * distance
+possible_inds = np.where(np.abs(ra)*distance < 35)[0]
+sample_inds = [np.random.randint(possible_inds[0], possible_inds[-1]) for i in range(40)]
+for i in sample_inds:
+    try:
+        centroid = SE_fits[0, np.where(SE_xpix_range == i)[0][0], 1]
+    except:
+        centroid = NW_fits[0, np.where(NW_xpix_range == i)[0][0], 1]
     profile = im[dec_inds, i]
     profile *= A/profile.max()
-    inset2.plot(xs, profile, 'k:', lw=0.7, alpha=0.7)
-inset2.plot(xs, gauss, 'r-', lw=1)
+    inset2.plot(xs_slice-centroid, profile, ':', c='grey', lw=0.5, alpha=0.4)
+inset2.plot(xs_gauss, gauss, 'k', lw=1)
+
+inset2.set_ylim(0, A+0.02)
 inset2.set_axis_off()
 
 
