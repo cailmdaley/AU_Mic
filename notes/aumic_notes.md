@@ -64,6 +64,13 @@ b_FWHM_x = 2* b_semimin * b_semimaj / np.sqrt(
   - test quasar beam: 0.48 x .31, 75.5 deg
   - imfit gives 0.54 x 0.32, 71.7 deg
 
+- My note to John Carpenter:
+
+> So far we’ve imaged the test quasars for the two long-baseline observations and compared their image-domain FWHM (derived from imfit) to the beam size. 
+> The test quasar FWHM is slightly larger than the beam, by 12~18% along the major axis and 3~7% along the minor axis. 
+> Also, the deconvolved quasar FWHM (~0.23 x 0.07 arcsec) is smaller than the (beam-subtracted) vertical disk FWHM of 0.28 arcsec that we measure from both image-domain and MCMC analysis of the disk. 
+> That being said, it’s difficult to make a direct comparison between the quasar and disk due to the positional offset between the two objects and the shorter integration times used for the test quasar.
+
 ------------------------------------------------------------
 
 #### 6/18/18: Flare analysis  

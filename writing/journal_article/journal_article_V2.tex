@@ -466,16 +466,6 @@ Hence, we can quantify the statistical significance of our detection of the scal
 The best-fit model image and residuals are shown in Figure \ref{fig: skinny}.
 The skinny model results in a significantly poorer fit to the data than the fiducial model with variable aspect ratio, with the best fits differing at the $3.7 \sigma$ level according to the AICc and by a value of 5.8 on the BIC.
 
-The preferred disk FWHM is only $\sim 2/3$ the size of the combined-data beam projected onto the vertical axis of the disk.
-While it may seem improbable that we measure a scale height below the image-domain spatial resolution of the combined data, our results can be explained by the following observations.
-First, the beam size of the naturally weighted combined image ($\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$) is not wholly representative of the resolution of the data. 
-The smallest naturally weighted beam FHWM from the three individual observations is $\SI{0.30}{\arcsecond} = \SI{2.9}{au}$ (Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is $\SI{0.22}{\arcsecond} = \SI{2.1}{au}$.
-Second, the scale height $H$ refers to the disk height as measured from the midplane; the observable quantity that must be resolved in order to measure the scale height is actually the total vertical thickness $2H$.
-Third, the scale height represents the standard deviation of a Gaussian distribution of dust particles that in fact reaches well beyond the extent of the scale height.
-For example, considering that the peak signal-to-noise (SNR) of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.35}{\arcsecond} (\SI{3.4}{au}). 
-The combination of these factors indicates that it is plausible that we are able to detect a scale height smaller than the resolution of the image-domain data.\footnote{Would this paragraph fit in better in the discussion section?}
-
-
 \section{Discussion}
 \label{section: discussion}
 
@@ -610,6 +600,23 @@ We conclude that this analysis would be beyond the scope of this work.
 \subsection{Vertical Structure}
 \label{subsection: vertical discussion}
 
+As discussed in \S \ref{subsection: vertical analysis}, our MCMC analysis yields a median aspect ratio of $h~=~\num{0.031 \pm 0.005}$; at a reference point of \SI{40}{au}, this translates to a vertical scale height $H = \SI{1.2 \pm 0.2}{au}$ and a FWHM of \SI{2.8 \pm 0.5}{au}.
+This FWHM is only $\sim 2/3$ the size of the combined-data beam projected onto the vertical axis of the disk.
+While it may seem improbable that we measure a vertical thickness below the image-domain spatial resolution of the combined data, our results can be explained by the following observations.
+First, the beam size of the naturally weighted combined image ($\SI{0.52}{\arcsecond} \times \SI{0.39}{\arcsecond}$) is not wholly representative of the resolution of the data. 
+The smallest naturally weighted beam FHWM from the three individual observations is $\SI{0.30}{\arcsecond} = \SI{2.9}{au}$ (Table \ref{tab:observations}), while the spatial scale traced by the longest baseline is $\SI{0.22}{\arcsecond} = \SI{2.1}{au}$.
+Second, the scale height $H$ refers to the disk height as measured from the midplane; the observable quantity that must be resolved in order to measure the scale height is actually the total vertical thickness $2H$.
+Third, the scale height represents the standard deviation of a Gaussian distribution of dust particles that in fact reaches well beyond the extent of the scale height.
+For example, considering that the peak signal-to-noise (SNR) of the data is $\sim 23$ and that the vertical distribution of dust is assumed to be Gaussian, the SNR should remain above 3 over a total vertical extent of $\sim$\SI{0.35}{\arcsecond} (\SI{3.4}{au}). 
+The combination of these factors indicates that it is plausible that we are able to detect a scale height smaller than the resolution of the image-domain data.
+
+Our ability to measure the disk's vertical thickness could also be affected by phase noise, which could cause the true angular resolution of the data to exceed that given by the beam.
+To investigate the effects of phase noise on the resolution, we imaged the test quasars that were observed by ALMA with the same clean parameters that were used to image the AU Mic disk itself.
+We find that the image-domain FWHMs of the quasars observed during the two long-baseline observations are slightly larger than the corresponding beam FWHMs; however the beam-subtracted quasar FWHMs are still smaller than the beam-subtracted vertical disk FWHM, indicating that phase noise does not prevent us from resolving the vertical structure of AU Mic's disk.
+\citet{boehler13} find that introducing Gaussian-distributed phase noise to synthetic ALMA observations of highly-inclined proplanetary disks has little effect on the measured scale height value, although the corresponding uncertainties do grow.
+Furthermore, the authors find that introducing phase noise dramatically increases model reduced $\chi^2$ values; our low reduced $\chi^2$ value of 1.027 provides further indication that phase noise does not affect our results.
+
+
 \afterpage{%    % defer execution until the next page break occurs anyway
   \begin{figure}[t!] % not "pt"
     \centering
@@ -640,8 +647,7 @@ We conclude that this analysis would be beyond the scope of this work.
   \end{table}
 } % end of argument of `\afterpage` command
 
-As discussed in \S \ref{subsection: vertical analysis}, our MCMC analysis yields a median aspect ratio of $h~=~\num{0.031 \pm 0.005}$; at a reference point of \SI{40}{au}, this translates to a vertical scale height $H = \SI{1.2 \pm 0.2}{au}$ and a HWHM of \SI{1.4 \pm 0.2}{au}.
-This measurement is marginally consistent with values cited in the literature derived from observations spanning the optical to the sub-millimeter, with HWHMs ranging from roughly \SIrange{0.2}{2}{au}.
+Our measured HWHM of \SI{1.4 \pm 0.2}{au} is marginally consistent with values cited in the literature derived from observations spanning the optical to the sub-millimeter, ranging from roughly \SIrange{0.2}{2}{au}.
 \citet{schuppler17} place an upper limit of \SI{0.05}{\radian} on the \SI{1.3}{mm} opening angle (equivalent to the aspect ratio for small angles) by extracting the image-domain vertical profile from vertically unresolved ALMA observations presented in \citet{macgregor13}, and estimate a visible-wavelength opening angle of \SI{0.03}{\radian} by reading off the vertical scale height from STIS observations of the disk in \citet{schneider14}.
 \citet{metchev05} approximate a $H$-band Keck FWHM of $\sim \SI{4}{au}$ at a separation of \SI{40}{au};
 \citet{krist05} fit a vertical Lorentzian profile to multicolor HST observations of the disk and find the Gaia-corrected FWHM interior to \SI{50}{au} to fall between \SIlist{2.4;3.4}{au}.
