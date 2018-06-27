@@ -15,20 +15,20 @@ rs = np.linspace(37.5,42.5, 4)
 HWHMs = rs * 0.1/2
 ax1.plot(rs, HWHMs,  ls='-', color=c[2],
     label='Schuppler et al. (2015), short wavelengths')
-ax1.annotate(s='1a', xy=(rs[-1]-1, HWHMs[-1]-0.03), color=c[2], fontsize=fontsize)
+ax1.annotate(s='1a', xy=(rs[-1]-0.3, HWHMs[-1]), color=c[2], fontsize=fontsize)
 
 ## Metchev, apparent
 r = 40
 # HWHMs = np.linspace(2.5,4.2,4)/2
 HWHM = 2 
-ax1.plot(r, HWHM,  ls=':', label='Metchev et al. (2005)', color=c[1])
-ax1.annotate(s='2a', xy=(rs[-1]-1, HWHMs[-1]+0.06), color=c[1], fontsize=fontsize)
+ax1.plot(r, HWHM,  ls=':', label='Metchev et al. (2005)', color=c[1], marker='o')
+ax1.annotate(s='2a', xy=(r+3.1, HWHM-0.21), color=c[1], fontsize=fontsize)
 
 ## Krist, apparent
-rs_in = np.linspace(1.5, 5, 4)*distance
+rs = np.linspace(1.5, 5, 4)*distance
 HWHMs = np.linspace(0.25/2, 0.35/2, 4)*distance
 ax1.plot(rs, HWHMs,  ls=':', label='Krist et al. (2005), apparent', color=c[3])
-ax1.annotate(s='3a', xy=(rs[-1]-1, HWHMs[-1]+0.05), color=c[3], fontsize=fontsize)
+ax1.annotate(s='3a', xy=(rs[-1], HWHMs[-1]+0.05), color=c[3], fontsize=fontsize)
 
 ## Schneider
 rs = np.linspace(10, 50, 4)
@@ -93,6 +93,6 @@ ax2.set_title('Millimeter')
 
 plt.subplots_adjust(wspace=0, bottom=0.18)
 
-# plt.savefig('scale_height_comparison.png', dpi=1000)
-# plt.savefig('../../../writing/figures/scale_height_comparison.png', dpi=1000)
+plt.savefig('scale_height_comparison.png', dpi=1000)
+plt.savefig('../../../writing/figures/scale_height_comparison.png', dpi=1000)
 plt.show()

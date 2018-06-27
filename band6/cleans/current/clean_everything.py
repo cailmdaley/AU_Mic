@@ -48,8 +48,7 @@ all_cleans = [
             
             
 rms_strings = []
-for obs in all_cleans:
-    casa.obs_clean(*obs)
+casa.obs_clean(*all_cleans[-1])
     # rms_strings.append(obs[0] + '_rms = ' + raw_input('please enter clean rms: '))
-print(np.array(rms_strings))
+# print(np.array(rms_strings))
     

@@ -5,12 +5,12 @@ import numpy as np
 from glob import glob
 
 # create df
-run_info = pd.DataFrame(columns=['samples', 'k',  'lnprob', 'AICc', 'AIC_sigma', 'd_BIC'], dtype=float)
+run_info = pd.DataFrame(columns=['samples', 'k', 'chi^2', 'red_chi^2', 'lnprob', 'AICc', 'AIC_sigma', 'd_BIC'], dtype=float)
 run_info.name = 'run'
 
-# get # of visibilities
+# get number of visibilities; factor of 2 comes from reals and imaginaries
 uvfs = glob('subtracted_obs_files/*.uvf')
-nvis = np.sum([fits.open(uvf)[0].data.shape[0] for uvf in uvfs])
+nvis = 2 * np.sum([fits.open(uvf)[0].data.shape[0] for uvf in uvfs])
 
 
 # get get run directories and names
@@ -33,6 +33,8 @@ for run, run_name in zip(runs, run_names):
 
     run_info.loc[run_name, 'samples'] = chain.shape[0]
     run_info.loc[run_name, 'k'] = chain.shape[1]
+    run_info.loc[run_name, 'chi^2'] = -2*chain.lnprob.max()
+    run_info.loc[run_name, 'red_chi^2'] = -2*chain.lnprob.max() / nvis
     run_info.loc[run_name, 'lnprob'] = chain.lnprob.max()
 
 # calculate AIC --> AICc

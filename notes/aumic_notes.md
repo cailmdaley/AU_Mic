@@ -20,6 +20,7 @@ old_log_M_dust = ufloat(-7.540, 0.006)
 old_M_dust = 10**old_log_M_dust * u.Msun.to(u.M_earth)
 print(old_M_dust) # 0.00960+/-0.00013
 scaling_factor.n * old_M_dust
+
 ```
 
 ------------------------------------------------------------
@@ -99,8 +100,19 @@ alt_sep_dec = alt_noflare_dec - alt_flare_dec
 alt_sep_tot = umath.sqrt( alt_sep_ra**2 + alt_sep_dec**2) # 0.118+/-0.0088 arcsec
 alt_sep_tot
 ```
-2. 
+2. Verifying flare fluxes derived by calling imstat on the clean image from each 1-minute timebind
 
+```python
+from uncertainties import ufloat, umath
+MCMC_starflux = ufloat(0.23, 0.02) #mJy
+MCMC_diskflux = ufloat(4.81, 0.05) #mJy
+cgcurs_flux = ufloat(4.97, 0.08) #mJy
+imfit_flux = ufloat(0.26, 0.02)
+
+print(imfit_flux - MCMC_starflux) # 0.030+/-0.028
+print(imfit_flux - (cgcurs_flux - MCMC_diskflux)) # 0.10+/-0.10
+```
+Everything agrees to within ~1-sigma!
 
 ------------------------------------------------------------
 

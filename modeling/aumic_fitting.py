@@ -43,7 +43,7 @@ def label_fix(run):
             df.loc[:,'jun_starflux'] *= 1e6
             df.loc[:,'aug_starflux'] *= 1e6
             
-        df.loc[:,'inc'].where(df.loc[:,'inc'] < 90, 180-df.loc[:,'inc'], inplace=True)
+        # df.loc[:,'inc'].where(df.loc[:,'inc'] < 90, 180-df.loc[:,'inc'], inplace=True)
         
         df.rename(inplace=True, columns={
             'm_disk' : r'$\log \ M_{dust}$ ($M_{\odot}$)', 
@@ -53,8 +53,8 @@ def label_fix(run):
             'd_r' : r'$r_{out}$ (au)',
             # 'd_r' : r'$\Delta r$ (au)',
             'inc' : r'$i$ ($\degree$)',
-            'pa'  : r'PA  ($\degree$)',
-            'mar_starflux' : r'March $F_{*}$ ($\mu$Jy)',
-            'aug_starflux' : r'August $F_{*}$ ($\mu$Jy)',
-            'jun_starflux' : r'June $F_{*}$ ($\mu$Jy)'})
+            'pa'  : r'PA ($\degree$)',
+            'mar_starflux' : r'$F_{\star \rm March}$ ($\mu$Jy)',
+            'aug_starflux' : r'$F_{\star \rm August}$ ($\mu$Jy)',
+            'jun_starflux' : r'$F_{\star \rm June}$ ($\mu$Jy)'})
     

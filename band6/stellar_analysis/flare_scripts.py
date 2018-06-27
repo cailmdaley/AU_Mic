@@ -122,7 +122,6 @@ def calculate_flare_fluxes():
     df.loc[:, ['flux', 'rms']] *= 1e3 # mJy
     return df.round(2)
     
-    
 # # Concatenate and clean flare vs no-flare files; compare imfit locations
 # concat_flare()
 # clean('band6_24jun_flare.fixvis')
