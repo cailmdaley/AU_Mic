@@ -240,7 +240,7 @@ def make_best_fits(run, concise=False):
                 paths[-1] + '.fits',
                 paths[-1] + '.residuals.fits']],
             rmses=[3*[aumic_fitting.band6_rms_values[-1]]],
-            global_colorscale=False)
+            global_colorscale=True)
         plotter.plot_all()
 
         # Subplot labels
@@ -249,8 +249,9 @@ def make_best_fits(run, concise=False):
 
         # Scale bar
         x = -3.015; y = -4.7
-        plotter.axes[0].plot([x, x - 10/9.725], [y, y], ls='-', linewidth=2, color='k')
-        plotter.add_text(subplot_index=0, x=x+0.32, y=y+0.15, text="10 au")
+        for i, ax in enumerate(plotter.axes):
+            ax.plot([x, x - 10/9.725], [y, y], ls='-', linewidth=2, color='k')
+            plotter.add_text(subplot_index=i, x=x+0.32, y=y+0.15, text="10 au")
 
         # For residual subplot: plot disk PA/extent as dashed line 
         # and stellar location as star
@@ -262,6 +263,7 @@ def make_best_fits(run, concise=False):
         plotter.axes[-1].plot(0, 0, marker='*', markersize=7, markeredgewidth=1, color='k')
         
         plotter.save(run.name+'/' + run.name + '_bestfit_concise.pdf', dpi=1000)
+        plotter.save('../writing/figures/skinny_best_fit.pdf', dpi=1000)
         # plotter.show()
     
     # else:

@@ -47,6 +47,7 @@ This run is a redo of the previous single starflux model (run7), but uses the ne
 
     if args.run:
         mcmc.run_emcee(run_name=run_name, nsteps=10000, nwalkers=50,
+            scratch_dir='/scratch/cail/{}_model_files'.format(run_name), 
             lnprob = lnprob, to_vary = [
             ('m_disk',            -7.54,        0.06,      (-np.inf, np.inf)),
             ('sb_law',            1.5,          1.5,       (-np.inf, np.inf)),
@@ -139,7 +140,6 @@ def lnprob(theta, run_name, to_vary):
     For each parameter to be varied, return -infinity if the proposed value lies
     outside the bounds for the parameter; if all parameters are ok, return 0.
     """
-
     # reassign parameters to vary to those input by emcee
     for i, free_param in enumerate(to_vary):
         lower_bound, upper_bound = free_param[-1]
@@ -169,7 +169,6 @@ def lnprob(theta, run_name, to_vary):
     model.delete()
 
     return -0.5 * sum(model.chis)
-
 
 def make_best_fits(run, concise=False):
     subset_df = run.main#[run.main['r_in'] < 15]
@@ -230,35 +229,51 @@ def make_best_fits(run, concise=False):
 
     print('Making figure...')
     if concise:
-        fig = plotting.Figure(
-            layout=(1,3),
-            paths=[
+        plotter = plotting.Plotter(
+            paths=[[
                 aumic_fitting.band6_fits_images[-1],
                 paths[-1] + '.fits',
-                paths[-1] + '.residuals.fits'],
-            rmses=3*[aumic_fitting.band6_rms_values[-1]],
-            texts=[
-                [[4.6, 4.0, 'Data']],
-                [[4.6, 4.0, 'Model']],
-                [[4.6, 4.0, 'Residuals']]
-                ],
-            title=None, #r'Run 6 Global Best Fit Model & Residuals',
-            savefile=run.name+'/' + run.name + '_bestfit_concise.pdf',
-            show=True)
-    else:
-        fig = plotting.Figure(layout=(4,3),
-           paths=[[obs, path + '.fits', path + '.residuals.fits']
-               for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
-           rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
-           texts=[
-               [[[4.6, 4.0, date]],
-               [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
-               None]
-               for date, rms in zip(['March', 'August', 'June', 'All'],
-               aumic_fitting.band6_rms_values)
-               ],
-           title= run.name + r'Global Best Fit Model & Residuals',
-          savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
+                paths[-1] + '.residuals.fits']],
+            rmses=[3*[aumic_fitting.band6_rms_values[-1]]],
+            global_colorscale=True)
+        plotter.plot_all()
+
+        # Subplot labels
+        for i, text in enumerate(['Data', 'Model', 'Residuals']):
+            plotter.add_text(subplot_index=i, x=4.6, y=4.0, text=text)
+
+        # Scale bar
+        x = -3.015; y = -4.7
+        for i, ax in enumerate(plotter.axes):
+            ax.plot([x, x - 10/9.725], [y, y], ls='-', linewidth=2, color='k')
+            plotter.add_text(subplot_index=i, x=x+0.32, y=y+0.15, text="10 au")
+
+        # For residual subplot: plot disk PA/extent as dashed line 
+        # and stellar location as star
+        proj_angle = np.radians(model_params['pa'] + 90)
+        r_out_arcsec = model_params[['r_in', 'd_r']].sum() / 9.725
+        x_proj = r_out_arcsec * -np.cos( proj_angle ) # neg b/c RA is left-positive
+        y_proj = r_out_arcsec *  np.sin( proj_angle ) 
+        plotter.axes[-1].plot([-x_proj, x_proj], [-y_proj, y_proj], c='k', ls=':', lw=2)
+        plotter.axes[-1].plot(0, 0, marker='*', markersize=7, markeredgewidth=1, color='k')
+        
+        plotter.save(run.name+'/' + run.name + '_bestfit_concise.pdf', dpi=1000)
+        # plotter.show()
+    
+    # else:
+    #     fig = plotting.Figure(layout=(4,3),
+    #        paths=[[obs, path + '.fits', path + '.residuals.fits']
+    #            for obs, path in zip(aumic_fitting.band6_fits_images, paths)],
+    #        rmses=[3*[rms] for rms in aumic_fitting.band6_rms_values],
+    #        texts=[
+    #            [[[4.6, 4.0, date]],
+    #            [[4.6, 4.0, 'rms={}'.format(np.round(rms*1e6))]],
+    #            None]
+    #            for date, rms in zip(['March', 'August', 'June', 'All'],
+    #            aumic_fitting.band6_rms_values)
+    #            ],
+    #        title= run.name + r'Global Best Fit Model & Residuals',
+    #       savefile=run.name+'/' + run.name + '_bestfit_global.pdf')
           
 
 def sample_disk_flux(run, best_fit = False):
@@ -302,4 +317,3 @@ def disk_flux_stats(n_samples):
 
 if __name__ == '__main__':
     main()
-    

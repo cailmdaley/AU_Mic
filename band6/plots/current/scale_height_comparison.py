@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import seaborn as sns; sns.set()
 
 sns.set_style('whitegrid')
@@ -62,9 +63,9 @@ ax2.annotate(s='5', xy=(rs[-1]+1, HWHMs[-1]), color=c[5], fontsize=fontsize)
 
 # This work
 rs = np.linspace(24,42.3, 3)
-HWHMs = rs*0.031*2.355/2
+HWHMs = rs*0.032*2.355/2
 ax2.plot(rs, HWHMs, ls='-', label='This work', color=c[0])
-ax2.fill_between(rs, rs*0.026*2.35/2, rs*0.036*2.35/2, 
+ax2.fill_between(rs, rs*0.027*2.35/2, rs*0.037*2.35/2, 
     alpha=0.3, color=c[0])
 ax2.annotate(s='6', xy=(rs[-1]+1, HWHMs[-1]), color=c[0], fontsize=fontsize)
     
@@ -91,6 +92,11 @@ fig.text(0.5125, 0.02, 'Radius (au)', ha='center', fontsize=11)
 ax1.set_title('Optical & Near-IR')
 ax2.set_title('Millimeter')
 
+mpl.lines.Line2D([0],[0], ls=':', c='k', label='Apparent')
+fig.legend(
+    [mpl.lines.Line2D([0],[0], ls=':', c='k'),
+    mpl.lines.Line2D([0],[0], ls='-', c='k')], 
+    ['Apparent', 'Modeled'], loc=9, bbox_to_anchor=(0.486,0.855), frameon=True)
 plt.subplots_adjust(wspace=0, bottom=0.18)
 
 plt.savefig('scale_height_comparison.png', dpi=1000)
