@@ -22,7 +22,7 @@ ax1.annotate(s='1a', xy=(rs[-1]-0.3, HWHMs[-1]), color=c[2], fontsize=fontsize)
 r = 40
 # HWHMs = np.linspace(2.5,4.2,4)/2
 HWHM = 2 
-ax1.plot(r, HWHM,  ls=':', label='Metchev et al. (2005)', color=c[1], marker='o')
+ax1.plot(r, HWHM,  ls=':', label='Metchev et al. (2005)', color=c[1], marker='o', markersize=6)
 ax1.annotate(s='2a', xy=(r+3.1, HWHM-0.21), color=c[1], fontsize=fontsize)
 
 ## Krist, apparent
@@ -96,7 +96,7 @@ mpl.lines.Line2D([0],[0], ls=':', c='k', label='Apparent')
 fig.legend(
     [mpl.lines.Line2D([0],[0], ls=':', c='k'),
     mpl.lines.Line2D([0],[0], ls='-', c='k')], 
-    ['Apparent', 'Modeled'], loc=9, bbox_to_anchor=(0.486,0.855), frameon=True)
+    ['Apparent', 'Modeled'], loc=9, bbox_to_anchor=(0.5128,0.828), frameon=True)
 plt.subplots_adjust(wspace=0, bottom=0.18)
 
 plt.savefig('scale_height_comparison.png', dpi=1000)

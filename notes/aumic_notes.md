@@ -7,21 +7,19 @@ urlcolor : cyan
 
 ------------------------------------------------------------
 
+#### 6/22/18: Local Intensity Maxima Offset
+
+- NW: 7.0
+- SE: 10.0
+``` python
+import numpy as np
+NW_angle = np.sin(7.0/40); NW_angle * 180/np.pi
+SE_angle = np.sin(10.0/40); SE_angle * 180/np.pi
+```
+
+------------------------------------------------------------
+
 #### 6/22/18: Calculating Stirring Body Mass
-
-Calculating the size of the largest possible body, assuming Earth density
-`w (1.5 M_earth / (4/3 * pi * 5.5 g/cm^3))^(1/3) in earth radii`
-
-Calculating stirring extent for a single stirring body:
-`w 5*40 au * (1.5 M_earth / (3*0.5 M_sun))^(1/3)`
-
-Calculating stirring extent for a Neptune  
-`w 5*35 au * (15 M_earth / (3*0.5 M_sun))^(1/3)`  
-`w 5*47 au * (15 M_earth / (3*0.5 M_sun))^(1/3)`  
-- average of 5 and 7 $\implies$ 6 au 
-
-Calculating number of bodes of size 340 km:  
-`w 1.5 M_earth / (4/3*pi*(340km)^3 * 2 g/cm^3)`  
 
 ```python 
 import astropy.units as u; import astropy.constants as c
@@ -261,13 +259,6 @@ So on both accounts, I think we are justified in keeping the model stellar lumin
 
 ------------------------------------------------------------
 
-#### 3/31/18: Local Intensity Maxima Offset
-
-- NW: 7.3
-- SE: 10.5
-
-------------------------------------------------------------
-
 #### 3/31/18: Questions for Zach re: AU Mic Gas
 
 1. for the AU Mic standard keplerian model, which model parameters are fixed and which are free parameters?
@@ -311,10 +302,16 @@ spatial_scale = angular_scale * 9.725; spatial_scale # 2.1274964674653156
 #### 4/14/18: Macgregor flux density comparison
 
 ``` python
+import numpy as np
 from uncertainties import ufloat, umath
 import astropy.units as u; import astropy.constants as c
 
 # calculate scaling factor
+
+# new_mean_wav = 850*u.micron
+# mac_mean_freq = (c.c / new_mean_wav).to(u.Hz)
+# scaling_factor * ufloat(12.5, 1.5)
+
 mac_mean_freq = 235e9 * u.Hz
 mac_mean_wav = np.round((c.c / mac_mean_freq).to(u.mm), 2);
 mac_mean_wav.value # 1.28 mm
