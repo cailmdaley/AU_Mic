@@ -69,9 +69,11 @@ def gaussian(xs, amplitude, mean, sigma):
     return amplitude * np.exp(- 0.5 * (xs - mean) ** 2 / sigma ** 2)
 
 NW_fits_list, SE_fits_list = [ [], [] ], [ [], [] ]
+NW_sums, SE_sums = [], []
 for i in range(len(NW_xpix_range)):
     #Fit gaussian to data
     NW_slice = im[ypix_range, NW_xpix_range[i]]
+    NW_sums.append(NW_slice.sum())
     NW_fit = curve_fit(f=gaussian, 
         xdata=dec[ypix_range]*distance, ydata=NW_slice, 
         sigma=[20]*len(NW_slice), absolute_sigma=True, 
@@ -81,6 +83,7 @@ for i in range(len(NW_xpix_range)):
         
     if i != len(SE_xpix_range):
         SE_slice = im[ypix_range, SE_xpix_range[i]]
+        SE_sums.append(SE_slice.sum())
         SE_fit = curve_fit(f=gaussian, xdata=dec[ypix_range]*distance, ydata=SE_slice, 
             sigma=[15]*len(SE_slice), absolute_sigma=True, 
             p0=(np.max(SE_slice), 0, 1.2))
@@ -99,7 +102,7 @@ NW_square_difference = (sigma_to_FWHM * unp.uarray(*NW_fits[:,:,2]) )**2 - (b_FW
 NW_square_difference[NW_square_difference < 0] = np.nan
 NW_disk_FWHM = unp.sqrt(NW_square_difference)
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(8, 10), sharex=False)
+fig, (ax1, ax1a, ax2, ax3) = plt.subplots(4, figsize=(8, 10), sharex=False)
 color = 'crimson'
 # ax1.set_ylabel(r"Surface brightness ($\mu$Jy/beam)")
 # ax1.set_ylim(-50, 350)
@@ -122,6 +125,9 @@ ax1.fill_between(au_range, NW_fits[0,:-1,0] - NW_fits[1,:-1,0], NW_fits[0,:-1,0]
 # ax1.set_xticks(np.array([0,1,2,3,4])*10)
 legend1 = ax1.legend(loc='upper right')
 
+ax1a.plot(au_range, SE_sums, label='SE')
+ax1a.plot(au_range, NW_sums[:-1], '--', color=color, label='NW')
+
 ax2.set_ylabel("Elevation (au)")
 SE = ax2.plot(au_range, SE_fits[0,:,1], label='SE')
 NW = ax2.plot(au_range, NW_fits[0,:-1,1], '--', label='NW', color=color)
@@ -139,7 +145,6 @@ SE_disk_FWHM_val = unp.nominal_values(SE_disk_FWHM)
 SE_disk_FWHM_sigma = unp.std_devs(SE_disk_FWHM)
 NW_disk_FWHM_val = unp.nominal_values(NW_disk_FWHM)
 NW_disk_FWHM_sigma = unp.std_devs(NW_disk_FWHM)
-SE_disk_FWHM_val
 
 ax3.plot(au_range, SE_disk_FWHM_val, label='SE')
 ax3.plot(au_range, NW_disk_FWHM_val[:-1], '--', label='NW', color=color)
@@ -192,23 +197,28 @@ for ax in [ax1,ax2,ax3]:
     ax.yaxis.label.set_position((ylabel_x-13, ylabel_y))
     ax.yaxis._autolabelpos=False
 
-fig.savefig("../../../writing/figures/boccaletti_plots.pdf", dpi=1000)
+# fig.savefig("../../../writing/figures/boccaletti_plots.pdf", dpi=1000)
 plt.show()
 
 
 # find offset of two (inner) local intensity maxima
 # slice_indices = (5 < au_range) & (au_range < 12)
 # slice_range =  au_range[slice_indices]
-# slice_range[SE_amps[slice_indices].argmax()]
-# slice_range[NW_amps[:-1][slice_indices].argmax()]
+# slice_range[SE_fits[0,:,0][slice_indices].argmax()]
+# slice_range[NW_fits[0,:-1,0][slice_indices].argmax()]
 
-# find 3-sigma extent
-print(au_range[np.where(SE_fits[0,:,0] < 15 * 3)])    
-print(au_range[np.where(NW_fits[0,:,0] < 15 * 3)[0][:-1]])    
+# # find 3-sigma extent
+# print(au_range[np.where(SE_fits[0,:,0] >= 15 * 3)])    
+# print(au_range[np.where(NW_fits[0,:,0] >= 15 * 3)[0][:-1]])    
+# au_range[np.where(SE_fits[0,:,0] >= 15 * 3)][-1] * 2 / (b_FWHM_x * distance)
 
-# find average FWHM interior to 30
-inds = np.where(au_range < 35)
-FWHMs = np.array([SE_disk_FWHM[inds], NW_disk_FWHM[:-1][inds]])
-FWHM_mean = np.mean(FWHMs)
-FWHM_std = unp.sqrt( np.sum( (FWHMs - np.mean(FWHMs))**2 ) / (FWHMs.size-1) )
-print(FWHM_mean, FWHM_std)
+# # find average beam-subtracted FWHM interior to 30
+# inds = np.where(au_range < 35)
+# FWHMs = np.array([SE_disk_FWHM[inds], NW_disk_FWHM[:-1][inds]])
+# FWHM_mean = np.mean(FWHMs)
+# FWHM_std = unp.sqrt( np.sum( (FWHMs - np.mean(FWHMs))**2 ) / (FWHMs.size-1) )
+# print(FWHM_mean, FWHM_std)
+
+# # find average *apparent* FWHM interior to 30
+# FWHMs = np.array([SE_fits[0,:,2][inds], NW_fits[0,:-1,2][inds]]) * sigma_to_FWHM
+# FWHMs.mean()

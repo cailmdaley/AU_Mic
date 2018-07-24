@@ -9,7 +9,9 @@
     ".remote-sync.json",
     ".git/**",
     "modeling/**/model_files/**",
-    "*.csv"
+    "*.csv",
+    "*DS_Store*",
+    "*nfs*"
   ],
   "username": "cdaley",
   "keyfile": "/Users/cdaley/.ssh/id_rsa",
