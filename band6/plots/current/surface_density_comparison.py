@@ -7,34 +7,35 @@ import pandas as pd
 from uncertainties import ufloat, umath
 import uncertainties.unumpy as unp
 from numba import jit
+from uncertainties import ufloat
 
 M_dust = unp.uarray( 
-    [[10**(-7.54), 0,  10**(-7.54)           ], 
-     [10**(-7.54),  0, 10**(-7.54)           ]],
-    [[(10**(-7.54)  - 10**(-7.546)) / 2, 0, 0],
-     [(10**(-7.534) - 10**(-7.54))  / 2, 0, 0]]
+    [[10**(-7.561),                   0, 10**(-7.564)           ], 
+     [10**(-7.561),                   0, 10**(-7.564)           ]],
+    [[(10**(-7.561)  - 10**(-7.567)), 0, 0], # why dide i divide this errors by two before?
+     [(10**(-7.555) - 10**(-7.561)),  0, 0]]
     ) * u.Msun.to('g')
 r_in =  unp.uarray( 
-    [[24.0, 8.8, 5.2], 
-     [24.0, 8.8, 5.2]],
-    [[0.9, 1.,   0  ],
+    [[23.3, 8.5, 6.1], 
+     [23.3, 8.5, 6.1]],
+    [[1.0, 1.,   0  ],
      [0.6, 11.,  0  ]]
     ) * u.au.to('cm')
 r_out = unp.uarray( 
-    [[42.3, 40.3, 40.6], 
-     [42.3, 40.3, 40.6]], 
-    [[0.5,  0.4,  0   ],
+    [[41.6, 38.9, 40.4], 
+     [41.6, 38.9, 40.4]], 
+    [[0.6,  0.4,  0   ],
      [0.4,  0.4,  0   ]]
     ) * u.au.to('cm')
 p = unp.uarray( 
-    [[0.8, 2.3, 2.8], 
-     [0.8, 2.3, 2.8]], 
+    [[0.9, 2.3, 2.8], 
+     [0.9, 2.3, 2.8]], 
     [[0.4, 0.31, 0],
      [0.5, 0.21, 0]]
     )
 macgregor_flux_values = unp.uarray([7.14, 7.14], [0.25, 0.12])
-r_in_errs = np.array([ [0.9, 0.6], [1, 11], [0,0] ]) * u.au.to('cm')
-r_out_errs = np.array([ [0.5, 0.4], [0.4, 0.4], [0,0] ]) * u.au.to('cm')
+r_in_errs = np.array([ [1.0, 0.6], [1, 11], [0,0] ]) * u.au.to('cm')
+r_out_errs = np.array([ [0.6, 0.4], [0.4, 0.4], [0,0] ]) * u.au.to('cm')
 r = np.array([np.linspace(
     r_in[0,i].n  - r_in[0,i].std_dev, 
     r_out[1,i].n + r_out[1,i].std_dev, 
@@ -91,7 +92,7 @@ sigma = our_surface_density()
 sigma[:, 1] = macgregor_surface_density(1000)
 
 fig, ax = plt.subplots()
-labels = ['This work', 'MacGregor et al. (2013)', r'$r_{min} \leq 15$ au best fit']
+labels = ['This work', 'MacGregor et al. (2013)', r'$r_{in} \leq 15$ au best fit']
 ls = ['-', '--', ':']
 colors = [sns.color_palette()[0], 'crimson', 'k']
 for i in range(1, -1, -1):

@@ -7,6 +7,44 @@ urlcolor : cyan
 
 ------------------------------------------------------------
 
+#### 6/22/18: Local Intensity Maxima Offset
+
+- NW: 7.0
+- SE: 10.0
+``` python
+import numpy as np
+NW_angle = np.sin(7.0/40); NW_angle * 180/np.pi
+SE_angle = np.sin(10.0/40); SE_angle * 180/np.pi
+```
+
+------------------------------------------------------------
+
+#### 6/22/18: Calculating Stirring Body Mass
+
+```python 
+import astropy.units as u; import astropy.constants as c
+from uncertainties import ufloat, umath
+import numpy as np
+h = ufloat(0.032, 0.005)
+rho = 2 * u.g / u.cm**3
+print(h*40 * 2.355 / 2)
+
+v_Kep = np.sqrt(c.G * 0.5*u.M_sun / (40*u.au) ).to(u.m / u.s)
+v_rel = v_esc = v_Kep * 2.355 * np.sqrt(3) * h; print(v_rel.value) # 430+/-70 m/s
+
+# v_esc = umath.sqrt(2 * c.G * (4/3*np.pi * s_big**3 * rho) / s_big)
+s_big = (v_esc / np.sqrt(8*np.pi * c.G * rho / 3) ).decompose()
+print(s_big.value * 1e-3) # 410+/-60 km
+
+M_big = ( 4/3 * np.pi * s_big**3 * rho ).decompose()
+print(M_big.value) # (5.8+/-2.7)e+20 kg
+print(M_big.value * u.kg.to(u.M_earth))
+
+```
+
+
+------------------------------------------------------------
+
 #### 6/22/18: Dust mass uncertainty propagation
 
 ```python
@@ -146,10 +184,10 @@ print(macgregor_r_in_lower, macgregor_r_in_upper) # 8.5+/-1.0 8+/-11
 macgregor_r_in_3sigma = 21 * scaling_factor; print(macgregor_r_in_3sigma)
 45*scaling_factor
 
-# Vertical Structure
 macgregor_r_out = ufloat(40.3, 0.4) * scaling_factor
 print(macgregor_r_out) # 38.9+/-0.4
 
+# Vertical Structure
 Krist_FWHM = np.array([2.5, 3.5]) * scaling_factor; Krist_FWHM # 2.4,  3.37
 ```
 
@@ -221,13 +259,6 @@ So on both accounts, I think we are justified in keeping the model stellar lumin
 
 ------------------------------------------------------------
 
-#### 3/31/18: Local Intensity Maxima Offset
-
-- NW: 7.3
-- SE: 10.5
-
-------------------------------------------------------------
-
 #### 3/31/18: Questions for Zach re: AU Mic Gas
 
 1. for the AU Mic standard keplerian model, which model parameters are fixed and which are free parameters?
@@ -271,10 +302,16 @@ spatial_scale = angular_scale * 9.725; spatial_scale # 2.1274964674653156
 #### 4/14/18: Macgregor flux density comparison
 
 ``` python
+import numpy as np
 from uncertainties import ufloat, umath
 import astropy.units as u; import astropy.constants as c
 
 # calculate scaling factor
+
+# new_mean_wav = 850*u.micron
+# mac_mean_freq = (c.c / new_mean_wav).to(u.Hz)
+# scaling_factor * ufloat(12.5, 1.5)
+
 mac_mean_freq = 235e9 * u.Hz
 mac_mean_wav = np.round((c.c / mac_mean_freq).to(u.mm), 2);
 mac_mean_wav.value # 1.28 mm
@@ -793,7 +830,7 @@ The resulting visibilities appear very slighltly oversubtracted, but it's good e
 ------------------------------------------------------------
 
 #### 6/14/17: Final corrections on visibility files, and exclusion of flare 
-Now that we a more reliable result for the June star position, Meredith and I have decided that it would be a good idea to re-subtract the stellar componenet from the actual star position, rather than the flare position. I apply `uvmodelfit` to the I used the following code to fit a point source to several different baseline ranges; the point source flux should converge to the stellar flux as the shorter baselines are excluded.
+Now that we a more reliable result for the June star position, Meredith and I have decided that it would be a good idea to re-subtract the stellar componenet from the actual star position, rather than the flare position. I apply `uvmodelfit` to the I used the following code to fit a point source to several different baseline ranges; the point source flux should converge to the stellar flux as the shorter baselines are excluded.  
 ``` python
 I = []
 for i in range(0, 701, 50):
@@ -803,9 +840,10 @@ for i in range(0, 701, 50):
 ```
 
 After visual inspection, I've decided that `uvrange='350~1400'` provides the best balance between excluding disk flux and including as many data points as possible.
-This yields a stellar flux of `I = 0.000262055 +/- 9.40667e-09` Jy. 
+This yields a stellar flux of `I = 0.000262055 +/- 9.40667e-09` Jy.  
 
-The procedure for June is as follows: 
+The procedure for June is as follows:  
+
 1.  Fix phasecenter:      
     ``` python
     fixvis(vis = 'aumic_jun_noflare_allspws.concat.ms', 
@@ -831,9 +869,9 @@ from glob import glob
 files = glob("../24jun2015_flare_reduced/*.uvsub")
 concat(vis=files, concatvis='aumic_jun_flare_allspws.fixvis.uvsub.ms')
 ```
-When the output vis is cleaned, some stellar emission clearly remains. This is weird, because I haven't seen stellar emission in any of the previously made clean images... 
+When the output vis is cleaned, some stellar emission clearly remains. This is weird, because I haven't seen stellar emission in any of the previously made clean images...   
 
-***Given the difficulties that I experienced with the bad spectral window during the flare timewindow, the persistent flare/stellar flux in the supposedly corrected flare visibilities, and general uncertainty about how we fit the point sources to the star/flare the first time around, I'm deciding to fully eliminate the flare timewindow (4:23:38-4:29:58) from the data we use for imaging and modeling.***
+***Given the difficulties that I experienced with the bad spectral window during the flare timewindow, the persistent flare/stellar flux in the supposedly corrected flare visibilities, and general uncertainty about how we fit the point sources to the star/flare the first time around, I'm deciding to fully eliminate the flare timewindow (4:23:38-4:29:58) from the data we use for imaging and modeling.***  
 
 ------------------------------------------------------------
 
@@ -877,32 +915,34 @@ I will use March and August as controls.
 *Methods:* Concatenate all four pre-fixvis and -uvsub spws (i.e. before phase shifting and stellar component subtraction), use this to fit. Make sure region around star is a very small circle, so that any irregularities at the edges of the smeared point source don't affect fit position
 
 ##### March:  
+
     ra:   20:45:09.84238 +/- 0.00033 s (0.00426 arcsec along great circle)  
     dec: -31.20.32.35898 +/- 0.00223 arcsec  
     Peak: 771.3 +/- 4.7 uJy/beam    
     
-Compare to previously used imfit values:
+Compare to previously used imfit values:  
 
     All times
-    ra:   20:45:09.843230 +/- 0.000062 s (0.000800 arcsec along great circle)
-    dec: -31.20.32.358302 +/- 0.000378 arcsec
-    Peak: 755.40 +/- 0.82 uJy/beam
+    ra:   20:45:09.843230 +/- 0.000062 s (0.000800 arcsec along great circle)  
+    dec: -31.20.32.358302 +/- 0.000378 arcsec  
+    Peak: 755.40 +/- 0.82 uJy/beam  
 
-    Fixvis phase center:
-    J2000 20h45m09.8443s -031d20m32.36s
+    Fixvis phase center:  
+    J2000 20h45m09.8443s -031d20m32.36s  
 
 ##### August:  
-    ra:   20:45:09.85274 +/- 0.00016 s (0.00200 arcsec along great circle)
-    dec: -31.20.32.50258 +/- 0.00182 arcsec
-    Peak: 226.5 +/- 2.5 uJy/beam
-Compare to previously used imfit values:
 
-    ra:   20:45:09.85471 +/- 0.00077 s (0.00984 arcsec along great circle)
-    dec: -31.20.32.52039 +/- 0.00717 arcsec
-    Peak: 225.1 +/- 10.0 uJy/beam
+    ra:   20:45:09.85274 +/- 0.00016 s (0.00200 arcsec along great circle)  
+    dec: -31.20.32.50258 +/- 0.00182 arcsec  
+    Peak: 226.5 +/- 2.5 uJy/beam  
+Compare to previously used imfit values:  
 
-    Fixvis phase center:
-    J2000 20h45m09.85471s -031d20m32.52034s
+    ra:   20:45:09.85471 +/- 0.00077 s (0.00984 arcsec along great circle)  
+    dec: -31.20.32.52039 +/- 0.00717 arcsec  
+    Peak: 225.1 +/- 10.0 uJy/beam  
+
+    Fixvis phase center:  
+    J2000 20h45m09.85471s -031d20m32.52034s  
     
 ##### June:  
 
@@ -911,18 +951,18 @@ Compare to previously used imfit values:
     Peak: 378.9 +/- 1.3 uJy/beam  
     in degrees: 311.2911313 -31.3424550  
     
-Compare to previously used imfit values:
+Compare to previously used imfit values:  
 
-    All times
-    ra:   20:45:09.86765 +/- 0.00016 s (0.00203 arcsec along great circle)
-    dec: -31.20.32.88803 +/- 0.00128 arcsec
-    Peak: 862.3 +/- 7.7 uJy/beam
-    in degrees: 311.2911154    -31.3424689
+    All times  
+    ra:   20:45:09.86765 +/- 0.00016 s (0.00203 arcsec along great circle)  
+    dec: -31.20.32.88803 +/- 0.00128 arcsec  
+    Peak: 862.3 +/- 7.7 uJy/beam  
+    in degrees: 311.2911154    -31.3424689  
 
-    Fixvis phase center:
-    J2000 20h45m09.8677s -031d20m32.89s
+    Fixvis phase center:  
+    J2000 20h45m09.8677s -031d20m32.89s  
 
-Now, to calculate the shift caused by excluding the flare:
+Now, to calculate the shift caused by excluding the flare:  
 ``` python
 from uncertainties import ufloat, unumpy as unp
 dec_flare   = ufloat( -( 31 + 20/60. + 32.838199/60**2 ), 0.000479/60**2 )

@@ -45,6 +45,8 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
         help='generate walker evolution plot.')
     parser.add_argument('-kde', '--kernel_density', action='store_true',
         help='generate kernel density estimate (kde) of posterior distribution')
+    parser.add_argument('-s', '--stats', action='store_true',
+        help='print table of posterior statistics')
         
     parser.add_argument('-dfs', '--disk_flux_samples', default=0, type=int,
         help='draw a given number of disk flux samples from the MCMC chain')
@@ -78,12 +80,21 @@ This run is a redo of the previous fiducial model run25, but with a broader rang
 
         if args.analyze or args.best_fit: make_best_fits(run, concise=args.concise)
         aumic_fitting.label_fix(run)
-        if args.corner_vars: args.corner_vars = run.groomed.columns[col_indices]
+        if args.stats: 
+            run.get_statistics()
+            return
+        if args.corner_vars: 
+            args.corner_vars = run.groomed.columns[col_indices]
         
-        if args.analyze or args.evolution: run.evolution()
-        if args.analyze or args.kernel_density: run.kde()
-        if args.analyze or args.corner: run.corner(variables=args.corner_vars)
-        
+        if args.analyze or args.evolution: 
+            run.evolution()
+        if args.analyze or args.kernel_density: 
+            run.kde()
+        if args.analyze or args.corner: 
+            tag = '_subset' if args.corner_vars is not None else ''
+            run.corner(variables=args.corner_vars, dpi=250, save_paths=[
+                run.name + '/' + run.name + tag + '_corner.png'.format(run.name),
+                '../writing/figures/degeneracy_corner.png'])
 
 # default parameter dict:
 param_dict = OrderedDict([
@@ -185,7 +196,7 @@ def lnprob(theta, run_name, to_vary):
 
 
 def make_best_fits(run, concise=False):
-    subset_df = run.main#[run.main['r_in'] < 15]
+    subset_df = run.main[run.main['r_in'] < 15]
     model_params = subset_df[subset_df['lnprob'] == subset_df['lnprob'].max()].iloc[0] # best fit
     print('Model parameters:')
     print(model_params.to_string())
@@ -241,6 +252,7 @@ def make_best_fits(run, concise=False):
 
     paths.append('{}_all'.format(model.path))
 
+    plotter = plotting.Plotter([['1','2','3']], rmses = [[1,2,3]])
     print('Making figure...')
     if concise:
         plotter = plotting.Plotter(
@@ -249,7 +261,7 @@ def make_best_fits(run, concise=False):
                 paths[-1] + '.fits',
                 paths[-1] + '.residuals.fits']],
             rmses=[3*[aumic_fitting.band6_rms_values[-1]]],
-            global_colorscale=False)
+            global_colorscale=True)
         plotter.plot_all()
 
         # Subplot labels
@@ -258,8 +270,9 @@ def make_best_fits(run, concise=False):
 
         # Scale bar
         x = -3.015; y = -4.7
-        plotter.axes[0].plot([x, x - 10/9.725], [y, y], ls='-', linewidth=2, color='k')
-        plotter.add_text(subplot_index=0, x=x+0.32, y=y+0.15, text="10 au")
+        for i, ax in enumerate(plotter.axes):
+            ax.plot([x, x - 10/9.725], [y, y], ls='-', linewidth=2, color='k')
+            plotter.add_text(subplot_index=i, x=x+0.32, y=y+0.15, text="10 au")
 
         # For residual subplot: plot disk PA/extent as dashed line 
         # and stellar location as star
@@ -271,6 +284,7 @@ def make_best_fits(run, concise=False):
         plotter.axes[-1].plot(0, 0, marker='*', markersize=7, markeredgewidth=1, color='k')
         
         plotter.save(run.name+'/' + run.name + '_bestfit_concise.pdf', dpi=1000)
+        plotter.save('../writing/figures/fiducial_best_fit.pdf', dpi=1000)
         # plotter.show()
     
     # else:
@@ -327,15 +341,18 @@ def disk_flux_stats(n_samples):
     print('\nBest-fit disk flux: {}'.format(bf))
     print('Standard deviation of {} samples: {}'.format(n_samples, np.std(disk_fluxes)))
     
-# import pandas as pd
-# df = pd.read_table('run27/disk_flux_samples.txt', names=['flux'])
-# df.plot(kind='kde')
-# plt.axvline(df.median()[0])
-# plt.axvline(0.00480706744496, ls=':') # best fit
-# plt.show()
-# 
-# df.describe()*1e3 # mJy
-# (df.describe() - df.median()[0]) * 1e3
+import pandas as pd
+import matplotlib.pyplot as plt
+df = pd.read_table('run27/disk_flux_samples.txt', names=['flux'])
+
+# plot distribution with markers for the median and best0fit
+df.plot(kind='kde')
+plt.axvline(df.median()[0])
+plt.axvline(0.00480706744496, ls=':') # best fit
+plt.show()
+
+df.describe()*1e3 # mJy
+(df.describe() - df.median()[0]) * 1e3 # to get +/- values
 
 if __name__ == '__main__':
     main()
